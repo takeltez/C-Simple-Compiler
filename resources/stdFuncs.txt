@@ -1,0 +1,9 @@
+main
+printf
+open
+close
+scanf
+fopen
+fclose
+atoi
+strlen
