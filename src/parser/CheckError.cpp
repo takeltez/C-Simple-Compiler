@@ -445,7 +445,7 @@ bool checkSemicolonAndCommaError(Token curr_tok, Token prev_tok)
 		 && curr_tok.getLexeme() != "<" && curr_tok.getLexeme() != ">"  && curr_tok.getLexeme() != ">="
 		 	&& curr_tok.getLexeme() != "<=" && curr_tok.getLexeme() != "++" && curr_tok.getLexeme() != "--"
 		 		&& curr_tok.getLexeme() != "+" && curr_tok.getLexeme() != "-" && curr_tok.getLexeme() != "/" 
-		 			&& curr_tok.getLexeme() != "*")
+		 			&& curr_tok.getLexeme() != "*" && curr_tok.getLexeme() != "")
 	{
 		cout<<"Loc=<"<<prev_tok.getLine()<<":"<<prev_tok.getPos()<<"> ";
 		cout<<"expected ',' or ';' after identidicator"<<endl;

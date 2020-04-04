@@ -86,13 +86,13 @@ void printAST(AST *tree) //hello.c
 	assignment = static_cast<AssignmentAST*>(if_body->blocks[1]); //=
 	cout<<"-------------------|"<<assignment->definition<<endl;
 
-	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //int
+	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //double
 	cout<<"-----------------------|"<<data_type->definition<<endl;
 
-	var = static_cast<SymbolIdAST*>(data_type->identificator); //a
+	var = static_cast<SymbolIdAST*>(data_type->identificator); //b
 	cout<<"---------------------------|"<<var->definition<<endl;
 
-	bin_op = static_cast<BinOperationAST*>(assignment->r_operand); // /
+	bin_op = static_cast<BinOperationAST*>(assignment->r_operand); // -
 	cout<<"-----------------------|"<<bin_op->definition<<endl;
 
 	var = static_cast<SymbolIdAST*>(bin_op->l_operand); //a

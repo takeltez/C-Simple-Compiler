@@ -5,6 +5,8 @@ int main(int argc, char const **argv)
 	Lexer *lexer = new Lexer();
 	Parser *parser = new Parser();
 	AST *tree = new AST();
+	SymbolTable *symbol_table = new SymbolTable();
+
 	Token token;
 
 	string command = argv[1];
@@ -32,22 +34,39 @@ int main(int argc, char const **argv)
 
 		tree = parser->buildAST(lexer);
 		
-		if (file_path == "./examples/hello.c")
-			printAST (tree);
+		if (file_path == "./examples/hello.c") {
 
-		else if (file_path == "./examples/array_min.c")
-			printAST1 (tree);
+			//printAST (tree);
+			symbol_table->setSymTab(tree);
+			symbol_table->printSymTab();
+		}
 
-		else if (file_path == "./examples/substr.c")
-			printAST2 (tree);
+		else if (file_path == "./examples/array_min.c") {
 
-		else if (file_path == "./examples/nod.c")
-			printAST3 (tree);
+			//printAST1 (tree);
+			symbol_table->setSymTab1(tree);
+			symbol_table->printSymTab();
+		}
+
+		else if (file_path == "./examples/substr.c") {
+
+			//printAST2 (tree);
+			symbol_table->setSymTab2(tree);
+			symbol_table->printSymTab();
+		}
+
+		else if (file_path == "./examples/nod.c") {
+			
+			//printAST3 (tree);
+			symbol_table->setSymTab3(tree);
+			symbol_table->printSymTab();	
+		}
 	}
 
 	free(lexer);
 	free(parser);
 	free(tree);
+	free(symbol_table);
 
 	return 0;
 }
