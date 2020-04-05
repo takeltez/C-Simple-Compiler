@@ -6,7 +6,7 @@
 #include "Token.h"
 #include "Lexer.h"
 #include "AST.h"
-#include "Symtab.h"
+#include "SymTab.h"
 
 using namespace std;
 
