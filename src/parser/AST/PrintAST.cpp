@@ -35,13 +35,7 @@ void printAST(AST *tree) //hello.c
 	MainFunctionBodyAST *main_func_body = static_cast<MainFunctionBodyAST*>(main_func->body); //main body
 	cout<<"-------|"<<main_func_body->definition<<endl;
 
-	PrintfAST *func_printf = static_cast<PrintfAST*>(main_func_body->blocks[0]); //printf
-	cout<<"-----------|"<<func_printf->definition<<endl;
-
-	StringLexemeAST *text = static_cast<StringLexemeAST*>(func_printf->params[0]); //"Start counting"
-	cout<<"---------------|"<<text->definition<<endl;
-
-	AssignmentAST *assignment = static_cast<AssignmentAST*>(main_func_body->blocks[1]); //=
+	AssignmentAST *assignment = static_cast<AssignmentAST*>(main_func_body->blocks[0]); //=
 	cout<<"-----------|"<<assignment->definition<<endl;
 
 	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //int
@@ -59,7 +53,7 @@ void printAST(AST *tree) //hello.c
 	val = static_cast<DigitIdAST*>(bin_op->r_operand); //2
 	cout<<"-------------------|"<<val->definition<<endl;
 
-	IfAST *key_word_if = static_cast<IfAST*>(main_func_body->blocks[2]); //if
+	IfAST *key_word_if = static_cast<IfAST*>(main_func_body->blocks[1]); //if
 	cout<<"-----------|"<<key_word_if->definition<<endl;
 
 	IfConditionAST *if_cond = static_cast<IfConditionAST*>(key_word_if->condition); //if condition
@@ -69,7 +63,7 @@ void printAST(AST *tree) //hello.c
 	cout<<"-------------------|"<<bin_op->definition<<endl;
 
 	var = static_cast<SymbolIdAST*>(bin_op->l_operand); //a
-	cout<<"-----------------------|"<<val->definition<<endl;
+	cout<<"-----------------------|"<<var->definition<<endl;
 
 	val = static_cast<DigitIdAST*>(bin_op->r_operand); //5
 	cout<<"-----------------------|"<<val->definition<<endl;
@@ -77,13 +71,7 @@ void printAST(AST *tree) //hello.c
 	IfBodyAST *if_body = static_cast<IfBodyAST*>(key_word_if->body); //if body
 	cout<<"---------------|"<<if_body->definition<<endl;
 
-	func_printf = static_cast<PrintfAST*>(if_body->blocks[0]); //printf
-	cout<<"-------------------|"<<func_printf->definition<<endl;
-
-	text = static_cast<StringLexemeAST*>(func_printf->params[0]); //"a = 5"
-	cout<<"-----------------------|"<<text->definition<<endl;
-
-	assignment = static_cast<AssignmentAST*>(if_body->blocks[1]); //=
+	assignment = static_cast<AssignmentAST*>(if_body->blocks[0]); //=
 	cout<<"-------------------|"<<assignment->definition<<endl;
 
 	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //double
@@ -101,7 +89,7 @@ void printAST(AST *tree) //hello.c
 	val = static_cast<DigitIdAST*>(bin_op->r_operand); //2
 	cout<<"---------------------------|"<<val->definition<<endl;
 
-	WhileAST *key_word_while = static_cast<WhileAST*>(main_func_body->blocks[3]); //while
+	WhileAST *key_word_while = static_cast<WhileAST*>(main_func_body->blocks[2]); //while
 	cout<<"-----------|"<<key_word_while->definition<<endl;
 
 	WhileConditionAST *while_cond = static_cast<WhileConditionAST*>(key_word_while->condition); //while condition
@@ -119,13 +107,49 @@ void printAST(AST *tree) //hello.c
 	WhileBodyAST *while_body = static_cast<WhileBodyAST*>(key_word_while->body); //while body
 	cout<<"---------------|"<<while_body->definition<<endl;
 
-	func_printf = static_cast<PrintfAST*>(while_body->blocks[0]); //printf
-	cout<<"-------------------|"<<func_printf->definition<<endl;
+	data_type = static_cast<DataTypeAST*>(while_body->blocks[0]); //int
+	cout<<"-------------------|"<<data_type->definition<<endl;
 
-	text = static_cast<StringLexemeAST*>(func_printf->params[0]); //"b = 3"
-	cout<<"-----------------------|"<<text->definition<<endl;
+	var = static_cast<SymbolIdAST*>(data_type->identificator); //a
+	cout<<"-----------------------|"<<var->definition<<endl;
 
-	ForAST *key_word_for = static_cast<ForAST*>(main_func_body->blocks[4]); //for
+	key_word_if = static_cast<IfAST*>(while_body->blocks[1]); //if
+	cout<<"-------------------|"<<key_word_if->definition<<endl;
+
+	if_cond = static_cast<IfConditionAST*>(key_word_if->condition); //if condition
+	cout<<"-----------------------|"<<if_cond->definition<<endl;
+
+	bin_op = static_cast<BinOperationAST*>(if_cond->blocks[0]); //==
+	cout<<"---------------------------|"<<bin_op->definition<<endl;
+
+	var = static_cast<SymbolIdAST*>(bin_op->l_operand); //a
+	cout<<"-------------------------------|"<<val->definition<<endl;
+
+	val = static_cast<DigitIdAST*>(bin_op->r_operand); //5
+	cout<<"-------------------------------|"<<val->definition<<endl;
+
+	if_body = static_cast<IfBodyAST*>(key_word_if->body); //if body
+	cout<<"-----------------------|"<<if_body->definition<<endl;
+
+	assignment = static_cast<AssignmentAST*>(if_body->blocks[0]); //=
+	cout<<"---------------------------|"<<assignment->definition<<endl;
+
+	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //double
+	cout<<"-------------------------------|"<<data_type->definition<<endl;
+
+	var = static_cast<SymbolIdAST*>(data_type->identificator); //b
+	cout<<"-----------------------------------|"<<var->definition<<endl;
+
+	bin_op = static_cast<BinOperationAST*>(assignment->r_operand); // -
+	cout<<"-------------------------------|"<<bin_op->definition<<endl;
+
+	var = static_cast<SymbolIdAST*>(bin_op->l_operand); //a
+	cout<<"----------------------------------|"<<var->definition<<endl;
+
+	val = static_cast<DigitIdAST*>(bin_op->r_operand); //1
+	cout<<"----------------------------------|"<<val->definition<<endl;
+
+	ForAST *key_word_for = static_cast<ForAST*>(main_func_body->blocks[3]); //for
 	cout<<"-----------|"<<key_word_for->definition<<endl;
 
 	ForConditionAST *for_cond = static_cast<ForConditionAST*>(key_word_for->condition); //for condition
@@ -167,19 +191,19 @@ void printAST(AST *tree) //hello.c
 	ForBodyAST *for_body = static_cast<ForBodyAST*>(key_word_for->body); //for body
 	cout<<"---------------|"<<for_body->definition<<endl;
 
-	unary_op = static_cast<UnaryOperationAST*>(for_body->blocks[0]); //++
-	cout<<"-------------------|"<<unary_op->definition<<endl;
+	assignment = static_cast<AssignmentAST*>(for_body->blocks[0]); //=
+	cout<<"-------------------|"<<assignment->definition<<endl;
 
-	var = static_cast<SymbolIdAST*>(unary_op->operand); //b
+	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //int
+	cout<<"-----------------------|"<<data_type->definition<<endl;
+
+	var = static_cast<SymbolIdAST*>(data_type->identificator); //c
+	cout<<"---------------------------|"<<var->definition<<endl;
+
+	var = static_cast<SymbolIdAST*>(assignment->r_operand); //b
 	cout<<"-----------------------|"<<var->definition<<endl;
 
-	func_printf = static_cast<PrintfAST*>(for_body->blocks[1]); //printf
-	cout<<"-------------------|"<<func_printf->definition<<endl;
-
-	text = static_cast<StringLexemeAST*>(func_printf->params[0]); //"incrementation"
-	cout<<"-----------------------|"<<text->definition<<endl;
-
-	ReturnAST *key_word_return = static_cast<ReturnAST*>(main_func_body->blocks[5]); //return
+	ReturnAST *key_word_return = static_cast<ReturnAST*>(main_func_body->blocks[4]); //return
 	cout<<"-----------|"<<key_word_return->definition<<endl;
 
 	val = static_cast<DigitIdAST*>(key_word_return->identificator); //0

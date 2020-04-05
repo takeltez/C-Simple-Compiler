@@ -4,7 +4,7 @@ SymbolTable::SymbolTable(void) {}
 
 void SymbolTable::printSymTab(void)
 {
-	cout<<"Identificator name | "<<"Declaration level"<<endl;
+	cout<<endl<<"Identificator name | "<<"Declaration level"<<endl;
 	cout<<"--------------------------------------"<<endl;
 
 	for (auto it = symTab.begin(); it != symTab.end(); ++it) 
@@ -73,7 +73,7 @@ void SymbolTable::setSymTab(AST *tree) //hello.c
 
 	MainFunctionBodyAST *main_func_body = static_cast<MainFunctionBodyAST*>(main_func->body); //main body
 
-	AssignmentAST *assignment = static_cast<AssignmentAST*>(main_func_body->blocks[1]); //=
+	AssignmentAST *assignment = static_cast<AssignmentAST*>(main_func_body->blocks[0]); //=
 
 	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //int
 
@@ -87,22 +87,24 @@ void SymbolTable::setSymTab(AST *tree) //hello.c
 
 	id_dec.clear();
 
+	identificators = checkMultiDeclaration(identificators);
+
 	symTab.emplace(level, identificators);
 
 	identificators.clear();
 
-	//level 2
+	//level 2a
 
-	IfAST *key_word_if = static_cast<IfAST*>(main_func_body->blocks[2]); //if
+	IfAST *key_word_if = static_cast<IfAST*>(main_func_body->blocks[1]); //if
 
 	IfConditionAST *if_cond = static_cast<IfConditionAST*>(key_word_if->condition); //if condition
 
-	if (checkFuncDeclaration(main_func_args->definition))
+	if (checkFuncDeclaration(if_cond->definition))
 		level = "2a";
 
 	IfBodyAST *if_body = static_cast<IfBodyAST*>(key_word_if->body); //if body
 
-	assignment = static_cast<AssignmentAST*>(if_body->blocks[1]); //=
+	assignment = static_cast<AssignmentAST*>(if_body->blocks[0]); //=
 
 	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //double
 
@@ -116,17 +118,79 @@ void SymbolTable::setSymTab(AST *tree) //hello.c
 
 	id_dec.clear();
 
+	identificators = checkMultiDeclaration(identificators);
+
+	symTab.emplace(level, identificators);
+
+	identificators.clear();
+
+	//lever 2b
+
+	WhileAST *key_word_while = static_cast<WhileAST*>(main_func_body->blocks[2]); //while
+
+	WhileConditionAST *while_cond = static_cast<WhileConditionAST*>(key_word_while->condition); //while condition
+
+	if (checkFuncDeclaration(while_cond->definition))
+		level = "2b";
+
+	WhileBodyAST *while_body = static_cast<WhileBodyAST*>(key_word_while->body); //while body
+
+	data_type = static_cast<DataTypeAST*>(while_body->blocks[0]); //int
+
+	if (checkIdDeclaration(data_type->definition))
+		id_dec = data_type->definition;
+
+	var = static_cast<SymbolIdAST*>(data_type->identificator); //a
+
+	if (!id_dec.empty())
+		identificators.push_back(var->definition);
+
+	id_dec.clear();
+
+	identificators = checkMultiDeclaration(identificators);
+
+	symTab.emplace(level, identificators);
+
+	identificators.clear();
+
+	//lever 3
+
+	key_word_if = static_cast<IfAST*>(while_body->blocks[1]); //if
+
+	if_cond = static_cast<IfConditionAST*>(key_word_if->condition); //if condition
+
+	if (checkFuncDeclaration(if_cond->definition))
+		level = "3";
+
+	if_body = static_cast<IfBodyAST*>(key_word_if->body); //if body
+
+	assignment = static_cast<AssignmentAST*>(if_body->blocks[0]); //=
+
+	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //double
+
+	if (checkIdDeclaration(data_type->definition))
+		id_dec = data_type->definition;
+
+	var = static_cast<SymbolIdAST*>(data_type->identificator); //b
+
+	if (!id_dec.empty())
+		identificators.push_back(var->definition);
+
+	id_dec.clear();
+
+	identificators = checkMultiDeclaration(identificators);
+
 	symTab.emplace(level, identificators);
 
 	identificators.clear();
 
 	//lever 2c
 
-	ForAST *key_word_for = static_cast<ForAST*>(main_func_body->blocks[4]); //for
+	ForAST *key_word_for = static_cast<ForAST*>(main_func_body->blocks[3]); //for
 
 	ForConditionAST *for_cond = static_cast<ForConditionAST*>(key_word_for->condition); //for condition
 
-	if (checkFuncDeclaration(main_func_args->definition))
+	if (checkFuncDeclaration(for_cond->definition))
 		level = "2c";
 
 	assignment = static_cast<AssignmentAST*>(for_cond->blocks[0]); //=
@@ -143,9 +207,28 @@ void SymbolTable::setSymTab(AST *tree) //hello.c
 
 	id_dec.clear();
 
+	ForBodyAST *for_body = static_cast<ForBodyAST*>(key_word_for->body); //for body
+
+	assignment = static_cast<AssignmentAST*>(for_body->blocks[0]); //=
+
+	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //int
+
+	if (checkIdDeclaration(data_type->definition))
+		id_dec = data_type->definition;
+
+	var = static_cast<SymbolIdAST*>(data_type->identificator); //c
+
+	if (!id_dec.empty())
+		identificators.push_back(var->definition);
+
+	id_dec.clear();
+
+	identificators = checkMultiDeclaration(identificators);
+
 	symTab.emplace(level, identificators);
 
 	identificators.clear();
+
 }
 
 void SymbolTable::setSymTab1(AST *tree) //array_min.c
@@ -237,6 +320,8 @@ void SymbolTable::setSymTab1(AST *tree) //array_min.c
 
 	id_dec.clear();
 
+	identificators = checkMultiDeclaration(identificators);
+
 	symTab.emplace(level, identificators);
 
 	identificators.clear();
@@ -263,6 +348,8 @@ void SymbolTable::setSymTab1(AST *tree) //array_min.c
 		identificators.push_back(var->definition);
 
 	id_dec.clear();
+
+	identificators = checkMultiDeclaration(identificators);
 
 	symTab.emplace(level, identificators);
 
@@ -384,6 +471,8 @@ void SymbolTable::setSymTab2(AST *tree) //substr.c
 
 	id_dec.clear();
 
+	identificators = checkMultiDeclaration(identificators);
+
 	symTab.emplace(level, identificators);
 
 	identificators.clear();
@@ -410,6 +499,8 @@ void SymbolTable::setSymTab2(AST *tree) //substr.c
 		identificators.push_back(var->definition);
 
 	id_dec.clear();
+
+	identificators = checkMultiDeclaration(identificators);
 
 	symTab.emplace(level, identificators);
 
@@ -510,6 +601,8 @@ void SymbolTable::setSymTab3(AST *tree) //nod.c
 
 	id_dec.clear();
 
+	identificators = checkMultiDeclaration(identificators);
+
 	symTab.emplace(level, identificators);
 
 	identificators.clear();
@@ -536,6 +629,8 @@ void SymbolTable::setSymTab3(AST *tree) //nod.c
 		identificators.push_back(var->definition);
 
 	id_dec.clear();
+
+	identificators = checkMultiDeclaration(identificators);
 
 	symTab.emplace(level, identificators);
 

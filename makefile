@@ -17,9 +17,9 @@ $(comp): build/compiler/ParseArray.o build/compiler/ParseFor.o build/compiler/Pa
 $(comp): build/compiler/ParseSimpleNodes.o build/compiler/ParseOtherNodes.o build/compiler/ParseWhile.o build/compiler/CheckError.o 
 $(comp): build/compiler/MainFuncAST.o build/compiler/OpsAST.o build/compiler/ArrayAST.o build/compiler/ForAST.o build/compiler/IfAST.o 
 $(comp): build/compiler/OtherNodesAST.o build/compiler/SimpleNodesAST.o build/compiler/WhileAST.o build/compiler/PrintAST.o
-$(comp): build/compiler/Symtab.o build/compiler/ChecSymTabError.o
+$(comp): build/compiler/Symtab.o build/compiler/CheckSymTabError.o
 	
-	$(G++) $(CFLAGS) build/compiler/main.o build/compiler/Lexer.o build/compiler/Token.o build/compiler/CheckStdLexemes.o build/compiler/Handler.o build/compiler/ParseArray.o build/compiler/ParseFor.o build/compiler/ParseIf.o build/compiler/ParseMainFunc.o build/compiler/ParseOps.o build/compiler/ParseSimpleNodes.o build/compiler/ParseOtherNodes.o build/compiler/ParseWhile.o build/compiler/CheckError.o build/compiler/MainFuncAST.o build/compiler/OpsAST.o build/compiler/ArrayAST.o build/compiler/ForAST.o build/compiler/IfAST.o build/compiler/OtherNodesAST.o build/compiler/SimpleNodesAST.o build/compiler/WhileAST.o build/compiler/PrintAST.o build/compiler/Symtab.o build/compiler/ChecSymTabError.o -o $(comp)
+	$(G++) $(CFLAGS) build/compiler/main.o build/compiler/Lexer.o build/compiler/Token.o build/compiler/CheckStdLexemes.o build/compiler/Handler.o build/compiler/ParseArray.o build/compiler/ParseFor.o build/compiler/ParseIf.o build/compiler/ParseMainFunc.o build/compiler/ParseOps.o build/compiler/ParseSimpleNodes.o build/compiler/ParseOtherNodes.o build/compiler/ParseWhile.o build/compiler/CheckError.o build/compiler/MainFuncAST.o build/compiler/OpsAST.o build/compiler/ArrayAST.o build/compiler/ForAST.o build/compiler/IfAST.o build/compiler/OtherNodesAST.o build/compiler/SimpleNodesAST.o build/compiler/WhileAST.o build/compiler/PrintAST.o build/compiler/Symtab.o build/compiler/CheckSymTabError.o -o $(comp)
 
 build/compiler/main.o: src/main.cpp 
 	$(G++) $(CFLAGS) -c src/main.cpp -o build/compiler/main.o -Isrc/lexer -Isrc/parser -Isrc/parser/AST -Isrc/symbol_table
@@ -73,8 +73,8 @@ build/compiler/PrintAST.o: src/parser/AST/PrintAST.cpp
 
 build/compiler/Symtab.o: src/symbol_table/Symtab.cpp
 	$(G++) $(CFLAGS) -c src/symbol_table/Symtab.cpp -o build/compiler/Symtab.o -Isrc/lexer -Isrc/parser/AST -Isrc/symbol_table -Isrc/parser
-build/compiler/ChecSymTabError.o: src/symbol_table/ChecSymTabError.cpp
-	$(G++) $(CFLAGS) -c src/symbol_table/ChecSymTabError.cpp -o build/compiler/ChecSymTabError.o -Isrc/lexer -Isrc/parser/AST -Isrc/symbol_table -Isrc/parser
+build/compiler/CheckSymTabError.o: src/symbol_table/CheckSymTabError.cpp
+	$(G++) $(CFLAGS) -c src/symbol_table/CheckSymTabError.cpp -o build/compiler/CheckSymTabError.o -Isrc/lexer -Isrc/parser/AST -Isrc/symbol_table -Isrc/parser
 
 
 

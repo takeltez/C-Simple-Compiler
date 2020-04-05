@@ -21,3 +21,4 @@ class SymbolTable
 
 bool checkIdDeclaration(string definition);
 bool checkFuncDeclaration(string definition);
+vector <string> checkMultiDeclaration(vector <string> identificators);
