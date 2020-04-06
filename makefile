@@ -4,11 +4,12 @@ examp_substr := bin/examples/substr
 examp_nod := bin/examples/nod
 lexer_test := bin/test/lexer_tests
 parser_test := bin/test/parser_tests
+SymTab_test := bin/test/SymTab_tests
 G++ := g++
 
 .PHONY: all clean dir
 
-all: $(comp) $(examp_array_min) $(examp_substr) $(examp_nod) $(lexer_test) $(parser_test) 
+all: $(comp) $(examp_array_min) $(examp_substr) $(examp_nod) $(lexer_test) $(parser_test) $(SymTab_test)
 
 #compiler
 
@@ -141,6 +142,16 @@ build/test/parse_simple_nodes_tests.o: test/parser/parse_simple_nodes_tests.cpp
 
 
 
+#SymTab tests
+
+$(SymTab_test): build/test/main.o build/test/SymTab_tests.o build/compiler/CheckSymTabError.o
+	$(G++) $(CFLAGS) build/test/main.o build/test/SymTab_tests.o build/compiler/CheckSymTabError.o -lgtest -lpthread -o $(SymTab_test)
+
+build/test/SymTab_tests.o: test/symbol_table/SymTab_tests.cpp
+	$(G++) $(CFLAGS) -c test/symbol_table/SymTab_tests.cpp -o build/test/SymTab_tests.o -Isrc/lexer -Isrc/parser -Isrc/parser/AST -Isrc/symbol_table
+
+
+
 #Сборка
 
 compiler: bin/compiler/my-compiler
@@ -160,6 +171,9 @@ lexer_test: bin/test/lexer_tests
 
 parser_test: bin/test/parser_tests
 	bin/test/parser_tests
+
+SymTab_test: bin/test/SymTab_tests
+	bin/test/SymTab_tests
 
 clean:
 	@rm -rf build/test/*.o
