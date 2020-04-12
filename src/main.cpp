@@ -33,31 +33,29 @@ int main(int argc, char const **argv)
 	else if (command == "--dump-ast") {
 
 		tree = parser->buildAST(lexer);
+
+		printAST(tree);
 		
 		if (file_path == "./examples/hello.c") {
 
-			//printAST (tree);
 			symbol_table->setSymTab(tree);
 			symbol_table->printSymTab();
 		}
 
 		else if (file_path == "./examples/array_min.c") {
 
-			//printAST1 (tree);
 			symbol_table->setSymTab1(tree);
 			symbol_table->printSymTab();
 		}
 
 		else if (file_path == "./examples/substr.c") {
 
-			//printAST2 (tree);
 			symbol_table->setSymTab2(tree);
 			symbol_table->printSymTab();
 		}
 
 		else if (file_path == "./examples/nod.c") {
 			
-			//printAST3 (tree);
 			symbol_table->setSymTab3(tree);
 			symbol_table->printSymTab();	
 		}

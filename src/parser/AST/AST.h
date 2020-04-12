@@ -8,7 +8,17 @@ using namespace std;
 class AST 
 {
 	public:
-  		virtual ~AST() {}
+      void level(int lvl) 
+      {
+          for (int i = 0; i < lvl; ++i)
+            cout<<"----";
+
+          cout<<"|";
+      }
+  		
+      virtual void print(int lvl) {}
+      
+      virtual ~AST() {}
 };
 
 class DataTypeAST : public AST 
@@ -19,6 +29,7 @@ class DataTypeAST : public AST
   public:
       string definition;
       DataTypeAST(AST *identificator, Token token);
+      void print(int lvl) override;
 };
 
 class ConstAST : public AST 
@@ -29,6 +40,7 @@ class ConstAST : public AST
   public:
       string definition;
       ConstAST(AST *identificator, Token token);
+      void print(int lvl) override;
 };
 
 class MainFunctionAST : public AST 
@@ -40,6 +52,7 @@ class MainFunctionAST : public AST
 	public:
       string definition;
   		MainFunctionAST(AST *args, AST *body, Token token);
+      void print(int lvl) override;
 };
 
 class MainFunctionBodyAST : public AST 
@@ -50,6 +63,7 @@ class MainFunctionBodyAST : public AST
   public:
     string definition;
     MainFunctionBodyAST(vector <AST*> blocks);
+    void print(int lvl) override;
 };
 
 class MainFunctionArgsAST : public AST 
@@ -60,6 +74,7 @@ class MainFunctionArgsAST : public AST
   public:
     string definition;
     MainFunctionArgsAST(vector <AST*> args);
+    void print(int lvl) override;
 };
 
 
@@ -71,6 +86,7 @@ class PrintfAST : public AST
   public:
       string definition;
       PrintfAST(vector <AST*> params, Token token);
+      void print(int lvl) override;
 };
 
 class ReturnAST : public AST 
@@ -81,6 +97,7 @@ class ReturnAST : public AST
   public:
       string definition;
       ReturnAST(AST *identificator, Token token);
+      void print(int lvl) override;
 };
 
 
@@ -93,6 +110,7 @@ class AssignmentAST : public AST
   public:
       string definition;
       AssignmentAST(AST *r_operand, AST *l_operand, Token token);
+      void print(int lvl) override;
 };
 
 class LogicOperationAST : public AST 
@@ -104,6 +122,7 @@ class LogicOperationAST : public AST
   public:
       string definition;
       LogicOperationAST(AST *r_operand, AST *l_operand, Token token);
+      void print(int lvl) override;
 };
 
 class TernarOperationAST : public AST 
@@ -115,6 +134,7 @@ class TernarOperationAST : public AST
   public:
       string definition;
       TernarOperationAST(AST *r_operand, AST *l_operand, Token token);
+      void print(int lvl) override;
 };
 
 class BinOperationAST : public AST 
@@ -126,6 +146,7 @@ class BinOperationAST : public AST
   public:
       string definition;
       BinOperationAST(AST *r_operand, AST *l_operand, Token token);
+      void print(int lvl) override;
 };
 
 class UnaryOperationAST : public AST 
@@ -136,6 +157,7 @@ class UnaryOperationAST : public AST
   public:
       string definition;
       UnaryOperationAST(AST *operand, Token token);
+      void print(int lvl) override;
 };
 
 class PointerAST : public AST 
@@ -146,6 +168,7 @@ class PointerAST : public AST
   public:
       string definition;
       PointerAST(AST *identificator, Token token);
+      void print(int lvl) override;
 };
 
 
@@ -158,6 +181,7 @@ class IfAST : public AST
   public:
       string definition;
       IfAST(AST *condition, AST *body, Token token);
+      void print(int lvl) override;
 };
 
 class IfBodyAST : public AST 
@@ -168,6 +192,7 @@ class IfBodyAST : public AST
   public:
     string definition;
     IfBodyAST(vector <AST*> blocks);
+    void print(int lvl) override;
 };
 
 class IfConditionAST : public AST 
@@ -178,6 +203,7 @@ class IfConditionAST : public AST
   public:
     string definition;
     IfConditionAST(vector <AST*> blocks);
+    void print(int lvl) override;
 };
 
 
@@ -190,6 +216,7 @@ class WhileAST : public AST
   public:
       string definition;
       WhileAST(AST *condition, AST *body, Token token);
+      void print(int lvl) override;
 };
 
 class WhileBodyAST : public AST 
@@ -200,6 +227,7 @@ class WhileBodyAST : public AST
   public:
     string definition;
     WhileBodyAST(vector <AST*> blocks);
+    void print(int lvl) override;
 };
 
 class WhileConditionAST : public AST 
@@ -210,6 +238,7 @@ class WhileConditionAST : public AST
   public:
     string definition;
     WhileConditionAST(vector <AST*> blocks);
+    void print(int lvl) override;
 };
 
 
@@ -222,6 +251,7 @@ class ForAST : public AST
   public:
       string definition;
       ForAST(AST *condition, AST *body, Token token);
+      void print(int lvl) override;
 };
 
 class ForBodyAST : public AST 
@@ -232,6 +262,7 @@ class ForBodyAST : public AST
   public:
     string definition;
     ForBodyAST(vector <AST*> blocks);
+    void print(int lvl) override;
 };
 
 class ForConditionAST : public AST 
@@ -242,6 +273,7 @@ class ForConditionAST : public AST
   public:
     string definition;
     ForConditionAST(vector <AST*> blocks);
+    void print(int lvl) override;
 };
 
 
@@ -253,6 +285,7 @@ class ArrayDataAST : public AST
   public:
     string definition;
     ArrayDataAST(vector <AST*> blocks);
+    void print(int lvl) override;
 };
 
 class ArrayNameAST : public AST 
@@ -263,6 +296,7 @@ class ArrayNameAST : public AST
   public:
     string definition;
     ArrayNameAST(AST *identificator, Token token);
+    void print(int lvl) override;
 };
 
 
@@ -271,6 +305,7 @@ class StringLexemeAST : public AST
   public:
       string definition;
       StringLexemeAST(Token token);
+      void print(int lvl) override;
 };
 
 class DigitIdAST : public AST 
@@ -278,6 +313,7 @@ class DigitIdAST : public AST
   public:
       int definition;
       DigitIdAST(Token token);
+      void print(int lvl) override;
 };
 
 class SymbolIdAST : public AST 
@@ -285,6 +321,7 @@ class SymbolIdAST : public AST
   public:
       string definition;
       SymbolIdAST(Token token);
+      void print(int lvl) override;
 };
 
 class BreakAST : public AST 
@@ -292,9 +329,22 @@ class BreakAST : public AST
   public:
       string definition;
       BreakAST(Token token);
+      void print(int lvl) override;
 };
 
 void printAST (AST *tree);
 void printAST1 (AST *tree);
 void printAST2 (AST *tree);
 void printAST3 (AST *tree);
+
+void printRootNode(AST *tree);
+void printDataTypeNode(void);
+void printMainFuncNode(void);
+void printMainFuncArgsNode(void);
+void printSymbolIdNode(void);
+void printConstNode(void);
+void printPtrNode(void);
+void printMainFuncBodyNode(void);
+void printAssignmentNode(void);
+void printBinOpNode(void);
+void printDigitIdNode(void);

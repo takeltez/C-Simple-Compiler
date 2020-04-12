@@ -46,8 +46,12 @@ AST *Parser::parseArrayName(Token token, Lexer *lexer)
 
 		identificator = handler(tok, lexer);
 
-		if (identificator) 
-			arr_name = new ArrayNameAST(identificator, token);
+		if (identificator) {
+			if (tok.getLexeme() == "]")
+				arr_name = new ArrayNameAST(NULL, token);
+			else
+				arr_name = new ArrayNameAST(identificator, token);
+		}
 	}
 
 	return arr_name;
