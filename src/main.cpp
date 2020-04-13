@@ -6,6 +6,7 @@ int main(int argc, char const **argv)
 	Parser *parser = new Parser();
 	AST *tree = new AST();
 	SymbolTable *symbol_table = new SymbolTable();
+	Sema *sema = new Sema();
 
 	Token token;
 
@@ -59,12 +60,15 @@ int main(int argc, char const **argv)
 			symbol_table->setSymTab3(tree);
 			symbol_table->printSymTab();	
 		}
+
+		sema->checkSemantic(tree);
 	}
 
 	free(lexer);
 	free(parser);
 	free(tree);
 	free(symbol_table);
+	free(sema);
 
 	return 0;
 }

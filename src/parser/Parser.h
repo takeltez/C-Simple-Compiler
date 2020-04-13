@@ -7,6 +7,7 @@
 #include "Lexer.h"
 #include "AST.h"
 #include "SymTab.h"
+#include "Sema.h"
 
 using namespace std;
 
