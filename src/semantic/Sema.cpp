@@ -1,6 +1,16 @@
 #include "Parser.h"
 
+int num = 0;
+bool declr = false;
+
 string data_type;
+string op;
+string left_operand;
+
+map <string, string> type_id;
+vector <string> operands;
+
+Sema *sema = new Sema();
 
 void ArrayDataAST::semantic()
 {
@@ -10,6 +20,9 @@ void ArrayDataAST::semantic()
 
 void ArrayNameAST::semantic()
 {		
+	if ((type_id.find(definition)) == type_id.end())
+		type_id.emplace(definition, data_type);
+
 	if (identificator != NULL)
 		identificator->semantic();
 }
@@ -60,6 +73,7 @@ void IfBodyAST::semantic()
 {
 	for (int i = 0; i < blocks.size(); ++i)
 		blocks[i]->semantic();
+
 }
 
 void IfConditionAST::semantic()
@@ -87,43 +101,94 @@ void MainFunctionArgsAST::semantic()
 }
 
 void AssignmentAST::semantic()
-{
+{	
+	if (op.empty())
+		op = definition;
+
 	l_operand->semantic();
 	r_operand->semantic();
+
+	num = 0;
+
+	left_operand.clear();
+
+	operands = sema->checkOperatorsDataType(operands, type_id, op);
+
+	if (op == definition)
+		op.clear();
+
+	declr = false;
 }
 
 void LogicOperationAST::semantic()
 {
+	if (op.empty())
+		op = definition;
+
 	l_operand->semantic();
 	r_operand->semantic();
+
+	if (op == definition)
+		op.clear();
 }
 
 void TernarOperationAST::semantic()
 {
+	if (op.empty())
+		op = definition;
+
 	l_operand->semantic();
 	r_operand->semantic();
+
+	if (op == definition)
+		op.clear();
 }
 
 void BinOperationAST::semantic()
 {
+	if (op.empty())
+		op = definition;
+
 	l_operand->semantic();
 	r_operand->semantic();
+
+	if (op == definition)
+		op.clear();
 }
 
 void UnaryOperationAST::semantic()
 {
+	if (op.empty())
+		op = definition;
+
 	operand->semantic();
+
+	if (op == definition)
+		op.clear();
 }
 
 void PointerAST::semantic()
 {
+	if (op.empty())
+		op = definition;
+
 	identificator->semantic();
+
+	if (op == definition)
+		op.clear();
 }
 
 void DataTypeAST::semantic()
 {
 	data_type = definition;
+
+	if (op.empty())
+		op = "declaration";
+
 	identificator->semantic();
+
+	if (op == "declaration")
+		op.clear();
 }
 
 void ConstAST::semantic()
@@ -134,6 +199,7 @@ void ConstAST::semantic()
 void PrintfAST::semantic()
 {
 	data_type.clear();
+	op.clear();
 
 	for (int i = 0; i < params.size(); ++i)
 		params[i]->semantic();
@@ -158,7 +224,49 @@ void DigitIdAST::semantic()
 
 void SymbolIdAST::semantic()
 {
+	bool error = false;
+
+	if (op == "=") {
+
+		if (!num) {
+
+			if ((type_id.find(definition)) == type_id.end()) {
+
+					type_id.emplace(definition, data_type);
+
+					declr = true;	
+			}
+
+			left_operand = definition;
+		}
+
+		else  {
+
+			if ((type_id.find(definition)) == type_id.end() || ((definition == left_operand) && declr)) {
+				
+				error = true;
+
+				cout<<"Identificator '"<<definition<<"' was not declarated in this scope"<<endl;
+			}
+		}
+
+		if (!error && num == 1) {
+			operands.push_back(left_operand);
+		}
+
+		if (!error && num) {
+			operands.push_back(definition);
+		}
 	
+		++num;
+	}
+
+	else if (op == "declaration" || !data_type.empty()) {
+
+		if ((type_id.find(definition)) == type_id.end()) 
+			type_id.emplace(definition, data_type);
+	}
+
 }
 
 void BreakAST::semantic()
@@ -172,4 +280,7 @@ void Sema::checkSemantic(AST *tree)
 	DataTypeAST *data_type = static_cast<DataTypeAST*>(tree);
 	
 	data_type->semantic();
+
+	/*for (auto it = type_id.begin(); it != type_id.end(); ++it)
+		cout<<it->second<<" "<<it->first<<endl;*/
 }

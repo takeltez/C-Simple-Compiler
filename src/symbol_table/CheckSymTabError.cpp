@@ -20,7 +20,7 @@ vector <string> checkMultiDeclaration(vector <string> identificators)
 		{
 			if (i != j && !identificators[i].empty()) {
 				if (identificators[i] == identificators[j]) {
-					cout<<endl<<"identificator '"<<identificators[i]<<"' was already declarate in this scope"<<endl;
+					cout<<endl<<"identificator '"<<identificators[i]<<"' was already declarated in this scope"<<endl;
 					identificators[j].clear();
 					flag = true;
 				}
