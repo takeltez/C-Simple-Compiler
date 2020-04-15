@@ -5,11 +5,12 @@ examp_nod := bin/examples/nod
 lexer_test := bin/test/lexer_tests
 parser_test := bin/test/parser_tests
 SymTab_test := bin/test/SymTab_tests
+semantic_test := bin/test/semantic_tests
 G++ := g++
 
 .PHONY: all clean dir
 
-all: $(comp) $(examp_array_min) $(examp_substr) $(examp_nod) $(lexer_test) $(parser_test) $(SymTab_test)
+all: $(comp) $(examp_array_min) $(examp_substr) $(examp_nod) $(lexer_test) $(parser_test) $(SymTab_test) $(semantic_test)
 
 #compiler
 
@@ -18,9 +19,9 @@ $(comp): build/compiler/ParseArray.o build/compiler/ParseFor.o build/compiler/Pa
 $(comp): build/compiler/ParseSimpleNodes.o build/compiler/ParseOtherNodes.o build/compiler/ParseWhile.o build/compiler/CheckError.o 
 $(comp): build/compiler/MainFuncAST.o build/compiler/OpsAST.o build/compiler/ArrayAST.o build/compiler/ForAST.o build/compiler/IfAST.o 
 $(comp): build/compiler/OtherNodesAST.o build/compiler/SimpleNodesAST.o build/compiler/WhileAST.o build/compiler/PrintAST.o
-$(comp): build/compiler/SymTab.o build/compiler/CheckSymTabError.o build/compiler/Sema.o build/compiler/checkDataTypeError.o
+$(comp): build/compiler/SymTab.o build/compiler/CheckSymTabError.o build/compiler/Sema.o build/compiler/checkSemanticError.o
 	
-	$(G++) $(CFLAGS) build/compiler/main.o build/compiler/Lexer.o build/compiler/Token.o build/compiler/CheckStdLexemes.o build/compiler/Handler.o build/compiler/ParseArray.o build/compiler/ParseFor.o build/compiler/ParseIf.o build/compiler/ParseMainFunc.o build/compiler/ParseOps.o build/compiler/ParseSimpleNodes.o build/compiler/ParseOtherNodes.o build/compiler/ParseWhile.o build/compiler/CheckError.o build/compiler/MainFuncAST.o build/compiler/OpsAST.o build/compiler/ArrayAST.o build/compiler/ForAST.o build/compiler/IfAST.o build/compiler/OtherNodesAST.o build/compiler/SimpleNodesAST.o build/compiler/WhileAST.o build/compiler/PrintAST.o build/compiler/SymTab.o build/compiler/CheckSymTabError.o build/compiler/Sema.o build/compiler/checkDataTypeError.o -o $(comp)
+	$(G++) $(CFLAGS) build/compiler/main.o build/compiler/Lexer.o build/compiler/Token.o build/compiler/CheckStdLexemes.o build/compiler/Handler.o build/compiler/ParseArray.o build/compiler/ParseFor.o build/compiler/ParseIf.o build/compiler/ParseMainFunc.o build/compiler/ParseOps.o build/compiler/ParseSimpleNodes.o build/compiler/ParseOtherNodes.o build/compiler/ParseWhile.o build/compiler/CheckError.o build/compiler/MainFuncAST.o build/compiler/OpsAST.o build/compiler/ArrayAST.o build/compiler/ForAST.o build/compiler/IfAST.o build/compiler/OtherNodesAST.o build/compiler/SimpleNodesAST.o build/compiler/WhileAST.o build/compiler/PrintAST.o build/compiler/SymTab.o build/compiler/CheckSymTabError.o build/compiler/Sema.o build/compiler/checkSemanticError.o -o $(comp)
 
 build/compiler/main.o: src/main.cpp 
 	$(G++) $(CFLAGS) -c src/main.cpp -o build/compiler/main.o -Isrc/lexer -Isrc/parser -Isrc/parser/AST -Isrc/symbol_table -Isrc/semantic
@@ -80,8 +81,8 @@ build/compiler/CheckSymTabError.o: src/symbol_table/CheckSymTabError.cpp
 
 build/compiler/Sema.o: src/semantic/Sema.cpp
 	$(G++) $(CFLAGS) -c src/semantic/Sema.cpp -o build/compiler/Sema.o -Isrc/lexer -Isrc/parser/AST -Isrc/symbol_table -Isrc/semantic -Isrc/parser
-build/compiler/checkDataTypeError.o: src/semantic/checkDataTypeError.cpp
-	$(G++) $(CFLAGS) -c src/semantic/checkDataTypeError.cpp -o build/compiler/checkDataTypeError.o -Isrc/lexer -Isrc/parser/AST -Isrc/symbol_table -Isrc/semantic -Isrc/parser
+build/compiler/checkSemanticError.o: src/semantic/checkSemanticError.cpp
+	$(G++) $(CFLAGS) -c src/semantic/checkSemanticError.cpp -o build/compiler/checkSemanticError.o -Isrc/lexer -Isrc/parser/AST -Isrc/symbol_table -Isrc/semantic -Isrc/parser
 
 #examples
 
@@ -104,13 +105,13 @@ build/examples/nod.o: examples/nod.c
 
 #lexer tests
 
-$(lexer_test): build/test/main.o build/test/lexer_test.o build/compiler/Lexer.o build/compiler/Token.o build/compiler/CheckStdLexemes.o 
-	$(G++) $(CFLAGS) build/test/main.o build/test/lexer_test.o build/compiler/Lexer.o build/compiler/Token.o build/compiler/CheckStdLexemes.o -lgtest -lpthread -o $(lexer_test)
+$(lexer_test): build/test/main.o build/test/lexer_tests.o build/compiler/Lexer.o build/compiler/Token.o build/compiler/CheckStdLexemes.o 
+	$(G++) $(CFLAGS) build/test/main.o build/test/lexer_tests.o build/compiler/Lexer.o build/compiler/Token.o build/compiler/CheckStdLexemes.o -lgtest -lpthread -o $(lexer_test)
 
 build/test/main.o: test/main.cpp
-	$(G++) $(CFLAGS) -c test/main.cpp -o build/test/main.o -Isrc/lexer -Isrc/parser -Isrc/parser/AST
-build/test/lexer_test.o: test/lexer/lexer_tests.cpp
-	$(G++) $(CFLAGS) -c test/lexer/lexer_tests.cpp -o build/test/lexer_test.o -Isrc/lexer
+	$(G++) $(CFLAGS) -c test/main.cpp -o build/test/main.o 
+build/test/lexer_tests.o: test/lexer/lexer_tests.cpp
+	$(G++) $(CFLAGS) -c test/lexer/lexer_tests.cpp -o build/test/lexer_tests.o -Isrc/lexer
 
 
 
@@ -123,8 +124,8 @@ $(parser_test): build/compiler/CheckStdLexemes.o build/compiler/Handler.o build/
 $(parser_test): build/compiler/ParseMainFunc.o build/compiler/ParseOps.o build/compiler/ParseSimpleNodes.o build/compiler/ParseOtherNodes.o 
 $(parser_test): build/compiler/ParseWhile.o build/compiler/CheckError.o build/compiler/MainFuncAST.o build/compiler/OpsAST.o build/compiler/ArrayAST.o 
 $(parser_test): build/compiler/ForAST.o build/compiler/IfAST.o build/compiler/OtherNodesAST.o build/compiler/SimpleNodesAST.o build/compiler/WhileAST.o 
-$(parser_test):	build/compiler/PrintAST.o build/compiler/Sema.o build/compiler/checkDataTypeError.o
-	$(G++) $(CFLAGS) build/test/main.o build/test/parse_build_AST_tests.o build/test/parse_main_func_tests.o build/test/parse_for_tests.o build/test/parse_while_tests.o build/test/parse_if_tests.o build/test/parse_array_tests.o build/test/parse_operations_tests.o build/test/parse_other_nodes_tests.o build/test/parse_simple_nodes_tests.o build/compiler/Lexer.o build/compiler/Token.o build/compiler/CheckStdLexemes.o build/compiler/Handler.o build/compiler/ParseArray.o build/compiler/ParseFor.o build/compiler/ParseIf.o build/compiler/ParseMainFunc.o build/compiler/ParseOps.o build/compiler/ParseSimpleNodes.o build/compiler/ParseOtherNodes.o build/compiler/ParseWhile.o build/compiler/CheckError.o build/compiler/MainFuncAST.o build/compiler/OpsAST.o build/compiler/ArrayAST.o build/compiler/ForAST.o build/compiler/IfAST.o build/compiler/OtherNodesAST.o build/compiler/SimpleNodesAST.o build/compiler/WhileAST.o build/compiler/PrintAST.o build/compiler/Sema.o build/compiler/checkDataTypeError.o  -lgtest -lpthread -o $(parser_test)
+$(parser_test):	build/compiler/PrintAST.o build/compiler/Sema.o build/compiler/checkSemanticError.o
+	$(G++) $(CFLAGS) build/test/main.o build/test/parse_build_AST_tests.o build/test/parse_main_func_tests.o build/test/parse_for_tests.o build/test/parse_while_tests.o build/test/parse_if_tests.o build/test/parse_array_tests.o build/test/parse_operations_tests.o build/test/parse_other_nodes_tests.o build/test/parse_simple_nodes_tests.o build/compiler/Lexer.o build/compiler/Token.o build/compiler/CheckStdLexemes.o build/compiler/Handler.o build/compiler/ParseArray.o build/compiler/ParseFor.o build/compiler/ParseIf.o build/compiler/ParseMainFunc.o build/compiler/ParseOps.o build/compiler/ParseSimpleNodes.o build/compiler/ParseOtherNodes.o build/compiler/ParseWhile.o build/compiler/CheckError.o build/compiler/MainFuncAST.o build/compiler/OpsAST.o build/compiler/ArrayAST.o build/compiler/ForAST.o build/compiler/IfAST.o build/compiler/OtherNodesAST.o build/compiler/SimpleNodesAST.o build/compiler/WhileAST.o build/compiler/PrintAST.o build/compiler/Sema.o build/compiler/checkSemanticError.o  -lgtest -lpthread -o $(parser_test)
 
 build/test/parse_build_AST_tests.o: test/parser/parse_build_AST_tests.cpp
 	$(G++) $(CFLAGS) -c test/parser/parse_build_AST_tests.cpp -o build/test/parse_build_AST_tests.o -Isrc/lexer -Isrc/parser -Isrc/parser/AST -Isrc/symbol_table -Isrc/semantic
@@ -149,12 +150,21 @@ build/test/parse_simple_nodes_tests.o: test/parser/parse_simple_nodes_tests.cpp
 
 #SymTab tests
 
-$(SymTab_test): build/test/main.o build/test/SymTab_tests.o build/compiler/CheckSymTabError.o
-	$(G++) $(CFLAGS) build/test/main.o build/test/SymTab_tests.o build/compiler/CheckSymTabError.o -lgtest -lpthread -o $(SymTab_test)
+$(SymTab_test): build/test/main.o build/test/SymTab_tests.o build/compiler/CheckSymTabError.o build/compiler/SymTab.o
+	$(G++) $(CFLAGS) build/test/main.o build/test/SymTab_tests.o build/compiler/CheckSymTabError.o build/compiler/SymTab.o -lgtest -lpthread -o $(SymTab_test)
 
 build/test/SymTab_tests.o: test/symbol_table/SymTab_tests.cpp
 	$(G++) $(CFLAGS) -c test/symbol_table/SymTab_tests.cpp -o build/test/SymTab_tests.o -Isrc/lexer -Isrc/parser -Isrc/parser/AST -Isrc/symbol_table -Isrc/semantic
 
+
+
+#semantic tests
+
+$(semantic_test): build/test/main.o build/test/semantic_tests.o build/compiler/checkSemanticError.o build/compiler/Sema.o
+	$(G++) $(CFLAGS) build/test/main.o build/test/semantic_tests.o build/compiler/checkSemanticError.o build/compiler/Sema.o -lgtest -lpthread -o $(semantic_test)
+
+build/test/semantic_tests.o: test/semantic/Semantic_tests.cpp
+	$(G++) $(CFLAGS) -c test/semantic/Semantic_tests.cpp -o build/test/semantic_tests.o -Isrc/lexer -Isrc/parser -Isrc/parser/AST -Isrc/symbol_table -Isrc/semantic
 
 
 #Сборка
@@ -179,6 +189,9 @@ parser_test: bin/test/parser_tests
 
 SymTab_test: bin/test/SymTab_tests
 	bin/test/SymTab_tests
+
+semantic_test: bin/test/semantic_tests
+	bin/test/semantic_tests
 
 clean:
 	@rm -rf build/test/*.o

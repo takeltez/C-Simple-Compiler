@@ -17,8 +17,7 @@ class SymbolTable
 		void setSymTab2(AST *tree);
 		void setSymTab3(AST *tree);
 		void printSymTab(void);
+		bool checkIdDeclaration(string definition);
+		bool checkFuncDeclaration(string definition);
+		vector <string> checkMultiDeclaration(vector <string> identificators);
 };
-
-bool checkIdDeclaration(string definition);
-bool checkFuncDeclaration(string definition);
-vector <string> checkMultiDeclaration(vector <string> identificators);
