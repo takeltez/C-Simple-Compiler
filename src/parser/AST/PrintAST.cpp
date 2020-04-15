@@ -189,6 +189,13 @@ void StringLexemeAST::print(int lvl)
 	cout<<definition<<endl;
 }
 
+void SymbolLexemeAST::print(int lvl)
+{
+	level(lvl);
+	
+	cout<<definition<<endl;
+}
+
 void DigitIdAST::print(int lvl)
 {
 	level(lvl);

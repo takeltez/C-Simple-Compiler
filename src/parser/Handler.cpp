@@ -78,6 +78,9 @@ AST *Parser::handler(Token token, Lexer *lexer)
 	if (checkParseStringLexeme(token))
 		return parseStringLexeme(token);
 
+	if (checkParseSymbolLexeme(token))
+		return parseSymbolLexeme(token);
+
 	if (checkParseDigitId(token))
 		return parseDigitId(token);
 

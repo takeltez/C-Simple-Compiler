@@ -6,6 +6,7 @@ bool declr = false;
 string data_type;
 string op;
 string left_operand;
+string prev_node;
 
 map <string, string> type_id;
 vector <string> operands;
@@ -20,8 +21,13 @@ void ArrayDataAST::semantic()
 
 void ArrayNameAST::semantic()
 {		
-	if ((type_id.find(definition)) == type_id.end())
-		type_id.emplace(definition, data_type);
+	if (!data_type.empty()) {
+
+		if ((type_id.find(definition)) == type_id.end())
+			type_id.emplace(definition, data_type);
+	}
+
+	prev_node = "array_name";
 
 	if (identificator != NULL)
 		identificator->semantic();
@@ -29,6 +35,7 @@ void ArrayNameAST::semantic()
 
 void ForAST::semantic()
 {
+	data_type.clear();
 	condition->semantic();
 	body->semantic();
 }
@@ -47,6 +54,7 @@ void ForConditionAST::semantic()
 
 void WhileAST::semantic()
 {
+	data_type.clear();
 	condition->semantic();
 	body->semantic();
 }
@@ -65,6 +73,7 @@ void WhileConditionAST::semantic()
 
 void IfAST::semantic()
 {
+	data_type.clear();
 	condition->semantic();
 	body->semantic();
 }
@@ -73,7 +82,6 @@ void IfBodyAST::semantic()
 {
 	for (int i = 0; i < blocks.size(); ++i)
 		blocks[i]->semantic();
-
 }
 
 void IfConditionAST::semantic()
@@ -118,6 +126,8 @@ void AssignmentAST::semantic()
 		op.clear();
 
 	declr = false;
+
+	prev_node.clear();
 }
 
 void LogicOperationAST::semantic()
@@ -148,12 +158,13 @@ void BinOperationAST::semantic()
 {
 	if (op.empty())
 		op = definition;
-
+	
 	l_operand->semantic();
 	r_operand->semantic();
 
 	if (op == definition)
 		op.clear();
+
 }
 
 void UnaryOperationAST::semantic()
@@ -182,13 +193,7 @@ void DataTypeAST::semantic()
 {
 	data_type = definition;
 
-	if (op.empty())
-		op = "declaration";
-
 	identificator->semantic();
-
-	if (op == "declaration")
-		op.clear();
 }
 
 void ConstAST::semantic()
@@ -201,6 +206,8 @@ void PrintfAST::semantic()
 	data_type.clear();
 	op.clear();
 
+	prev_node = "printf";
+
 	for (int i = 0; i < params.size(); ++i)
 		params[i]->semantic();
 }
@@ -212,14 +219,26 @@ void ReturnAST::semantic()
 
 void StringLexemeAST::semantic()
 {
+	if (data_type != "char" && !data_type.empty()) 
+		cout<<"Incorrect operators for operation '"<<op<<"': '"<<data_type<<"' and 'string'"<<endl;
+
+	if (prev_node != "array_name" && prev_node != "printf")
+			cout<<"Cannot assign 'string', variable must be array"<<endl;
+}
+
+void SymbolLexemeAST::semantic()
+{
 	if (data_type != "char" && !data_type.empty())
-		cout<<"Incorrect operators for operation '=': '"<<data_type<<"' and 'string'"<<endl;
+		cout<<"Incorrect operators for operation '"<<op<<"': '"<<data_type<<"' and 'char'"<<endl;
+
+	if (prev_node == "array_name")
+			cout<<"Cannot assign 'char' to array, right operand must be 'string'"<<endl;
 }
 
 void DigitIdAST::semantic()
 {
-	if (data_type != "int" && data_type != "double" && data_type != "float" && !data_type.empty())
-		cout<<"Incorrect operators for operation '=': '"<<data_type<<"' and 'int'"<<endl;
+	if (data_type != "int" && data_type != "double" && data_type != "float" && !data_type.empty() && prev_node != "array_name")
+		cout<<"Incorrect operators for operation '"<<op<<"': '"<<data_type<<"' and 'int'"<<endl;
 }
 
 void SymbolIdAST::semantic()
@@ -230,14 +249,26 @@ void SymbolIdAST::semantic()
 
 		if (!num) {
 
-			if ((type_id.find(definition)) == type_id.end()) {
+			if ((type_id.find(definition)) == type_id.end() && !data_type.empty()) {
 
 					type_id.emplace(definition, data_type);
 
-					declr = true;	
+					declr = true;
+
+					left_operand = definition;	
 			}
 
-			left_operand = definition;
+			else if ((type_id.find(definition)) == type_id.end() && data_type.empty()) {
+
+				error = true;
+
+				cout<<"Identificator '"<<definition<<"' was not declarated in this scope"<<endl;
+
+				return;
+			}
+
+			if (!error)
+				left_operand = definition;
 		}
 
 		else  {
@@ -261,7 +292,7 @@ void SymbolIdAST::semantic()
 		++num;
 	}
 
-	else if (op == "declaration" || !data_type.empty()) {
+	else if (!data_type.empty()) {
 
 		if ((type_id.find(definition)) == type_id.end()) 
 			type_id.emplace(definition, data_type);

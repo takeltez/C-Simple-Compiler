@@ -1,7 +1,7 @@
 int main(int argc, const char **argv)
-{
+{   
     int a = 10 / 2;
-
+    
     if (a == 5) {
     	 double b = a - 2;
     }

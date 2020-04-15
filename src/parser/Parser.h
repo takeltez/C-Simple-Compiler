@@ -46,6 +46,7 @@ class Parser
 		AST *parseArrayData(Lexer *lexer);
 		AST *parseArrayName(Token token, Lexer *lexer); 
 		AST *parseStringLexeme(Token token);
+		AST *parseSymbolLexeme(Token token);
 		AST *parseDigitId(Token token);
 		AST *parseSymbolId(Token token);
 		AST *parseBreak(Token token, Lexer *lexer);
@@ -90,6 +91,7 @@ bool checkParseArrayName(Token token);
 bool checkParsePrintf(Token token);
 bool checkParseReturn(Token token);
 bool checkParseStringLexeme(Token token);
+bool checkParseSymbolLexeme(Token token);
 bool checkParseDigitId(Token token);
 bool checkParseSymbolId(Token token);
 bool checkParseBreak(Token token);

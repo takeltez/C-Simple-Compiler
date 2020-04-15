@@ -61,7 +61,7 @@ bool checkAssignmentTok(Token tok)
 				|| tok.getTokenClass() == "digit_literal_oct" || tok.getTokenClass() == "arithmetic_operator_+" 
 					|| tok.getTokenClass() == "arithmetic_operator_-"|| tok.getTokenClass() == "arithmetic_operator_*" 
 						|| tok.getTokenClass() == "arithmetic_operator_/" || tok.getTokenClass() == "right_paren_{"
-							|| tok.getTokenClass() == "string_literal" || tok.getTokenClass() == "spec_symbol_?"
+							|| tok.getTokenClass() == "string_literal" || tok.getTokenClass() == "symbol_literal" || tok.getTokenClass() == "spec_symbol_?"
 								|| tok.getTokenClass() == "compare_operator_==" || tok.getTokenClass() == "compare_operator_!=" 
 									|| tok.getTokenClass() == "compare_operator_>=" || tok.getTokenClass() == "compare_operator_<="
 										|| tok.getTokenClass() == "compare_operator_>" || tok.getTokenClass() == "compare_operator_<"
@@ -283,6 +283,12 @@ bool checkParseReturn(Token tok)
 bool checkParseStringLexeme(Token tok)
 {
 	return (tok.getTokenClass() == "string_literal");
+
+}
+
+bool checkParseSymbolLexeme(Token tok)
+{
+	return (tok.getTokenClass() == "symbol_literal");
 
 }
 

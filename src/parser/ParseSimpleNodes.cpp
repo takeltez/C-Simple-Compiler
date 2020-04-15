@@ -9,6 +9,13 @@ AST *Parser::parseStringLexeme(Token token)
 	return text;
 }
 
+AST *Parser::parseSymbolLexeme(Token token)
+{
+	SymbolLexemeAST *text = new SymbolLexemeAST(token);
+
+	return text;
+}
+
 AST *Parser::parseDigitId(Token token)
 {		
 	DigitIdAST *val = new DigitIdAST(token);

@@ -326,6 +326,15 @@ class StringLexemeAST : public AST
       void semantic(void) override;
 };
 
+class SymbolLexemeAST : public AST 
+{
+  public:
+      string definition;
+      SymbolLexemeAST(Token token);
+      void print(int lvl) override;
+      void semantic(void) override;
+};
+
 class DigitIdAST : public AST 
 {
   public:

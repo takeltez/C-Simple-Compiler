@@ -21,6 +21,26 @@ TEST(parser_test, parseStringLexeme)
     EXPECT_EQ("AlexeyGenaEugeneAlexey", text->definition);
 }
 
+TEST(parser_test, parseSymbolLexeme)
+{
+	Lexer *lexer = new Lexer();
+	Parser *parser = new Parser();
+	AST *result = new AST();
+
+	lexer->file_string = 'q';
+	lexer->new_file_string = 'q';
+
+	lexer->makeSpaces();
+
+	Token token = parser->getNextTok(lexer);
+
+	result = parser->parseSymbolLexeme(token);
+
+	SymbolLexemeAST *text = static_cast<SymbolLexemeAST*>(result); 
+
+    EXPECT_EQ("q", text->definition);
+}
+
 TEST(parser_test, parseDigitId)
 {
 	Lexer *lexer = new Lexer();
