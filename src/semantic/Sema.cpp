@@ -159,7 +159,9 @@ void BinOperationAST::semantic()
 	r_operand->semantic();
 
 	op = buff;
-	num = 0;
+	
+	//if (op == "?")
+		num = 0;
 }
 
 void UnaryOperationAST::semantic()
@@ -175,7 +177,6 @@ void UnaryOperationAST::semantic()
 
 void PointerAST::semantic()
 {
-
 	identificator->semantic();
 }
 
@@ -222,7 +223,7 @@ void StringLexemeAST::semantic()
 	data_type = it->second;
 
 	if (sema->checkBinOperationSign(op))
-		cout<<"Cannot make bin operation with 'string'"<<endl;
+		cout<<"Cannot execute bin operation with 'string'"<<endl;
 
 	else if (data_type != "char" && !data_type.empty()) 
 		cout<<"Incorrect operators for operation '"<<op<<"': '"<<data_type<<"' and 'string'"<<endl;
@@ -238,7 +239,7 @@ void SymbolLexemeAST::semantic()
 	data_type = it->second;
 
 	if (sema->checkBinOperationSign(op))
-		cout<<"Cannot make bin operation with 'char'"<<endl;
+		cout<<"Cannot execute bin operation with 'char'"<<endl;
 
 	else if (data_type != "char" && !data_type.empty())
 		cout<<"Incorrect operators for operation '"<<op<<"': '"<<data_type<<"' and 'char'"<<endl;
@@ -250,7 +251,7 @@ void SymbolLexemeAST::semantic()
 void DigitIdAST::semantic()
 {
 	if ((cond == "if condition" || cond == "while condition")  && (op != ">" && op != "<" && op != ">=" && op != "<=" && op != "=="))
-			cout<<"Cannot make arithmetic operation in '"<<cond<<"'"<<endl;
+			cout<<"Cannot execute arithmetic operation in '"<<cond<<"'"<<endl;
 
 	else if (data_type != "int" && data_type != "double" && data_type != "float" && !data_type.empty() && prev_node != "array_name")
 		cout<<"Incorrect operators for operation '"<<op<<"': '"<<data_type<<"' and 'int'"<<endl;
@@ -265,7 +266,7 @@ void SymbolIdAST::semantic()
 		if ((cond == "if condition" || cond == "while condition") 
 				&& (op != ">" && op != "<" && op != ">=" && op != "<=" && op != "==" && op != "%")) {
 		
-			cout<<"Cannot make arithmetic operation in '"<<cond<<"'"<<endl;
+			cout<<"Cannot execute arithmetic operation in '"<<cond<<"'"<<endl;
 
 			return;
 		}
@@ -300,7 +301,7 @@ void SymbolIdAST::semantic()
 				
 				error = true;
 
-				cout<<"Identificator '"<<definition<<"' was not declarated in this scope"<<endl;
+				cout<<"1Identificator '"<<definition<<"' was not declarated in this scope"<<endl;
 			}
 		}
 
