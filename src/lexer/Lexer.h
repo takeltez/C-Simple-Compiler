@@ -54,4 +54,5 @@ class Lexer
 		string findVariables(int newLineCounter, string lexeme, int *lexeme_pos, int start_pos);
 		string findUnacceptSymbols(int newLineCounter, string lexeme, int *lexeme_pos);
 		Token getNextToken();
+		void print(Token token);
 };

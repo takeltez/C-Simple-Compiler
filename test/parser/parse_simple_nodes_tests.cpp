@@ -58,7 +58,7 @@ TEST(parser_test, parseDigitId)
 
 	DigitIdAST *val = static_cast<DigitIdAST*>(result); 
 
-    EXPECT_EQ(1, val->definition);
+    EXPECT_EQ("1", val->definition);
 }
 
 TEST(parser_test, parseSymbolId)

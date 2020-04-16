@@ -85,8 +85,12 @@ bool checkBinOpTok(Token tok)
 {
 	return (tok.getTokenClass() == "variable" || tok.getTokenClass() == "digit_literal_dec" 
 			|| tok.getTokenClass() == "digit_literal_bin"|| tok.getTokenClass() == "digit_literal_hex" 
-				|| tok.getTokenClass() == "digit_literal_oct"
-					|| tok.getTokenClass() == "array_name");
+				|| tok.getTokenClass() == "digit_literal_oct" || tok.getTokenClass() == "string_literal" 
+					|| tok.getTokenClass() == "symbol_literal" || tok.getTokenClass() == "array_name"
+					  	||tok.getTokenClass() == "arithmetic_operator_+" || tok.getTokenClass() == "arithmetic_operator_-"
+							|| tok.getTokenClass() == "arithmetic_operator_*" || tok.getTokenClass() == "arithmetic_operator_/"
+								|| tok.getTokenClass() == "arithmetic_operator_-" || tok.getTokenClass() == "arithmetic_operator_*" 
+									|| tok.getTokenClass() == "arithmetic_operator_/"  || tok.getTokenClass() == "arithmetic_operator_%");
 }
 
 bool checkTernarOpTok(Token tok)
@@ -120,7 +124,9 @@ bool checkIfConditionTok(Token tok)
 						|| tok.getTokenClass() == "compare_operator_<=" || tok.getTokenClass() == "compare_operator_>" 
 							|| tok.getTokenClass() == "compare_operator_<" || tok.getTokenClass() == "logic_operator_&&"
 							  	|| tok.getTokenClass() == "logic_operator_||" || tok.getTokenClass() == "arithmetic_operator_%"
-							  		|| tok.getTokenClass() == "array_name");
+							  		|| tok.getTokenClass() == "array_name" || tok.getTokenClass() == "arithmetic_operator_+" 
+										|| tok.getTokenClass() == "arithmetic_operator_-"|| tok.getTokenClass() == "arithmetic_operator_*" 
+											|| tok.getTokenClass() == "arithmetic_operator_/");
 }
 
 bool checkWhileConditionTok(Token tok)
@@ -132,7 +138,9 @@ bool checkWhileConditionTok(Token tok)
 						|| tok.getTokenClass() == "compare_operator_<=" || tok.getTokenClass() == "compare_operator_>" 
 							|| tok.getTokenClass() == "compare_operator_<" || tok.getTokenClass() == "logic_operator_&&"
 								|| tok.getTokenClass() == "logic_operator_||" || tok.getTokenClass() == "arithmetic_operator_%"
-									|| tok.getTokenClass() == "array_name");
+									|| tok.getTokenClass() == "array_name" || tok.getTokenClass() == "arithmetic_operator_+" 
+										|| tok.getTokenClass() == "arithmetic_operator_-"|| tok.getTokenClass() == "arithmetic_operator_*" 
+											|| tok.getTokenClass() == "arithmetic_operator_/");
 }
 
 bool checkForConditionTok(Token tok)
@@ -325,12 +333,10 @@ bool checkParseBinOperation(Token tok)
 {
 	return (tok.getTokenClass() == "arithmetic_operator_+" || tok.getTokenClass() == "arithmetic_operator_-"
 			|| tok.getTokenClass() == "arithmetic_operator_*" || tok.getTokenClass() == "arithmetic_operator_/"
-				|| tok.getTokenClass() == "arithmetic_operator_-" || tok.getTokenClass() == "arithmetic_operator_*" 
-					|| tok.getTokenClass() == "arithmetic_operator_/" || tok.getTokenClass() == "compare_operator_=="
-						|| tok.getTokenClass() == "compare_operator_!=" || tok.getTokenClass() == "compare_operator_>="
-							|| tok.getTokenClass() == "compare_operator_<="|| tok.getTokenClass() == "compare_operator_>"
-								|| tok.getTokenClass() == "compare_operator_<" || tok.getTokenClass() == "spec_symbol_:"
-									|| tok.getTokenClass() == "arithmetic_operator_%");
+			 	|| tok.getTokenClass() == "compare_operator_==" || tok.getTokenClass() == "compare_operator_!=" 
+			 		|| tok.getTokenClass() == "compare_operator_>=" || tok.getTokenClass() == "compare_operator_<="
+			 			|| tok.getTokenClass() == "compare_operator_>"|| tok.getTokenClass() == "compare_operator_<" 
+			 				|| tok.getTokenClass() == "spec_symbol_:" || tok.getTokenClass() == "arithmetic_operator_%");
 }
 
 bool checkParseUnaryOperation(Token tok)

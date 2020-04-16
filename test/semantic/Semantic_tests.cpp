@@ -18,3 +18,12 @@ TEST(semantic_test, checkOperatorsDataType)
 
     EXPECT_EQ(expected, result);
 }
+
+TEST(semantic_test, checkBinOperationSign)
+{
+	Sema *sema = new Sema();
+
+	bool result = sema->checkBinOperationSign("+");
+
+    EXPECT_EQ(true, result);
+}

@@ -12,3 +12,21 @@ TEST(SymTab_test, checkMultiDeclaration)
 
     EXPECT_EQ(expected, result);
 }
+
+TEST(semantic_test, checkIdDeclaration)
+{
+	SymbolTable *symbol_table = new SymbolTable();
+
+	bool result = symbol_table->checkIdDeclaration("char");
+
+    EXPECT_EQ(true, result);
+}
+
+TEST(semantic_test, checkFuncDeclaration)
+{
+	SymbolTable *symbol_table = new SymbolTable();
+
+	bool result = symbol_table->checkFuncDeclaration("ARGUMENTS");
+
+    EXPECT_EQ(true, result);
+}

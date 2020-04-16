@@ -12,7 +12,7 @@ SymbolLexemeAST::SymbolLexemeAST(Token token)
 
 DigitIdAST::DigitIdAST(Token token)
 {
-	this->definition = stoi(token.getLexeme());
+	this->definition = token.getLexeme();
 }
 
 SymbolIdAST::SymbolIdAST(Token token)

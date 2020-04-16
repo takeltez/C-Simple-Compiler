@@ -2,12 +2,12 @@ int main(int argc, char const **argv)
 {
     int N = 22, token_size = 4;
     char s_str[] = "AlexeyGenaEugeneAlexey";
-    char token[] = "w";
+    char token[] = "Gena";
     int j = 0, pos;
-  
+
     for (int i = 0; i < N; ++i) {
         if (s_str[i] == token[j]) {
-             j++;
+            j++;
         }
         if (j == token_size) {
             pos = i - token_size + 1;

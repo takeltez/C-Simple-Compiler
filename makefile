@@ -14,14 +14,14 @@ all: $(comp) $(examp_array_min) $(examp_substr) $(examp_nod) $(lexer_test) $(par
 
 #compiler
 
-$(comp): build/compiler/main.o build/compiler/Lexer.o build/compiler/Token.o build/compiler/CheckStdLexemes.o build/compiler/Handler.o 
+$(comp): build/compiler/main.o build/compiler/Lexer.o build/compiler/Token.o build/compiler/CheckStdLexemes.o build/compiler/PrintLexemes.o build/compiler/Handler.o 
 $(comp): build/compiler/ParseArray.o build/compiler/ParseFor.o build/compiler/ParseIf.o build/compiler/ParseMainFunc.o build/compiler/ParseOps.o
 $(comp): build/compiler/ParseSimpleNodes.o build/compiler/ParseOtherNodes.o build/compiler/ParseWhile.o build/compiler/CheckError.o 
 $(comp): build/compiler/MainFuncAST.o build/compiler/OpsAST.o build/compiler/ArrayAST.o build/compiler/ForAST.o build/compiler/IfAST.o 
 $(comp): build/compiler/OtherNodesAST.o build/compiler/SimpleNodesAST.o build/compiler/WhileAST.o build/compiler/PrintAST.o
-$(comp): build/compiler/SymTab.o build/compiler/CheckSymTabError.o build/compiler/Sema.o build/compiler/checkSemanticError.o
+$(comp): build/compiler/SymTab.o build/compiler/CheckSymTabError.o build/compiler/Sema.o build/compiler/CheckSemanticError.o
 	
-	$(G++) $(CFLAGS) build/compiler/main.o build/compiler/Lexer.o build/compiler/Token.o build/compiler/CheckStdLexemes.o build/compiler/Handler.o build/compiler/ParseArray.o build/compiler/ParseFor.o build/compiler/ParseIf.o build/compiler/ParseMainFunc.o build/compiler/ParseOps.o build/compiler/ParseSimpleNodes.o build/compiler/ParseOtherNodes.o build/compiler/ParseWhile.o build/compiler/CheckError.o build/compiler/MainFuncAST.o build/compiler/OpsAST.o build/compiler/ArrayAST.o build/compiler/ForAST.o build/compiler/IfAST.o build/compiler/OtherNodesAST.o build/compiler/SimpleNodesAST.o build/compiler/WhileAST.o build/compiler/PrintAST.o build/compiler/SymTab.o build/compiler/CheckSymTabError.o build/compiler/Sema.o build/compiler/checkSemanticError.o -o $(comp)
+	$(G++) $(CFLAGS) build/compiler/main.o build/compiler/Lexer.o build/compiler/Token.o build/compiler/CheckStdLexemes.o build/compiler/PrintLexemes.o build/compiler/Handler.o build/compiler/ParseArray.o build/compiler/ParseFor.o build/compiler/ParseIf.o build/compiler/ParseMainFunc.o build/compiler/ParseOps.o build/compiler/ParseSimpleNodes.o build/compiler/ParseOtherNodes.o build/compiler/ParseWhile.o build/compiler/CheckError.o build/compiler/MainFuncAST.o build/compiler/OpsAST.o build/compiler/ArrayAST.o build/compiler/ForAST.o build/compiler/IfAST.o build/compiler/OtherNodesAST.o build/compiler/SimpleNodesAST.o build/compiler/WhileAST.o build/compiler/PrintAST.o build/compiler/SymTab.o build/compiler/CheckSymTabError.o build/compiler/Sema.o build/compiler/CheckSemanticError.o -o $(comp)
 
 build/compiler/main.o: src/main.cpp 
 	$(G++) $(CFLAGS) -c src/main.cpp -o build/compiler/main.o -Isrc/lexer -Isrc/parser -Isrc/parser/AST -Isrc/symbol_table -Isrc/semantic
@@ -32,6 +32,8 @@ build/compiler/Token.o: src/lexer/Token.cpp
 	$(G++) $(CFLAGS) -c src/lexer/Token.cpp -o build/compiler/Token.o
 build/compiler/CheckStdLexemes.o: src/lexer/CheckStdLexemes.cpp
 	$(G++) $(CFLAGS) -c src/lexer/CheckStdLexemes.cpp -o build/compiler/CheckStdLexemes.o
+build/compiler/PrintLexemes.o: src/lexer/PrintLexemes.cpp
+	$(G++) $(CFLAGS) -c src/lexer/PrintLexemes.cpp -o build/compiler/PrintLexemes.o
 
 build/compiler/Handler.o: src/parser/Handler.cpp
 	$(G++) $(CFLAGS) -c src/parser/Handler.cpp -o build/compiler/Handler.o -Isrc/lexer -Isrc/parser/AST -Isrc/symbol_table -Isrc/semantic
@@ -81,8 +83,8 @@ build/compiler/CheckSymTabError.o: src/symbol_table/CheckSymTabError.cpp
 
 build/compiler/Sema.o: src/semantic/Sema.cpp
 	$(G++) $(CFLAGS) -c src/semantic/Sema.cpp -o build/compiler/Sema.o -Isrc/lexer -Isrc/parser/AST -Isrc/symbol_table -Isrc/semantic -Isrc/parser
-build/compiler/checkSemanticError.o: src/semantic/checkSemanticError.cpp
-	$(G++) $(CFLAGS) -c src/semantic/checkSemanticError.cpp -o build/compiler/checkSemanticError.o -Isrc/lexer -Isrc/parser/AST -Isrc/symbol_table -Isrc/semantic -Isrc/parser
+build/compiler/CheckSemanticError.o: src/semantic/CheckSemanticError.cpp
+	$(G++) $(CFLAGS) -c src/semantic/CheckSemanticError.cpp -o build/compiler/CheckSemanticError.o -Isrc/lexer -Isrc/parser/AST -Isrc/symbol_table -Isrc/semantic -Isrc/parser
 
 #examples
 
@@ -124,8 +126,8 @@ $(parser_test): build/compiler/CheckStdLexemes.o build/compiler/Handler.o build/
 $(parser_test): build/compiler/ParseMainFunc.o build/compiler/ParseOps.o build/compiler/ParseSimpleNodes.o build/compiler/ParseOtherNodes.o 
 $(parser_test): build/compiler/ParseWhile.o build/compiler/CheckError.o build/compiler/MainFuncAST.o build/compiler/OpsAST.o build/compiler/ArrayAST.o 
 $(parser_test): build/compiler/ForAST.o build/compiler/IfAST.o build/compiler/OtherNodesAST.o build/compiler/SimpleNodesAST.o build/compiler/WhileAST.o 
-$(parser_test):	build/compiler/PrintAST.o build/compiler/Sema.o build/compiler/checkSemanticError.o
-	$(G++) $(CFLAGS) build/test/main.o build/test/parse_build_AST_tests.o build/test/parse_main_func_tests.o build/test/parse_for_tests.o build/test/parse_while_tests.o build/test/parse_if_tests.o build/test/parse_array_tests.o build/test/parse_operations_tests.o build/test/parse_other_nodes_tests.o build/test/parse_simple_nodes_tests.o build/compiler/Lexer.o build/compiler/Token.o build/compiler/CheckStdLexemes.o build/compiler/Handler.o build/compiler/ParseArray.o build/compiler/ParseFor.o build/compiler/ParseIf.o build/compiler/ParseMainFunc.o build/compiler/ParseOps.o build/compiler/ParseSimpleNodes.o build/compiler/ParseOtherNodes.o build/compiler/ParseWhile.o build/compiler/CheckError.o build/compiler/MainFuncAST.o build/compiler/OpsAST.o build/compiler/ArrayAST.o build/compiler/ForAST.o build/compiler/IfAST.o build/compiler/OtherNodesAST.o build/compiler/SimpleNodesAST.o build/compiler/WhileAST.o build/compiler/PrintAST.o build/compiler/Sema.o build/compiler/checkSemanticError.o  -lgtest -lpthread -o $(parser_test)
+$(parser_test):	build/compiler/PrintAST.o build/compiler/Sema.o build/compiler/CheckSemanticError.o
+	$(G++) $(CFLAGS) build/test/main.o build/test/parse_build_AST_tests.o build/test/parse_main_func_tests.o build/test/parse_for_tests.o build/test/parse_while_tests.o build/test/parse_if_tests.o build/test/parse_array_tests.o build/test/parse_operations_tests.o build/test/parse_other_nodes_tests.o build/test/parse_simple_nodes_tests.o build/compiler/Lexer.o build/compiler/Token.o build/compiler/CheckStdLexemes.o build/compiler/Handler.o build/compiler/ParseArray.o build/compiler/ParseFor.o build/compiler/ParseIf.o build/compiler/ParseMainFunc.o build/compiler/ParseOps.o build/compiler/ParseSimpleNodes.o build/compiler/ParseOtherNodes.o build/compiler/ParseWhile.o build/compiler/CheckError.o build/compiler/MainFuncAST.o build/compiler/OpsAST.o build/compiler/ArrayAST.o build/compiler/ForAST.o build/compiler/IfAST.o build/compiler/OtherNodesAST.o build/compiler/SimpleNodesAST.o build/compiler/WhileAST.o build/compiler/PrintAST.o build/compiler/Sema.o build/compiler/CheckSemanticError.o  -lgtest -lpthread -o $(parser_test)
 
 build/test/parse_build_AST_tests.o: test/parser/parse_build_AST_tests.cpp
 	$(G++) $(CFLAGS) -c test/parser/parse_build_AST_tests.cpp -o build/test/parse_build_AST_tests.o -Isrc/lexer -Isrc/parser -Isrc/parser/AST -Isrc/symbol_table -Isrc/semantic
@@ -160,8 +162,8 @@ build/test/SymTab_tests.o: test/symbol_table/SymTab_tests.cpp
 
 #semantic tests
 
-$(semantic_test): build/test/main.o build/test/semantic_tests.o build/compiler/checkSemanticError.o build/compiler/Sema.o
-	$(G++) $(CFLAGS) build/test/main.o build/test/semantic_tests.o build/compiler/checkSemanticError.o build/compiler/Sema.o -lgtest -lpthread -o $(semantic_test)
+$(semantic_test): build/test/main.o build/test/semantic_tests.o build/compiler/CheckSemanticError.o build/compiler/Sema.o
+	$(G++) $(CFLAGS) build/test/main.o build/test/semantic_tests.o build/compiler/CheckSemanticError.o build/compiler/Sema.o -lgtest -lpthread -o $(semantic_test)
 
 build/test/semantic_tests.o: test/semantic/Semantic_tests.cpp
 	$(G++) $(CFLAGS) -c test/semantic/Semantic_tests.cpp -o build/test/semantic_tests.o -Isrc/lexer -Isrc/parser -Isrc/parser/AST -Isrc/symbol_table -Isrc/semantic

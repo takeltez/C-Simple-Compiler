@@ -338,7 +338,7 @@ class SymbolLexemeAST : public AST
 class DigitIdAST : public AST 
 {
   public:
-      int definition;
+      string definition;
       DigitIdAST(Token token);
       void print(int lvl) override;
       void semantic(void) override;

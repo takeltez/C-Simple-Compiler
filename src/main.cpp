@@ -19,15 +19,13 @@ int main(int argc, char const **argv)
 
 		while (1) {
 
-			token = lexer->getNextToken(); //Возвращаем каждый найденный токен
+			token = lexer->getNextToken();
 
 			if (token.getLexeme() == " ")
 				break;
 
-			if (!token.getLexeme().empty()) {
-				cout<<"Loc=<"<<token.getLine()<<":"<<token.getPos()<<">	";
-				cout<<token.getTokenClass()<<"		"<<token.getLexeme()<<endl;
-			}
+			if (!token.getLexeme().empty())
+				lexer->print(token);
 		}
 	}
 

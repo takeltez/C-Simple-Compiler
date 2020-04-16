@@ -7,6 +7,7 @@ string data_type;
 string op;
 string left_operand;
 string prev_node;
+string cond;
 
 map <string, string> type_id;
 vector <string> operands;
@@ -21,12 +22,12 @@ void ArrayDataAST::semantic()
 
 void ArrayNameAST::semantic()
 {		
-	if (!data_type.empty()) {
+	if ((type_id.find(definition)) == type_id.end() && !data_type.empty())
+		type_id.emplace(definition, data_type);
 
-		if ((type_id.find(definition)) == type_id.end())
-			type_id.emplace(definition, data_type);
-	}
-
+	else if ((type_id.find(definition)) == type_id.end() && data_type.empty()) 
+		cout<<"Identificator '"<<definition<<"' was not declarated in this scope"<<endl;
+	
 	prev_node = "array_name";
 
 	if (identificator != NULL)
@@ -55,7 +56,12 @@ void ForConditionAST::semantic()
 void WhileAST::semantic()
 {
 	data_type.clear();
+	cond = "while condition";
+
 	condition->semantic();
+	
+	cond.clear();
+
 	body->semantic();
 }
 
@@ -74,7 +80,12 @@ void WhileConditionAST::semantic()
 void IfAST::semantic()
 {
 	data_type.clear();
+	cond = "if condition";
+
 	condition->semantic();
+
+	cond.clear();
+
 	body->semantic();
 }
 
@@ -110,83 +121,62 @@ void MainFunctionArgsAST::semantic()
 
 void AssignmentAST::semantic()
 {	
-	if (op.empty())
-		op = definition;
+	string buff = op;
+	op = definition;
 
 	l_operand->semantic();
 	r_operand->semantic();
 
-	num = 0;
-
-	left_operand.clear();
-
 	operands = sema->checkOperatorsDataType(operands, type_id, op);
 
-	if (op == definition)
-		op.clear();
+	op = buff;
 
+	num = 0;
 	declr = false;
 
+	left_operand.clear();
 	prev_node.clear();
 }
 
 void LogicOperationAST::semantic()
 {
-	if (op.empty())
-		op = definition;
-
 	l_operand->semantic();
 	r_operand->semantic();
-
-	if (op == definition)
-		op.clear();
 }
 
 void TernarOperationAST::semantic()
 {
-	if (op.empty())
-		op = definition;
-
 	l_operand->semantic();
 	r_operand->semantic();
-
-	if (op == definition)
-		op.clear();
 }
 
 void BinOperationAST::semantic()
 {
-	if (op.empty())
-		op = definition;
+	string buff = op;
+	op = definition;
 	
 	l_operand->semantic();
 	r_operand->semantic();
 
-	if (op == definition)
-		op.clear();
-
+	op = buff;
+	num = 0;
 }
 
 void UnaryOperationAST::semantic()
 {
-	if (op.empty())
-		op = definition;
+	string buff = op;
+	op = "unary_op";
 
 	operand->semantic();
 
-	if (op == definition)
-		op.clear();
+	op = buff;
+	num = 0;
 }
 
 void PointerAST::semantic()
 {
-	if (op.empty())
-		op = definition;
 
 	identificator->semantic();
-
-	if (op == definition)
-		op.clear();
 }
 
 void DataTypeAST::semantic()
@@ -204,8 +194,8 @@ void ConstAST::semantic()
 void PrintfAST::semantic()
 {
 	data_type.clear();
-	op.clear();
 
+	op = "printf";
 	prev_node = "printf";
 
 	for (int i = 0; i < params.size(); ++i)
@@ -214,30 +204,55 @@ void PrintfAST::semantic()
 
 void ReturnAST::semantic()
 {
+	string buff = op;
+	op = definition;
+
+	data_type.clear();
+
 	identificator->semantic();
+
+	op = buff;
+	num = 0;
 }
 
 void StringLexemeAST::semantic()
 {
-	if (data_type != "char" && !data_type.empty()) 
+	auto it = type_id.find(left_operand);
+
+	data_type = it->second;
+
+	if (sema->checkBinOperationSign(op))
+		cout<<"Cannot make bin operation with 'string'"<<endl;
+
+	else if (data_type != "char" && !data_type.empty()) 
 		cout<<"Incorrect operators for operation '"<<op<<"': '"<<data_type<<"' and 'string'"<<endl;
 
-	if (prev_node != "array_name" && prev_node != "printf")
+	else if (prev_node != "array_name" && prev_node != "printf")
 			cout<<"Cannot assign 'string', variable must be array"<<endl;
 }
 
 void SymbolLexemeAST::semantic()
 {
-	if (data_type != "char" && !data_type.empty())
+	auto it = type_id.find(left_operand);
+
+	data_type = it->second;
+
+	if (sema->checkBinOperationSign(op))
+		cout<<"Cannot make bin operation with 'char'"<<endl;
+
+	else if (data_type != "char" && !data_type.empty())
 		cout<<"Incorrect operators for operation '"<<op<<"': '"<<data_type<<"' and 'char'"<<endl;
 
-	if (prev_node == "array_name")
+	else if (prev_node == "array_name")
 			cout<<"Cannot assign 'char' to array, right operand must be 'string'"<<endl;
 }
 
 void DigitIdAST::semantic()
 {
-	if (data_type != "int" && data_type != "double" && data_type != "float" && !data_type.empty() && prev_node != "array_name")
+	if ((cond == "if condition" || cond == "while condition")  && (op != ">" && op != "<" && op != ">=" && op != "<=" && op != "=="))
+			cout<<"Cannot make arithmetic operation in '"<<cond<<"'"<<endl;
+
+	else if (data_type != "int" && data_type != "double" && data_type != "float" && !data_type.empty() && prev_node != "array_name")
 		cout<<"Incorrect operators for operation '"<<op<<"': '"<<data_type<<"' and 'int'"<<endl;
 }
 
@@ -245,7 +260,15 @@ void SymbolIdAST::semantic()
 {
 	bool error = false;
 
-	if (op == "=") {
+	if (op == "=" || op == "unary_op" || op == "return" || op == "printf" || sema->checkBinOperationSign(op)) {
+
+		if ((cond == "if condition" || cond == "while condition") 
+				&& (op != ">" && op != "<" && op != ">=" && op != "<=" && op != "==" && op != "%")) {
+		
+			cout<<"Cannot make arithmetic operation in '"<<cond<<"'"<<endl;
+
+			return;
+		}
 
 		if (!num) {
 
@@ -311,7 +334,4 @@ void Sema::checkSemantic(AST *tree)
 	DataTypeAST *data_type = static_cast<DataTypeAST*>(tree);
 	
 	data_type->semantic();
-
-	/*for (auto it = type_id.begin(); it != type_id.end(); ++it)
-		cout<<it->second<<" "<<it->first<<endl;*/
 }

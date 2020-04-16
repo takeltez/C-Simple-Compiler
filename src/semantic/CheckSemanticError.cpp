@@ -23,10 +23,18 @@ vector <string> Sema::checkOperatorsDataType(vector <string> operands, map <stri
 					break;
 				}	
 			}
+
+			break;
 		}
 	}
 
 	operands.clear();
 
 	return operands;	
+}
+
+bool Sema::checkBinOperationSign(string op)
+{
+	return (op == "+" || op == "-" || op == "*" || op == "/" || op == "==" || op == "!=" || op == "<=" || op == ">="
+				|| op == ">" || op == "<" || op == ":" || op == "%");
 }
