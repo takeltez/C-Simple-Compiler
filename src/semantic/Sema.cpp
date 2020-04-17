@@ -301,7 +301,7 @@ void SymbolIdAST::semantic()
 				
 				error = true;
 
-				cout<<"1Identificator '"<<definition<<"' was not declarated in this scope"<<endl;
+				cout<<"Identificator '"<<definition<<"' was not declarated in this scope"<<endl;
 			}
 		}
 
