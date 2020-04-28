@@ -99,6 +99,7 @@ TEST(lexer_test, shrinkLexemeFromString)
 	
 	int start_pos = 0;
 	string expected = "int";
+	lexer.file_string = " int main ";
 	lexer.new_file_string = " int main ";
 
 	string result = lexer.shrinkLexemeFromString(&start_pos);

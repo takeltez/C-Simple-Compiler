@@ -8,6 +8,64 @@ void AST::level(int lvl)
 	cout<<"|";
 }
 
+void AssignmentAST::print(int lvl)
+{
+	level(lvl);
+	
+	cout<<definition<<endl;
+
+	l_operand->print(lvl + 1);
+	r_operand->print(lvl + 1);
+}
+
+void LogicOperationAST::print(int lvl)
+{
+	level(lvl);
+	
+	cout<<definition<<endl;
+
+	l_operand->print(lvl + 1);
+	r_operand->print(lvl + 1);
+}
+
+void TernarOperationAST::print(int lvl)
+{
+	level(lvl);
+	
+	cout<<definition<<endl;
+
+	l_operand->print(lvl + 1);
+	r_operand->print(lvl + 1);
+}
+
+void BinOperationAST::print(int lvl)
+{
+	level(lvl);
+	
+	cout<<definition<<endl;
+
+	l_operand->print(lvl + 1);
+	r_operand->print(lvl + 1);
+}
+
+void UnaryOperationAST::print(int lvl)
+{
+	level(lvl);
+	
+	cout<<definition<<endl;
+
+	operand->print(lvl + 1);
+}
+
+void PointerAST::print(int lvl)
+{
+	level(lvl);
+	
+	cout<<definition<<endl;
+
+	identificator->print(lvl + 1);
+}
+
 void ArrayDataAST::print(int lvl)
 {
 	for (int i = 0; i < blocks.size(); ++i)
