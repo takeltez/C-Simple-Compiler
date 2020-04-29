@@ -8,6 +8,16 @@ void AST::level(int lvl)
 	cout<<"|";
 }
 
+void RootAST::print(int lvl)
+{
+	level(lvl);
+	
+	cout<<definition<<endl;
+
+	for (int i = 0; i < blocks.size(); ++i)
+		blocks[i]->print(lvl + 1);
+}
+
 void AssignmentAST::print(int lvl)
 {
 	level(lvl);
@@ -172,7 +182,7 @@ void IfConditionAST::print(int lvl)
 		blocks[i]->print(lvl + 1);
 }
 
-void MainFunctionAST::print(int lvl)
+void FunctionAST::print(int lvl)
 {
 	level(lvl);
 	
@@ -182,7 +192,7 @@ void MainFunctionAST::print(int lvl)
 	body->print(lvl + 1);
 }
 
-void MainFunctionBodyAST::print(int lvl)
+void FunctionBodyAST::print(int lvl)
 {
 	level(lvl);
 	
@@ -192,7 +202,7 @@ void MainFunctionBodyAST::print(int lvl)
 		blocks[i]->print(lvl + 1);
 }
 
-void MainFunctionArgsAST::print(int lvl)
+void FunctionArgsAST::print(int lvl)
 {
 	level(lvl);
 	
@@ -277,9 +287,9 @@ void BreakAST::print(int lvl)
 
 void printAST(AST *tree)
 {
-	DataTypeAST *data_type = static_cast<DataTypeAST*>(tree);
+	RootAST *root = static_cast<RootAST*>(tree);
 	
-	data_type->print(1);
+	root->print(1);
 
 	cout<<endl;
 }

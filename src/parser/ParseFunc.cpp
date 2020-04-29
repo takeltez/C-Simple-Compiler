@@ -2,10 +2,10 @@
 
 extern vector <AST*> blocks;
 
-AST *Parser::parseMainFunction(Token token, Lexer *lexer) 
+AST *Parser::parseFunction(Token token, Lexer *lexer) 
 {
-	MainFunctionAST *main_func; 
-	AST *main_func_Body, *main_func_args;
+	FunctionAST *func; 
+	AST *func_Body, *func_args;
 	Token tok;
 	bool error;
 
@@ -21,7 +21,7 @@ AST *Parser::parseMainFunction(Token token, Lexer *lexer)
 	}
 
 	if (!error)
-		main_func_args = handler(tok, lexer);
+		func_args = handler(tok, lexer);
 
 	else {
 		while (tok.getLexeme() != ")")
@@ -40,25 +40,27 @@ AST *Parser::parseMainFunction(Token token, Lexer *lexer)
 	}
 
 	if (!error)  
-		main_func_Body = handler(tok, lexer);
+		func_Body = handler(tok, lexer);
 
 	else {
 		while (tok.getLexeme() != "}")
 			tok = getNextTok(lexer);
 	}
 
-	if (main_func_Body && main_func_args)
-		main_func = new MainFunctionAST(main_func_args, main_func_Body, token);
+	if (func_Body && func_args)
+		func = new FunctionAST(func_args, func_Body, token);
 
 	Parser::prev_token.setLexeme("");
 
-  	return main_func;
+  	return func;
 }
 
-AST *Parser::parseMainFunctionArgs(Lexer *lexer)
+AST *Parser::parseFunctionArgs(Lexer *lexer)
 {
 	Token tok, prev;
-	MainFunctionArgsAST *main_func_args;
+	FunctionArgsAST *func_args;
+	vector <AST*> func_blocks;
+	int old_size = blocks.size();
 	bool error;
 
 	while (tok.getLexeme() != ")") 
@@ -73,22 +75,26 @@ AST *Parser::parseMainFunctionArgs(Lexer *lexer)
 		if(error)
 			break;
 
-		if (checkMainFuncArgsTok(tok)) 
+		if (checkFuncArgsTok(tok)) 
 			blocks.push_back(handler(tok, lexer));
 	}
 	
-	if (!blocks.empty())
-		main_func_args = new MainFunctionArgsAST(blocks);
+	for (int i = old_size; i < blocks.size(); ++i)
+		func_blocks.push_back(blocks[i]);
 
-	blocks.clear();
+	blocks.erase(blocks.begin() + old_size, blocks.begin() + blocks.size());
 
-	return main_func_args;
+	func_args = new FunctionArgsAST(func_blocks);
+
+	return func_args;
 }
 
-AST *Parser::parseMainFunctionBody(Lexer *lexer)
+AST *Parser::parseFunctionBody(Lexer *lexer)
 {
 	Token tok, prev;
-	MainFunctionBodyAST *main_func_Body;
+	FunctionBodyAST *func_Body;
+	vector <AST*> func_blocks;
+	int old_size = blocks.size();
 
 	while (tok.getLexeme() != "}") 
 	{	
@@ -101,10 +107,12 @@ AST *Parser::parseMainFunctionBody(Lexer *lexer)
 			blocks.push_back(handler(tok, lexer));
 	}
 
-	if (!blocks.empty())
-		main_func_Body = new MainFunctionBodyAST(blocks);
+	for (int i = old_size; i < blocks.size(); ++i)
+		func_blocks.push_back(blocks[i]);
 
-	blocks.clear();
+	blocks.erase(blocks.begin() + old_size, blocks.begin() + blocks.size());
 
-	return main_func_Body;
+	func_Body = new FunctionBodyAST(func_blocks);
+
+	return func_Body;
 }

@@ -27,14 +27,14 @@ AST *Parser::handler(Token token, Lexer *lexer)
 	if (checkParseCosnt(token))
 		return  parseConst(token, lexer);
 
-	if (checkParseMainFunction(token))
-		return parseMainFunction (token, lexer);
+	if (checkParseFunction(token))
+		return parseFunction (token, lexer);
 
-	if (checkParseMainFuncArgs(token, Parser::prev_token)) 
-		return parseMainFunctionBody(lexer);
+	if (checkParseFuncArgs(token, Parser::prev_token)) 
+		return parseFunctionBody(lexer);
 
-	if (checkParseMainFuncBody(token, Parser::prev_token))
-		return parseMainFunctionArgs(lexer);
+	if (checkParseFuncBody(token, Parser::prev_token))
+		return parseFunctionArgs(lexer);
 
 	if (checkParseIfBody(token, Parser::prev_token))
 		return parseIfBody(lexer);
@@ -110,9 +110,5 @@ AST *Parser::handler(Token token, Lexer *lexer)
 
 AST *Parser::buildAST(Lexer *lexer)
 {
-	Token token;
-
-	token = getNextTok(lexer);
-	
-	return handler(token, lexer);
+	return parseRoot(lexer);
 }

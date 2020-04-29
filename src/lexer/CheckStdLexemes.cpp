@@ -210,10 +210,6 @@ string Lexer::checkStdLexemes(string lexeme) { //Вывод классов то�
 		return "spec_symbol_&";
 	}
 
-	if (lexeme == "main") {
-		return "std_function_main";
-	}
-
 	if (lexeme == "printf") {
 		return "std_function_printf";
 	}

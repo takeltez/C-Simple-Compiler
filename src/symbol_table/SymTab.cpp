@@ -32,9 +32,9 @@ void SymbolTable::setSymTab(AST *tree) //hello.c
 
 	DataTypeAST *data_type = static_cast<DataTypeAST*>(tree); //int
 	
-	MainFunctionAST *main_func = static_cast<MainFunctionAST*>(data_type->identificator); //main
+	FunctionAST *main_func = static_cast<FunctionAST*>(data_type->identificator); //main
 
-	MainFunctionArgsAST *main_func_args = static_cast<MainFunctionArgsAST*>(main_func->args); //main args
+	FunctionArgsAST *main_func_args = static_cast<FunctionArgsAST*>(main_func->args); //main args
 
 	//level 1
 
@@ -71,7 +71,7 @@ void SymbolTable::setSymTab(AST *tree) //hello.c
 
 	id_dec.clear();
 
-	MainFunctionBodyAST *main_func_body = static_cast<MainFunctionBodyAST*>(main_func->body); //main body
+	FunctionBodyAST *main_func_body = static_cast<FunctionBodyAST*>(main_func->body); //main body
 
 	AssignmentAST *assignment = static_cast<AssignmentAST*>(main_func_body->blocks[0]); //=
 
@@ -237,9 +237,9 @@ void SymbolTable::setSymTab1(AST *tree) //array_min.c
 
 	DataTypeAST *data_type = static_cast<DataTypeAST*>(tree); //int
 	
-	MainFunctionAST *main_func = static_cast<MainFunctionAST*>(data_type->identificator); //main
+	FunctionAST *main_func = static_cast<FunctionAST*>(data_type->identificator); //main
 
-	MainFunctionArgsAST *main_func_args = static_cast<MainFunctionArgsAST*>(main_func->args); //main args
+	FunctionArgsAST *main_func_args = static_cast<FunctionArgsAST*>(main_func->args); //main args
 
 	//level 1
 
@@ -276,7 +276,7 @@ void SymbolTable::setSymTab1(AST *tree) //array_min.c
 
 	id_dec.clear();
 
-	MainFunctionBodyAST *main_func_body = static_cast<MainFunctionBodyAST*>(main_func->body); //main body
+	FunctionBodyAST *main_func_body = static_cast<FunctionBodyAST*>(main_func->body); //main body
 
 	AssignmentAST *assignment = static_cast<AssignmentAST*>(main_func_body->blocks[0]); //=
 
@@ -362,9 +362,9 @@ void SymbolTable::setSymTab2(AST *tree) //substr.c
 
 	DataTypeAST *data_type = static_cast<DataTypeAST*>(tree); //int
 	
-	MainFunctionAST *main_func = static_cast<MainFunctionAST*>(data_type->identificator); //main
+	FunctionAST *main_func = static_cast<FunctionAST*>(data_type->identificator); //main
 
-	MainFunctionArgsAST *main_func_args = static_cast<MainFunctionArgsAST*>(main_func->args); //main args
+	FunctionArgsAST *main_func_args = static_cast<FunctionArgsAST*>(main_func->args); //main args
 
 	//level 1
 
@@ -401,7 +401,7 @@ void SymbolTable::setSymTab2(AST *tree) //substr.c
 
 	id_dec.clear();
 
-	MainFunctionBodyAST *main_func_body = static_cast<MainFunctionBodyAST*>(main_func->body); //main body
+	FunctionBodyAST *main_func_body = static_cast<FunctionBodyAST*>(main_func->body); //main body
 
 	AssignmentAST *assignment = static_cast<AssignmentAST*>(main_func_body->blocks[0]); //=
 
@@ -513,9 +513,9 @@ void SymbolTable::setSymTab3(AST *tree) //nod.c
 
 	DataTypeAST *data_type = static_cast<DataTypeAST*>(tree); //int
 	
-	MainFunctionAST *main_func = static_cast<MainFunctionAST*>(data_type->identificator); //main
+	FunctionAST *main_func = static_cast<FunctionAST*>(data_type->identificator); //main
 
-	MainFunctionArgsAST *main_func_args = static_cast<MainFunctionArgsAST*>(main_func->args); //main args
+	FunctionArgsAST *main_func_args = static_cast<FunctionArgsAST*>(main_func->args); //main args
 
 	//level 1
 
@@ -552,7 +552,7 @@ void SymbolTable::setSymTab3(AST *tree) //nod.c
 
 	id_dec.clear();
 
-	MainFunctionBodyAST *main_func_body = static_cast<MainFunctionBodyAST*>(main_func->body); //main body
+	FunctionBodyAST *main_func_body = static_cast<FunctionBodyAST*>(main_func->body); //main body
 
 	AssignmentAST *assignment = static_cast<AssignmentAST*>(main_func_body->blocks[0]); //=
 

@@ -14,11 +14,11 @@ TEST(parser_test, parseMainFunction)
 
 	Token token = parser->getNextTok(lexer);
 
-	result = parser->parseMainFunction(token, lexer);
+	result = parser->parseFunction(token, lexer);
 
-	MainFunctionAST *main_func = static_cast<MainFunctionAST*>(result); 
+	FunctionAST *func = static_cast<FunctionAST*>(result); 
 
-    EXPECT_EQ("main", main_func->definition);
+    EXPECT_EQ("main", func->definition);
 }
 
 TEST(parser_test, parseMainFunctionArgs)
@@ -32,11 +32,11 @@ TEST(parser_test, parseMainFunctionArgs)
 
 	lexer->makeSpaces();
 
-	result = parser->parseMainFunctionArgs(lexer);
+	result = parser->parseFunctionArgs(lexer);
 
-	MainFunctionArgsAST *main_func_args = static_cast<MainFunctionArgsAST*>(result); 
+	FunctionArgsAST *func_args = static_cast<FunctionArgsAST*>(result); 
 
-    EXPECT_EQ("ARGUMENTS", main_func_args->definition);
+    EXPECT_EQ("ARGUMENTS", func_args->definition);
 }
 
 TEST(parser_test, parseMainFunctionBody)
@@ -50,9 +50,9 @@ TEST(parser_test, parseMainFunctionBody)
 
 	lexer->makeSpaces();
 
-	result = parser->parseMainFunctionBody(lexer);
+	result = parser->parseFunctionBody(lexer);
 
-	MainFunctionBodyAST *main_func_body = static_cast<MainFunctionBodyAST*>(result); 
+	FunctionBodyAST *func_body = static_cast<FunctionBodyAST*>(result); 
 
-    EXPECT_EQ("BODY", main_func_body->definition);
+    EXPECT_EQ("BODY", func_body->definition);
 }

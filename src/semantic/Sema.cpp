@@ -14,6 +14,12 @@ vector <string> operands;
 
 Sema *sema = new Sema();
 
+void RootAST::semantic()
+{
+	for (int i = 0; i < blocks.size(); ++i)
+		blocks[i]->semantic();
+}
+
 void ArrayDataAST::semantic()
 {
 	for (int i = 0; i < blocks.size(); ++i)
@@ -101,19 +107,19 @@ void IfConditionAST::semantic()
 		blocks[i]->semantic();
 }
 
-void MainFunctionAST::semantic()
+void FunctionAST::semantic()
 {
 	args->semantic();
 	body->semantic();
 }
 
-void MainFunctionBodyAST::semantic()
+void FunctionBodyAST::semantic()
 {
 	for (int i = 0; i < blocks.size(); ++i)
 		blocks[i]->semantic();
 }
 
-void MainFunctionArgsAST::semantic()
+void FunctionArgsAST::semantic()
 {
 	for (int i = 0; i < args.size() - 1; ++i)
 		args[i]->semantic();	
@@ -250,7 +256,9 @@ void SymbolLexemeAST::semantic()
 
 void DigitIdAST::semantic()
 {
-	if ((cond == "if condition" || cond == "while condition")  && (op != ">" && op != "<" && op != ">=" && op != "<=" && op != "=="))
+	if ((cond == "if condition" || cond == "while condition")  
+		&& (op != ">" && op != "<" && op != ">=" && op != "<=" && op != "==" && op != "!="))
+			
 			cout<<"Cannot execute arithmetic operation in '"<<cond<<"'"<<endl;
 
 	else if (data_type != "int" && data_type != "double" && data_type != "float" && !data_type.empty() && prev_node != "array_name")
@@ -264,7 +272,7 @@ void SymbolIdAST::semantic()
 	if (op == "=" || op == "unary_op" || op == "return" || op == "printf" || sema->checkBinOperationSign(op)) {
 
 		if ((cond == "if condition" || cond == "while condition") 
-				&& (op != ">" && op != "<" && op != ">=" && op != "<=" && op != "==" && op != "%")) {
+				&& (op != ">" && op != "<" && op != ">=" && op != "<=" && op != "==" && op != "%" && op != "!=")) {
 		
 			cout<<"Cannot execute arithmetic operation in '"<<cond<<"'"<<endl;
 
@@ -332,7 +340,7 @@ Sema::Sema() {}
 
 void Sema::checkSemantic(AST *tree)
 {
-	DataTypeAST *data_type = static_cast<DataTypeAST*>(tree);
+	RootAST *root = static_cast<RootAST*>(tree);
 	
-	data_type->semantic();
+	root->semantic();
 }

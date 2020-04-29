@@ -250,6 +250,14 @@ string Lexer::findVariables(int newLineCount, string lexeme, int *lexeme_pos, in
 			return "array_name";
 		}
 
+		else if (next_lexeme == "(") {
+			*lexeme_pos = file_string.find(lexeme) + 1;
+
+			file_string.replace(file_string.find(lexeme), lexeme.length(), lexeme.length(), ' ');
+			new_file_string.replace(new_file_string.find(lexeme), lexeme.length(), lexeme.length(), ' ');
+			return "function_name";
+		}
+
 		else if (regex_search(lexeme.begin(), lexeme.end(), DICT_ID)) {
 			*lexeme_pos = file_string.find(lexeme) + 1;
 

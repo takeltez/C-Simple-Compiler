@@ -3,8 +3,14 @@
 
 //nodes
 
+bool checkRootTok(Token tok)
+{
+	return (tok.getTokenClass() =="data_type_int" || tok.getTokenClass() == "data_type_char" 
+			|| tok.getTokenClass() == "data_type_float" || tok.getTokenClass() == "data_type_double" 
+				|| tok.getTokenClass() == "data_type_void" || tok.getTokenClass() == "arithmetic_operator_=");
+}
 
-bool checkMainFuncArgsTok(Token tok)
+bool checkFuncArgsTok(Token tok)
 {
 	return (tok.getTokenClass() =="data_type_int" || tok.getTokenClass() == "data_type_char" 
 			|| tok.getTokenClass() == "data_type_float" || tok.getTokenClass() == "data_type_double" 
@@ -27,7 +33,7 @@ bool checkBodyTok(Token tok)
 
 bool checkDataTypeTok(Token tok)
 {
-	return (tok.getTokenClass() == "std_function_main" || tok.getTokenClass() == "variable" 
+	return (tok.getTokenClass() == "function_name" || tok.getTokenClass() == "variable" 
 			|| tok.getTokenClass() == "arithmetic_operator_*" || tok.getTokenClass() == "key_word_const"
 				|| tok.getTokenClass() == "array_name");
 
@@ -196,20 +202,20 @@ bool checkParseCosnt(Token tok)
 	return (tok.getTokenClass() == "key_word_const");
 }
 
-bool checkParseMainFunction(Token tok)
+bool checkParseFunction(Token tok)
 {
-	return (tok.getTokenClass() == "std_function_main");
+	return (tok.getTokenClass() == "function_name");
 }
 
-bool checkParseMainFuncArgs(Token curr_tok, Token prev_tok)
+bool checkParseFuncArgs(Token curr_tok, Token prev_tok)
 {
-	return (curr_tok.getTokenClass() =="right_paren_{" && prev_tok.getTokenClass() == "std_function_main");
+	return (curr_tok.getTokenClass() =="right_paren_{" && prev_tok.getTokenClass() == "function_name");
 
 }
 
-bool checkParseMainFuncBody(Token curr_tok, Token prev_tok)
+bool checkParseFuncBody(Token curr_tok, Token prev_tok)
 {
-	return (curr_tok.getTokenClass() =="right_paren_(" && prev_tok.getTokenClass() == "std_function_main");
+	return (curr_tok.getTokenClass() =="right_paren_(" && prev_tok.getTokenClass() == "function_name");
 
 }
 
@@ -372,7 +378,7 @@ bool CheckLeftParenError(Token tok)
 	if (tok.getLexeme() == "{") {
 
 		cout<<"Loc=<"<<tok.getLine()<<":"<<tok.getPos()<<"> ";
-		cout<<"Expected '(' becouse ')' previously used"<<endl;
+		cout<<"Expected ')' becouse '(' previously used"<<endl;
 		
 		return true; 
 	}
@@ -396,7 +402,7 @@ bool checkRightBraceError(Token tok)
 
 bool checkDataTypeNextTokError(Token next_tok, Token curr_tok)
 {
-	if (next_tok.getTokenClass() != "std_function_main" &&  next_tok.getTokenClass() != "variable" 
+	if (next_tok.getTokenClass() != "function_name" &&  next_tok.getTokenClass() != "variable" 
 			&&  next_tok.getTokenClass() != "arithmetic_operator_*" &&  next_tok.getTokenClass() != "key_word_const"
 				&&  next_tok.getTokenClass() != "array_name" &&  next_tok.getTokenClass() != "") 
 	{

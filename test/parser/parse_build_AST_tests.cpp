@@ -14,9 +14,9 @@ TEST(parser_test, buildAST)
 
 	result = parser->buildAST(lexer);
 
-	DataTypeAST *data_type = static_cast<DataTypeAST*>(result); 
+	RootAST *root = static_cast<RootAST*>(result); 
 
-    EXPECT_EQ("int", data_type->definition);
+    EXPECT_EQ("START", root->definition);
 }
 
 TEST(parser_test, handler)

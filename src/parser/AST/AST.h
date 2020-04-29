@@ -14,6 +14,18 @@ class AST
       virtual ~AST() {}
 };
 
+class RootAST : public AST 
+{
+  public:
+    vector <AST*> blocks;
+
+  public:
+    string definition;
+    RootAST(vector <AST*> blocks);
+    void print(int lvl) override;
+    void semantic(void) override;
+};
+
 class DataTypeAST : public AST 
 {
   public:
@@ -38,7 +50,7 @@ class ConstAST : public AST
       void semantic(void) override;
 };
 
-class MainFunctionAST : public AST 
+class FunctionAST : public AST 
 {
   public:
       AST *args;
@@ -46,33 +58,33 @@ class MainFunctionAST : public AST
 
 	public:
       string definition;
-  		MainFunctionAST(AST *args, AST *body, Token token);
+  		FunctionAST(AST *args, AST *body, Token token);
       void print(int lvl) override;
       void semantic(void) override;
 };
 
-class MainFunctionBodyAST : public AST 
+class FunctionBodyAST : public AST 
 {
   public:
       vector <AST*> blocks;
 
   public:
     string definition;
-    MainFunctionBodyAST(vector <AST*> blocks);
+    FunctionBodyAST(vector <AST*> blocks);
     void print(int lvl) override;
-      void semantic(void) override;
+    void semantic(void) override;
 };
 
-class MainFunctionArgsAST : public AST 
+class FunctionArgsAST : public AST 
 {
   public:
       vector <AST*> args;
 
   public:
     string definition;
-    MainFunctionArgsAST(vector <AST*> args);
+    FunctionArgsAST(vector <AST*> args);
     void print(int lvl) override;
-      void semantic(void) override;
+    void semantic(void) override;
 };
 
 
