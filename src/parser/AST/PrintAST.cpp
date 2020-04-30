@@ -9,7 +9,7 @@ void AST::level(int lvl)
 }
 
 void RootAST::print(int lvl)
-{
+{	
 	level(lvl);
 	
 	cout<<definition<<endl;

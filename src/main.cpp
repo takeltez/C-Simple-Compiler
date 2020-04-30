@@ -34,31 +34,10 @@ int main(int argc, char const **argv)
 		tree = parser->buildAST(lexer);
 
 		printAST(tree);
+
+		symbol_table->setSymTab(tree);
+		symbol_table->printSymTab();
 		
-		if (file_path == "./examples/hello.c") {
-
-			//symbol_table->setSymTab(tree);
-			//symbol_table->printSymTab();
-		}
-
-		else if (file_path == "./examples/array_min.c") {
-
-			//symbol_table->setSymTab1(tree);
-			//symbol_table->printSymTab();
-		}
-
-		else if (file_path == "./examples/substr.c") {
-
-			//symbol_table->setSymTab2(tree);
-			//symbol_table->printSymTab();
-		}
-
-		else if (file_path == "./examples/nod.c") {
-			
-			//symbol_table->setSymTab3(tree);
-			//symbol_table->printSymTab();	
-		}
-
 		sema->checkSemantic(tree);
 	}
 

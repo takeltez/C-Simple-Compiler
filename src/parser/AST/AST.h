@@ -11,19 +11,21 @@ class AST
       void level(int lvl);	
       virtual void print(int lvl) {}
       virtual void semantic() {}
+      virtual void sym_tab() {}
       virtual ~AST() {}
 };
 
 class RootAST : public AST 
 {
-  public:
-    vector <AST*> blocks;
+  public:                                       
+    vector <AST*> blocks;                           
 
   public:
     string definition;
     RootAST(vector <AST*> blocks);
     void print(int lvl) override;
     void semantic(void) override;
+    void sym_tab(void) override;
 };
 
 class DataTypeAST : public AST 
@@ -36,6 +38,7 @@ class DataTypeAST : public AST
       DataTypeAST(AST *identificator, Token token);
       void print(int lvl) override;
       void semantic(void) override;
+      void sym_tab(void) override;
 };
 
 class ConstAST : public AST 
@@ -48,6 +51,7 @@ class ConstAST : public AST
       ConstAST(AST *identificator, Token token);
       void print(int lvl) override;
       void semantic(void) override;
+      void sym_tab(void) override;
 };
 
 class FunctionAST : public AST 
@@ -61,6 +65,7 @@ class FunctionAST : public AST
   		FunctionAST(AST *args, AST *body, Token token);
       void print(int lvl) override;
       void semantic(void) override;
+      void sym_tab(void) override;
 };
 
 class FunctionBodyAST : public AST 
@@ -73,6 +78,7 @@ class FunctionBodyAST : public AST
     FunctionBodyAST(vector <AST*> blocks);
     void print(int lvl) override;
     void semantic(void) override;
+    void sym_tab(void) override;
 };
 
 class FunctionArgsAST : public AST 
@@ -85,6 +91,7 @@ class FunctionArgsAST : public AST
     FunctionArgsAST(vector <AST*> args);
     void print(int lvl) override;
     void semantic(void) override;
+    void sym_tab(void) override;
 };
 
 
@@ -98,6 +105,7 @@ class PrintfAST : public AST
       PrintfAST(vector <AST*> params, Token token);
       void print(int lvl) override;
       void semantic(void) override;
+      void sym_tab(void) override;
 };
 
 class ReturnAST : public AST 
@@ -110,6 +118,7 @@ class ReturnAST : public AST
       ReturnAST(AST *identificator, Token token);
       void print(int lvl) override;
       void semantic(void) override;
+      void sym_tab(void) override;
 };
 
 
@@ -124,6 +133,7 @@ class AssignmentAST : public AST
       AssignmentAST(AST *r_operand, AST *l_operand, Token token);
       void print(int lvl) override;
       void semantic(void) override;
+      void sym_tab(void) override;
 };
 
 class LogicOperationAST : public AST 
@@ -137,6 +147,7 @@ class LogicOperationAST : public AST
       LogicOperationAST(AST *r_operand, AST *l_operand, Token token);
       void print(int lvl) override;
       void semantic(void) override;
+      void sym_tab(void) override;
 };
 
 class TernarOperationAST : public AST 
@@ -150,6 +161,7 @@ class TernarOperationAST : public AST
       TernarOperationAST(AST *r_operand, AST *l_operand, Token token);
       void print(int lvl) override;
       void semantic(void) override;
+      void sym_tab(void) override;
 };
 
 class BinOperationAST : public AST 
@@ -163,6 +175,7 @@ class BinOperationAST : public AST
       BinOperationAST(AST *r_operand, AST *l_operand, Token token);
       void print(int lvl) override;
       void semantic(void) override;
+      void sym_tab(void) override;
 };
 
 class UnaryOperationAST : public AST 
@@ -175,6 +188,7 @@ class UnaryOperationAST : public AST
       UnaryOperationAST(AST *operand, Token token);
       void print(int lvl) override;
       void semantic(void) override;
+      void sym_tab(void) override;
 };
 
 class PointerAST : public AST 
@@ -187,6 +201,7 @@ class PointerAST : public AST
       PointerAST(AST *identificator, Token token);
       void print(int lvl) override;
       void semantic(void) override;
+      void sym_tab(void) override;
 };
 
 
@@ -201,6 +216,7 @@ class IfAST : public AST
       IfAST(AST *condition, AST *body, Token token);
       void print(int lvl) override;
       void semantic(void) override;
+      void sym_tab(void) override;
 };
 
 class IfBodyAST : public AST 
@@ -213,6 +229,7 @@ class IfBodyAST : public AST
     IfBodyAST(vector <AST*> blocks);
     void print(int lvl) override;
     void semantic(void) override;
+    void sym_tab(void) override;
 };
 
 class IfConditionAST : public AST 
@@ -225,6 +242,7 @@ class IfConditionAST : public AST
     IfConditionAST(vector <AST*> blocks);
     void print(int lvl) override;
     void semantic(void) override;
+    void sym_tab(void) override;
 };
 
 
@@ -239,6 +257,7 @@ class WhileAST : public AST
       WhileAST(AST *condition, AST *body, Token token);
       void print(int lvl) override;
       void semantic(void) override;
+      void sym_tab(void) override;
 };
 
 class WhileBodyAST : public AST 
@@ -251,6 +270,7 @@ class WhileBodyAST : public AST
     WhileBodyAST(vector <AST*> blocks);
     void print(int lvl) override;
     void semantic(void) override;
+    void sym_tab(void) override;
 };
 
 class WhileConditionAST : public AST 
@@ -263,6 +283,7 @@ class WhileConditionAST : public AST
     WhileConditionAST(vector <AST*> blocks);
     void print(int lvl) override;
     void semantic(void) override;
+    void sym_tab(void) override;
 };
 
 
@@ -277,6 +298,7 @@ class ForAST : public AST
       ForAST(AST *condition, AST *body, Token token);
       void print(int lvl) override;
       void semantic(void) override;
+      void sym_tab(void) override;
 };
 
 class ForBodyAST : public AST 
@@ -289,6 +311,7 @@ class ForBodyAST : public AST
     ForBodyAST(vector <AST*> blocks);
     void print(int lvl) override;
     void semantic(void) override;
+    void sym_tab(void) override;
 };
 
 class ForConditionAST : public AST 
@@ -301,6 +324,7 @@ class ForConditionAST : public AST
     ForConditionAST(vector <AST*> blocks);
     void print(int lvl) override;
     void semantic(void) override;
+    void sym_tab(void) override;
 };
 
 
@@ -314,6 +338,7 @@ class ArrayDataAST : public AST
     ArrayDataAST(vector <AST*> blocks);
     void print(int lvl) override;
     void semantic(void) override;
+    void sym_tab(void) override;
 };
 
 class ArrayNameAST : public AST 
@@ -326,6 +351,7 @@ class ArrayNameAST : public AST
     ArrayNameAST(AST *identificator, Token token);
     void print(int lvl) override;
     void semantic(void) override;
+    void sym_tab(void) override;
 };
 
 
@@ -336,6 +362,7 @@ class StringLexemeAST : public AST
       StringLexemeAST(Token token);
       void print(int lvl) override;
       void semantic(void) override;
+      void sym_tab(void) override;
 };
 
 class SymbolLexemeAST : public AST 
@@ -345,6 +372,7 @@ class SymbolLexemeAST : public AST
       SymbolLexemeAST(Token token);
       void print(int lvl) override;
       void semantic(void) override;
+      void sym_tab(void) override;
 };
 
 class DigitIdAST : public AST 
@@ -354,6 +382,7 @@ class DigitIdAST : public AST
       DigitIdAST(Token token);
       void print(int lvl) override;
       void semantic(void) override;
+      void sym_tab(void) override;
 };
 
 class SymbolIdAST : public AST 
@@ -363,6 +392,7 @@ class SymbolIdAST : public AST
       SymbolIdAST(Token token);
       void print(int lvl) override;
       void semantic(void) override;
+      void sym_tab(void) override;
 };
 
 class BreakAST : public AST 
@@ -372,6 +402,7 @@ class BreakAST : public AST
       BreakAST(Token token);
       void print(int lvl) override;
       void semantic(void) override;
+      void sym_tab(void) override;
 };
 
 void printAST (AST *tree);

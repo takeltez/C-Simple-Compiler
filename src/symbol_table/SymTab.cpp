@@ -1,10 +1,248 @@
 #include "Parser.h"
 
+string declr_level;
+
+bool id_declr = false;
+
+string alphabet[] = {"", "a", "b", "c", "d"};
+int conter = 0;
+
+vector <string> identificators;
+map <string, vector <string>> symTab;
+
+SymbolTable *symbol_table = new SymbolTable();
+
 SymbolTable::SymbolTable(void) {}
+
+void RootAST::sym_tab()
+{	
+	for (int i = 0; i < blocks.size(); ++i)
+	{
+		declr_level = "0";
+		blocks[i]->sym_tab();
+	}
+}
+
+void ArrayDataAST::sym_tab()
+{
+	for (int i = 0; i < blocks.size(); ++i)
+		blocks[i]->sym_tab();
+}
+
+void ArrayNameAST::sym_tab()
+{	
+	if (id_declr)
+		identificators.push_back(definition);
+
+	id_declr = false;
+
+	if (identificator != NULL)
+		identificator->sym_tab();
+}
+
+void ForAST::sym_tab()
+{
+	++conter;
+
+	condition->sym_tab();
+	body->sym_tab();
+}
+
+void ForBodyAST::sym_tab()
+{
+	for (int i = 0; i < blocks.size(); ++i)
+		blocks[i]->sym_tab();
+}
+
+void ForConditionAST::sym_tab()
+{	
+	identificators = symbol_table->checkMultiDeclaration(identificators);
+
+	symTab.emplace(declr_level, identificators);
+
+	declr_level = to_string(stoi(declr_level) + 1) + alphabet[conter];
+
+	identificators.clear();
+
+	for (int i = 0; i < blocks.size(); ++i)
+		blocks[i]->sym_tab();
+}
+
+void WhileAST::sym_tab()
+{   
+	++conter;
+	
+	condition->sym_tab();
+
+	conter = 0;
+
+	body->sym_tab();
+}
+
+void WhileBodyAST::sym_tab()
+{
+	for (int i = 0; i < blocks.size(); ++i)
+		blocks[i]->sym_tab();
+}
+
+void WhileConditionAST::sym_tab()
+{
+	identificators = symbol_table->checkMultiDeclaration(identificators);
+
+	symTab.emplace(declr_level, identificators);
+
+	declr_level = to_string(stoi(declr_level) - 1);
+	declr_level = to_string(stoi(declr_level) + 1) + alphabet[conter];
+
+	identificators.clear();
+
+	for (int i = 0; i < blocks.size(); ++i)
+		blocks[i]->sym_tab();
+}
+
+void IfAST::sym_tab()
+{
+	++conter;
+
+	condition->sym_tab();
+	body->sym_tab();
+}
+
+void IfBodyAST::sym_tab()
+{
+	for (int i = 0; i < blocks.size(); ++i)
+		blocks[i]->sym_tab();
+}
+
+void IfConditionAST::sym_tab()
+{	
+	identificators = symbol_table->checkMultiDeclaration(identificators);
+
+	symTab.emplace(declr_level, identificators);
+
+	declr_level = to_string(stoi(declr_level) + 1) + alphabet[conter];
+
+	identificators.clear();
+
+	for (int i = 0; i < blocks.size(); ++i)
+		blocks[i]->sym_tab();
+}
+
+void FunctionAST::sym_tab()
+{
+	if (id_declr)
+		identificators.push_back(definition);
+
+	id_declr = false;
+
+	args->sym_tab();
+	body->sym_tab();
+}
+
+void FunctionBodyAST::sym_tab()
+{
+	for (int i = 0; i < blocks.size(); ++i)
+		blocks[i]->sym_tab();
+}
+
+void FunctionArgsAST::sym_tab()
+{
+	identificators = symbol_table->checkMultiDeclaration(identificators);
+
+	symTab.emplace(declr_level, identificators);
+
+	declr_level = to_string(stoi(declr_level) + 1);
+
+	identificators.clear();
+
+	for (int i = 0; i < args.size() - 1; ++i)
+		args[i]->sym_tab();	
+}
+
+void AssignmentAST::sym_tab()
+{	
+	l_operand->sym_tab();
+	r_operand->sym_tab();
+}
+
+void LogicOperationAST::sym_tab()
+{
+	l_operand->sym_tab();
+	r_operand->sym_tab();
+}
+
+void TernarOperationAST::sym_tab()
+{
+	l_operand->sym_tab();
+	r_operand->sym_tab();
+}
+
+void BinOperationAST::sym_tab()
+{
+	l_operand->sym_tab();
+	r_operand->sym_tab();
+}
+
+void UnaryOperationAST::sym_tab()
+{
+	operand->sym_tab();
+}
+
+void PointerAST::sym_tab()
+{
+	identificator->sym_tab();
+}
+
+void DataTypeAST::sym_tab()
+{
+	id_declr = true;
+
+	identificator->sym_tab();
+}
+
+void ConstAST::sym_tab()
+{
+	identificator->sym_tab();
+}
+
+void PrintfAST::sym_tab()
+{
+	for (int i = 0; i < params.size(); ++i)
+		params[i]->sym_tab();
+}
+
+void ReturnAST::sym_tab()
+{
+
+	identificator->sym_tab();
+}
+
+void StringLexemeAST::sym_tab()
+{
+}
+
+void SymbolLexemeAST::sym_tab()
+{
+}
+
+void DigitIdAST::sym_tab()
+{
+}
+
+void SymbolIdAST::sym_tab()
+{
+	if (id_declr)
+		identificators.push_back(definition);
+
+	id_declr = false;
+}
+
+void BreakAST::sym_tab() {}
+
 
 void SymbolTable::printSymTab(void)
 {
-	cout<<endl<<"Identificator name | "<<"Declaration level"<<endl;
+	cout<<endl<<"Identificator name | "<<"Declaration declr_level"<<endl;
 	cout<<"--------------------------------------"<<endl;
 
 	for (auto it = symTab.begin(); it != symTab.end(); ++it) 
@@ -26,614 +264,10 @@ void SymbolTable::printSymTab(void)
 	}
 }
 
-void SymbolTable::setSymTab(AST *tree) //hello.c
+void SymbolTable::setSymTab(AST *tree)
 {
-	string id_dec;
-
-	DataTypeAST *data_type = static_cast<DataTypeAST*>(tree); //int
+	RootAST *root = static_cast<RootAST*>(tree);
 	
-	FunctionAST *main_func = static_cast<FunctionAST*>(data_type->identificator); //main
-
-	FunctionArgsAST *main_func_args = static_cast<FunctionArgsAST*>(main_func->args); //main args
-
-	//level 1
-
-	if (checkFuncDeclaration(main_func_args->definition))
-		level = "1";
-
-	data_type = static_cast<DataTypeAST*>(main_func_args->args[0]); //int
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	SymbolIdAST *var = static_cast<SymbolIdAST*>(data_type->identificator); //argc
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	id_dec.clear();
-
-	ConstAST *key_word_const = static_cast<ConstAST*>(main_func_args->args[1]); //const
-
-	data_type = static_cast<DataTypeAST*>(key_word_const->identificator); //char
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	PointerAST *ptr = static_cast<PointerAST*>(data_type->identificator); //*
-
-	ptr = static_cast<PointerAST*>(ptr->identificator); //*
-
-	var = static_cast<SymbolIdAST*>(ptr->identificator); //argv
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	id_dec.clear();
-
-	FunctionBodyAST *main_func_body = static_cast<FunctionBodyAST*>(main_func->body); //main body
-
-	AssignmentAST *assignment = static_cast<AssignmentAST*>(main_func_body->blocks[0]); //=
-
-	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //int
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	var = static_cast<SymbolIdAST*>(data_type->identificator); //a
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	id_dec.clear();
-
-	identificators = checkMultiDeclaration(identificators);
-
-	symTab.emplace(level, identificators);
-
-	identificators.clear();
-
-	//level 2a
-
-	IfAST *key_word_if = static_cast<IfAST*>(main_func_body->blocks[1]); //if
-
-	IfConditionAST *if_cond = static_cast<IfConditionAST*>(key_word_if->condition); //if condition
-
-	if (checkFuncDeclaration(if_cond->definition))
-		level = "2a";
-
-	IfBodyAST *if_body = static_cast<IfBodyAST*>(key_word_if->body); //if body
-
-	assignment = static_cast<AssignmentAST*>(if_body->blocks[0]); //=
-
-	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //double
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	var = static_cast<SymbolIdAST*>(data_type->identificator); //b
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	id_dec.clear();
-
-	identificators = checkMultiDeclaration(identificators);
-
-	symTab.emplace(level, identificators);
-
-	identificators.clear();
-
-	//lever 2b
-
-	WhileAST *key_word_while = static_cast<WhileAST*>(main_func_body->blocks[2]); //while
-
-	WhileConditionAST *while_cond = static_cast<WhileConditionAST*>(key_word_while->condition); //while condition
-
-	if (checkFuncDeclaration(while_cond->definition))
-		level = "2b";
-
-	WhileBodyAST *while_body = static_cast<WhileBodyAST*>(key_word_while->body); //while body
-
-	data_type = static_cast<DataTypeAST*>(while_body->blocks[0]); //int
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	var = static_cast<SymbolIdAST*>(data_type->identificator); //a
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	id_dec.clear();
-
-	identificators = checkMultiDeclaration(identificators);
-
-	symTab.emplace(level, identificators);
-
-	identificators.clear();
-
-	//lever 3
-
-	key_word_if = static_cast<IfAST*>(while_body->blocks[1]); //if
-
-	if_cond = static_cast<IfConditionAST*>(key_word_if->condition); //if condition
-
-	if (checkFuncDeclaration(if_cond->definition))
-		level = "3";
-
-	if_body = static_cast<IfBodyAST*>(key_word_if->body); //if body
-
-	assignment = static_cast<AssignmentAST*>(if_body->blocks[0]); //=
-
-	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //double
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	var = static_cast<SymbolIdAST*>(data_type->identificator); //b
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	id_dec.clear();
-
-	identificators = checkMultiDeclaration(identificators);
-
-	symTab.emplace(level, identificators);
-
-	identificators.clear();
-
-	//lever 2c
-
-	ForAST *key_word_for = static_cast<ForAST*>(main_func_body->blocks[3]); //for
-
-	ForConditionAST *for_cond = static_cast<ForConditionAST*>(key_word_for->condition); //for condition
-
-	if (checkFuncDeclaration(for_cond->definition))
-		level = "2c";
-
-	assignment = static_cast<AssignmentAST*>(for_cond->blocks[0]); //=
-
-	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //int
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	var = static_cast<SymbolIdAST*>(data_type->identificator); //i
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	id_dec.clear();
-
-	ForBodyAST *for_body = static_cast<ForBodyAST*>(key_word_for->body); //for body
-
-	assignment = static_cast<AssignmentAST*>(for_body->blocks[0]); //=
-
-	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //int
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	var = static_cast<SymbolIdAST*>(data_type->identificator); //c
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	id_dec.clear();
-
-	identificators = checkMultiDeclaration(identificators);
-
-	symTab.emplace(level, identificators);
-
-	identificators.clear();
+	root->sym_tab();
 
 }
-
-void SymbolTable::setSymTab1(AST *tree) //array_min.c
-{
-	string id_dec;
-
-	DataTypeAST *data_type = static_cast<DataTypeAST*>(tree); //int
-	
-	FunctionAST *main_func = static_cast<FunctionAST*>(data_type->identificator); //main
-
-	FunctionArgsAST *main_func_args = static_cast<FunctionArgsAST*>(main_func->args); //main args
-
-	//level 1
-
-	if (checkFuncDeclaration(main_func_args->definition))
-		level = "1";
-
-	data_type = static_cast<DataTypeAST*>(main_func_args->args[0]); //int
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	SymbolIdAST *var = static_cast<SymbolIdAST*>(data_type->identificator); //argc
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	id_dec.clear();
-
-	ConstAST *key_word_const = static_cast<ConstAST*>(main_func_args->args[1]); //const
-
-	data_type = static_cast<DataTypeAST*>(key_word_const->identificator); //char
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	PointerAST *ptr = static_cast<PointerAST*>(data_type->identificator); //*
-
-	ptr = static_cast<PointerAST*>(ptr->identificator); //*
-
-	var = static_cast<SymbolIdAST*>(ptr->identificator); //argv
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	id_dec.clear();
-
-	FunctionBodyAST *main_func_body = static_cast<FunctionBodyAST*>(main_func->body); //main body
-
-	AssignmentAST *assignment = static_cast<AssignmentAST*>(main_func_body->blocks[0]); //=
-
-	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //int
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	var = static_cast<SymbolIdAST*>(data_type->identificator); //N
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	id_dec.clear();
-
-	assignment = static_cast<AssignmentAST*>(main_func_body->blocks[1]); //=
-
-	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //int
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	ArrayNameAST *arr_name = static_cast<ArrayNameAST*>(data_type->identificator); //arr[]
-
-	if (!id_dec.empty())
-		identificators.push_back(arr_name->definition);
-
-	id_dec.clear();
-
-	assignment = static_cast<AssignmentAST*>(main_func_body->blocks[2]); //=
-
-	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //int
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	var = static_cast<SymbolIdAST*>(data_type->identificator); //min
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	id_dec.clear();
-
-	identificators = checkMultiDeclaration(identificators);
-
-	symTab.emplace(level, identificators);
-
-	identificators.clear();
-
-	//level 2a
-
-	ForAST *key_word_for = static_cast<ForAST*>(main_func_body->blocks[3]); //for
-
-	ForConditionAST *for_cond = static_cast<ForConditionAST*>(key_word_for->condition); //for condition
-
-	if (checkFuncDeclaration(main_func_args->definition))
-		level = "2a";
-
-	assignment = static_cast<AssignmentAST*>(for_cond->blocks[0]); //=
-
-	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //int
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	var = static_cast<SymbolIdAST*>(data_type->identificator); //i
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	id_dec.clear();
-
-	identificators = checkMultiDeclaration(identificators);
-
-	symTab.emplace(level, identificators);
-
-	identificators.clear();
-}
-
-void SymbolTable::setSymTab2(AST *tree) //substr.c
-{
-	string id_dec;
-
-	DataTypeAST *data_type = static_cast<DataTypeAST*>(tree); //int
-	
-	FunctionAST *main_func = static_cast<FunctionAST*>(data_type->identificator); //main
-
-	FunctionArgsAST *main_func_args = static_cast<FunctionArgsAST*>(main_func->args); //main args
-
-	//level 1
-
-	if (checkFuncDeclaration(main_func_args->definition))
-		level = "1";
-
-	data_type = static_cast<DataTypeAST*>(main_func_args->args[0]); //int
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	SymbolIdAST *var = static_cast<SymbolIdAST*>(data_type->identificator); //argc
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	id_dec.clear();
-
-	ConstAST *key_word_const = static_cast<ConstAST*>(main_func_args->args[1]); //const
-
-	data_type = static_cast<DataTypeAST*>(key_word_const->identificator); //char
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	PointerAST *ptr = static_cast<PointerAST*>(data_type->identificator); //*
-
-	ptr = static_cast<PointerAST*>(ptr->identificator); //*
-
-	var = static_cast<SymbolIdAST*>(ptr->identificator); //argv
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	id_dec.clear();
-
-	FunctionBodyAST *main_func_body = static_cast<FunctionBodyAST*>(main_func->body); //main body
-
-	AssignmentAST *assignment = static_cast<AssignmentAST*>(main_func_body->blocks[0]); //=
-
-	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //int
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	var = static_cast<SymbolIdAST*>(data_type->identificator); //N
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	assignment = static_cast<AssignmentAST*>(main_func_body->blocks[1]); //=
-
-	var = static_cast<SymbolIdAST*>(assignment->l_operand); //token_size
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	id_dec.clear();
-
-	assignment = static_cast<AssignmentAST*>(main_func_body->blocks[2]); //=
-
-	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //char
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	ArrayNameAST *arr_name = static_cast<ArrayNameAST*>(data_type->identificator); //s_str[]
-
-	if (!id_dec.empty())
-		identificators.push_back(arr_name->definition);
-
-	id_dec.clear();
-
-	assignment = static_cast<AssignmentAST*>(main_func_body->blocks[3]); //=
-
-	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //char
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	arr_name = static_cast<ArrayNameAST*>(data_type->identificator); //token[]
-
-	if (!id_dec.empty())
-		identificators.push_back(arr_name->definition);
-
-	id_dec.clear();
-
-	assignment = static_cast<AssignmentAST*>(main_func_body->blocks[4]); //=
-
-	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //int
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	var = static_cast<SymbolIdAST*>(data_type->identificator); //j
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	var = static_cast<SymbolIdAST*>(main_func_body->blocks[5]); //pos
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	id_dec.clear();
-
-	identificators = checkMultiDeclaration(identificators);
-
-	symTab.emplace(level, identificators);
-
-	identificators.clear();
-
-	//level 2a
-
-	ForAST *key_word_for = static_cast<ForAST*>(main_func_body->blocks[6]); //for
-
-	ForConditionAST *for_cond = static_cast<ForConditionAST*>(key_word_for->condition); //for condition
-
-	if (checkFuncDeclaration(main_func_args->definition))
-		level = "2a";
-
-	assignment = static_cast<AssignmentAST*>(for_cond->blocks[0]); //=
-
-	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //int
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	var = static_cast<SymbolIdAST*>(data_type->identificator); //i
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	id_dec.clear();
-
-	identificators = checkMultiDeclaration(identificators);
-
-	symTab.emplace(level, identificators);
-
-	identificators.clear();
-}
-
-void SymbolTable::setSymTab3(AST *tree) //nod.c
-{
-	string id_dec;
-
-	DataTypeAST *data_type = static_cast<DataTypeAST*>(tree); //int
-	
-	FunctionAST *main_func = static_cast<FunctionAST*>(data_type->identificator); //main
-
-	FunctionArgsAST *main_func_args = static_cast<FunctionArgsAST*>(main_func->args); //main args
-
-	//level 1
-
-	if (checkFuncDeclaration(main_func_args->definition))
-		level = "1";
-
-	data_type = static_cast<DataTypeAST*>(main_func_args->args[0]); //int
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	SymbolIdAST *var = static_cast<SymbolIdAST*>(data_type->identificator); //argc
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	id_dec.clear();
-
-	ConstAST *key_word_const = static_cast<ConstAST*>(main_func_args->args[1]); //const
-
-	data_type = static_cast<DataTypeAST*>(key_word_const->identificator); //char
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	PointerAST *ptr = static_cast<PointerAST*>(data_type->identificator); //*
-
-	ptr = static_cast<PointerAST*>(ptr->identificator); //*
-
-	var = static_cast<SymbolIdAST*>(ptr->identificator); //argv
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	id_dec.clear();
-
-	FunctionBodyAST *main_func_body = static_cast<FunctionBodyAST*>(main_func->body); //main body
-
-	AssignmentAST *assignment = static_cast<AssignmentAST*>(main_func_body->blocks[0]); //=
-
-	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //int
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	var = static_cast<SymbolIdAST*>(data_type->identificator); //a
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	assignment = static_cast<AssignmentAST*>(main_func_body->blocks[1]); //=
-
-	var = static_cast<SymbolIdAST*>(assignment->l_operand); //b
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	id_dec.clear();
-
-	assignment = static_cast<AssignmentAST*>(main_func_body->blocks[2]); //=
-
-	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //int
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	var = static_cast<SymbolIdAST*>(data_type->identificator); //min
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	id_dec.clear();
-
-	data_type = static_cast<DataTypeAST*>(main_func_body->blocks[3]); //int
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	var = static_cast<SymbolIdAST*>(data_type->identificator); //nod
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	id_dec.clear();
-
-	identificators = checkMultiDeclaration(identificators);
-
-	symTab.emplace(level, identificators);
-
-	identificators.clear();
-
-	//level 2a
-
-	ForAST *key_word_for = static_cast<ForAST*>(main_func_body->blocks[4]); //for
-
-	ForConditionAST *for_cond = static_cast<ForConditionAST*>(key_word_for->condition); //for condition
-
-	if (checkFuncDeclaration(main_func_args->definition))
-		level = "2a";
-
-	assignment = static_cast<AssignmentAST*>(for_cond->blocks[0]); //=
-
-	data_type = static_cast<DataTypeAST*>(assignment->l_operand); //int
-
-	if (checkIdDeclaration(data_type->definition))
-		id_dec = data_type->definition;
-
-	var = static_cast<SymbolIdAST*>(data_type->identificator); //i
-
-	if (!id_dec.empty())
-		identificators.push_back(var->definition);
-
-	id_dec.clear();
-
-	identificators = checkMultiDeclaration(identificators);
-
-	symTab.emplace(level, identificators);
-
-	identificators.clear();
-}
-
