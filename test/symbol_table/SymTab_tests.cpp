@@ -13,20 +13,11 @@ TEST(SymTab_test, checkMultiDeclaration)
     EXPECT_EQ(expected, result);
 }
 
-TEST(semantic_test, checkIdDeclaration)
+TEST(semantic_test, compareLevels)
 {
 	SymbolTable *symbol_table = new SymbolTable();
 
-	bool result = symbol_table->checkIdDeclaration("char");
-
-    EXPECT_EQ(true, result);
-}
-
-TEST(semantic_test, checkFuncDeclaration)
-{
-	SymbolTable *symbol_table = new SymbolTable();
-
-	bool result = symbol_table->checkFuncDeclaration("ARGUMENTS");
+	bool result = symbol_table->compareLevels("2a", "3a");
 
     EXPECT_EQ(true, result);
 }

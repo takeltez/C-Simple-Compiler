@@ -3,6 +3,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <set>
 #include "Token.h"
 #include "Lexer.h"
 #include "AST.h"

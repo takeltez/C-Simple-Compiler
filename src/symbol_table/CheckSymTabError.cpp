@@ -1,14 +1,10 @@
 #include "Parser.h"
 
-bool SymbolTable::checkIdDeclaration(string def)
+bool SymbolTable::compareLevels(string prev_lvl, string new_lvl)
 {
-	return (def == "int" || def == "char" || def == "float" || def == "double" || def == "const");
+	return (stoi(prev_lvl) < stoi(new_lvl));
 }
 
-bool SymbolTable::checkFuncDeclaration(string def)
-{
-	return (def == "ARGUMENTS" || def == "CONDITION");
-}
 
 vector <string> SymbolTable::checkMultiDeclaration(vector <string> identificators)
 {

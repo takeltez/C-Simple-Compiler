@@ -1,14 +1,16 @@
 #include "Parser.h"
 
 string declr_level;
+string prev_declr_level;
 
 bool id_declr = false;
 
 string alphabet[] = {"", "a", "b", "c", "d"};
-int conter = 0;
+int ind = 0;
 
 vector <string> identificators;
 map <string, vector <string>> symTab;
+multiset <string> levels;
 
 SymbolTable *symbol_table = new SymbolTable();
 
@@ -18,6 +20,7 @@ void RootAST::sym_tab()
 {	
 	for (int i = 0; i < blocks.size(); ++i)
 	{
+		prev_declr_level = "0";
 		declr_level = "0";
 		blocks[i]->sym_tab();
 	}
@@ -42,10 +45,13 @@ void ArrayNameAST::sym_tab()
 
 void ForAST::sym_tab()
 {
-	++conter;
-
 	condition->sym_tab();
+
+	prev_declr_level = declr_level;
+
 	body->sym_tab();
+
+	prev_declr_level = to_string(stoi(prev_declr_level) - 1);
 }
 
 void ForBodyAST::sym_tab()
@@ -60,7 +66,17 @@ void ForConditionAST::sym_tab()
 
 	symTab.emplace(declr_level, identificators);
 
-	declr_level = to_string(stoi(declr_level) + 1) + alphabet[conter];
+	++ind;
+
+	if (symbol_table->compareLevels(declr_level, to_string(stoi(prev_declr_level) + 1)))
+		ind = levels.count(to_string(stoi(prev_declr_level) + 1)) + 1;
+
+	if (declr_level == "1")
+		--ind;
+
+	declr_level = to_string(stoi(prev_declr_level) + 1) + alphabet[ind];
+
+	levels.insert(to_string(stoi(prev_declr_level) + 1));
 
 	identificators.clear();
 
@@ -69,14 +85,14 @@ void ForConditionAST::sym_tab()
 }
 
 void WhileAST::sym_tab()
-{   
-	++conter;
-	
+{   	
 	condition->sym_tab();
 
-	conter = 0;
+	prev_declr_level = declr_level;
 
 	body->sym_tab();
+
+	prev_declr_level = to_string(stoi(prev_declr_level) - 1);
 }
 
 void WhileBodyAST::sym_tab()
@@ -91,8 +107,17 @@ void WhileConditionAST::sym_tab()
 
 	symTab.emplace(declr_level, identificators);
 
-	declr_level = to_string(stoi(declr_level) - 1);
-	declr_level = to_string(stoi(declr_level) + 1) + alphabet[conter];
+	++ind;
+
+	if (symbol_table->compareLevels(declr_level, to_string(stoi(prev_declr_level) + 1)))
+		ind = levels.count(to_string(stoi(prev_declr_level) + 1)) + 1;
+
+	if (declr_level == "1")
+		--ind;
+
+	declr_level = to_string(stoi(prev_declr_level) + 1) + alphabet[ind];
+
+	levels.insert(to_string(stoi(prev_declr_level) + 1));
 
 	identificators.clear();
 
@@ -102,10 +127,13 @@ void WhileConditionAST::sym_tab()
 
 void IfAST::sym_tab()
 {
-	++conter;
-
 	condition->sym_tab();
+
+	prev_declr_level = declr_level;
+
 	body->sym_tab();
+
+	prev_declr_level = to_string(stoi(prev_declr_level) - 1);
 }
 
 void IfBodyAST::sym_tab()
@@ -120,7 +148,18 @@ void IfConditionAST::sym_tab()
 
 	symTab.emplace(declr_level, identificators);
 
-	declr_level = to_string(stoi(declr_level) + 1) + alphabet[conter];
+	++ind;
+
+	if (symbol_table->compareLevels(declr_level, to_string(stoi(prev_declr_level) + 1)))
+		ind = levels.count(to_string(stoi(prev_declr_level) + 1)) + 1;
+
+
+	if (declr_level == "1")
+		--ind;
+
+	declr_level = to_string(stoi(prev_declr_level) + 1) + alphabet[ind];
+
+	levels.insert(to_string(stoi(prev_declr_level) + 1));
 
 	identificators.clear();
 
@@ -137,6 +176,10 @@ void FunctionAST::sym_tab()
 
 	args->sym_tab();
 	body->sym_tab();
+
+	identificators = symbol_table->checkMultiDeclaration(identificators);
+
+	symTab.emplace(declr_level, identificators);
 }
 
 void FunctionBodyAST::sym_tab()
@@ -150,8 +193,11 @@ void FunctionArgsAST::sym_tab()
 	identificators = symbol_table->checkMultiDeclaration(identificators);
 
 	symTab.emplace(declr_level, identificators);
-
+	
 	declr_level = to_string(stoi(declr_level) + 1);
+	prev_declr_level = declr_level;
+
+	levels.insert(to_string(stoi(prev_declr_level) + 1));
 
 	identificators.clear();
 
@@ -231,9 +277,9 @@ void DigitIdAST::sym_tab()
 
 void SymbolIdAST::sym_tab()
 {
-	if (id_declr)
+	if (id_declr) 
 		identificators.push_back(definition);
-
+	
 	id_declr = false;
 }
 
@@ -242,7 +288,7 @@ void BreakAST::sym_tab() {}
 
 void SymbolTable::printSymTab(void)
 {
-	cout<<endl<<"Identificator name | "<<"Declaration declr_level"<<endl;
+	cout<<endl<<"Identificator name | "<<"Declaration level"<<endl;
 	cout<<"--------------------------------------"<<endl;
 
 	for (auto it = symTab.begin(); it != symTab.end(); ++it) 
