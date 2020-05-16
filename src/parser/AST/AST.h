@@ -12,6 +12,7 @@ class AST
       virtual void print(int lvl) {}
       virtual void semantic() {}
       virtual void sym_tab() {}
+      virtual void codogenerator() {}
       virtual ~AST() {}
 };
 
@@ -26,6 +27,7 @@ class RootAST : public AST
     void print(int lvl) override;
     void semantic(void) override;
     void sym_tab(void) override;
+    void codogenerator(void) override;
 };
 
 class DataTypeAST : public AST 
@@ -39,6 +41,7 @@ class DataTypeAST : public AST
       void print(int lvl) override;
       void semantic(void) override;
       void sym_tab(void) override;
+      void codogenerator(void) override;
 };
 
 class ConstAST : public AST 
@@ -52,6 +55,7 @@ class ConstAST : public AST
       void print(int lvl) override;
       void semantic(void) override;
       void sym_tab(void) override;
+      void codogenerator(void) override;
 };
 
 class FunctionAST : public AST 
@@ -66,6 +70,7 @@ class FunctionAST : public AST
       void print(int lvl) override;
       void semantic(void) override;
       void sym_tab(void) override;
+      void codogenerator(void) override;
 };
 
 class FunctionBodyAST : public AST 
@@ -79,6 +84,7 @@ class FunctionBodyAST : public AST
     void print(int lvl) override;
     void semantic(void) override;
     void sym_tab(void) override;
+    void codogenerator(void) override;
 };
 
 class FunctionArgsAST : public AST 
@@ -92,6 +98,7 @@ class FunctionArgsAST : public AST
     void print(int lvl) override;
     void semantic(void) override;
     void sym_tab(void) override;
+    void codogenerator(void) override;
 };
 
 
@@ -106,6 +113,7 @@ class PrintfAST : public AST
       void print(int lvl) override;
       void semantic(void) override;
       void sym_tab(void) override;
+      void codogenerator(void) override;
 };
 
 class ReturnAST : public AST 
@@ -119,6 +127,7 @@ class ReturnAST : public AST
       void print(int lvl) override;
       void semantic(void) override;
       void sym_tab(void) override;
+      void codogenerator(void) override;
 };
 
 
@@ -134,6 +143,7 @@ class AssignmentAST : public AST
       void print(int lvl) override;
       void semantic(void) override;
       void sym_tab(void) override;
+      void codogenerator(void) override;
 };
 
 class LogicOperationAST : public AST 
@@ -148,6 +158,7 @@ class LogicOperationAST : public AST
       void print(int lvl) override;
       void semantic(void) override;
       void sym_tab(void) override;
+      void codogenerator(void) override;
 };
 
 class TernarOperationAST : public AST 
@@ -162,6 +173,7 @@ class TernarOperationAST : public AST
       void print(int lvl) override;
       void semantic(void) override;
       void sym_tab(void) override;
+      void codogenerator(void) override;
 };
 
 class BinOperationAST : public AST 
@@ -176,6 +188,7 @@ class BinOperationAST : public AST
       void print(int lvl) override;
       void semantic(void) override;
       void sym_tab(void) override;
+      void codogenerator(void) override;
 };
 
 class UnaryOperationAST : public AST 
@@ -189,6 +202,7 @@ class UnaryOperationAST : public AST
       void print(int lvl) override;
       void semantic(void) override;
       void sym_tab(void) override;
+      void codogenerator(void) override;
 };
 
 class PointerAST : public AST 
@@ -202,6 +216,7 @@ class PointerAST : public AST
       void print(int lvl) override;
       void semantic(void) override;
       void sym_tab(void) override;
+      void codogenerator(void) override;
 };
 
 
@@ -217,6 +232,7 @@ class IfAST : public AST
       void print(int lvl) override;
       void semantic(void) override;
       void sym_tab(void) override;
+      void codogenerator(void) override;
 };
 
 class IfBodyAST : public AST 
@@ -230,6 +246,7 @@ class IfBodyAST : public AST
     void print(int lvl) override;
     void semantic(void) override;
     void sym_tab(void) override;
+    void codogenerator(void) override;
 };
 
 class IfConditionAST : public AST 
@@ -243,6 +260,7 @@ class IfConditionAST : public AST
     void print(int lvl) override;
     void semantic(void) override;
     void sym_tab(void) override;
+    void codogenerator(void) override;
 };
 
 
@@ -258,6 +276,7 @@ class WhileAST : public AST
       void print(int lvl) override;
       void semantic(void) override;
       void sym_tab(void) override;
+      void codogenerator(void) override;
 };
 
 class WhileBodyAST : public AST 
@@ -271,6 +290,7 @@ class WhileBodyAST : public AST
     void print(int lvl) override;
     void semantic(void) override;
     void sym_tab(void) override;
+    void codogenerator(void) override;
 };
 
 class WhileConditionAST : public AST 
@@ -284,6 +304,7 @@ class WhileConditionAST : public AST
     void print(int lvl) override;
     void semantic(void) override;
     void sym_tab(void) override;
+    void codogenerator(void) override;
 };
 
 
@@ -299,6 +320,7 @@ class ForAST : public AST
       void print(int lvl) override;
       void semantic(void) override;
       void sym_tab(void) override;
+      void codogenerator(void) override;
 };
 
 class ForBodyAST : public AST 
@@ -312,6 +334,7 @@ class ForBodyAST : public AST
     void print(int lvl) override;
     void semantic(void) override;
     void sym_tab(void) override;
+    void codogenerator(void) override;
 };
 
 class ForConditionAST : public AST 
@@ -325,6 +348,7 @@ class ForConditionAST : public AST
     void print(int lvl) override;
     void semantic(void) override;
     void sym_tab(void) override;
+    void codogenerator(void) override;
 };
 
 
@@ -339,6 +363,7 @@ class ArrayDataAST : public AST
     void print(int lvl) override;
     void semantic(void) override;
     void sym_tab(void) override;
+    void codogenerator(void) override;
 };
 
 class ArrayNameAST : public AST 
@@ -352,6 +377,7 @@ class ArrayNameAST : public AST
     void print(int lvl) override;
     void semantic(void) override;
     void sym_tab(void) override;
+    void codogenerator(void) override;
 };
 
 
@@ -363,6 +389,7 @@ class StringLexemeAST : public AST
       void print(int lvl) override;
       void semantic(void) override;
       void sym_tab(void) override;
+      void codogenerator(void) override;
 };
 
 class SymbolLexemeAST : public AST 
@@ -373,6 +400,7 @@ class SymbolLexemeAST : public AST
       void print(int lvl) override;
       void semantic(void) override;
       void sym_tab(void) override;
+      void codogenerator(void) override;
 };
 
 class DigitIdAST : public AST 
@@ -383,6 +411,7 @@ class DigitIdAST : public AST
       void print(int lvl) override;
       void semantic(void) override;
       void sym_tab(void) override;
+      void codogenerator(void) override;
 };
 
 class SymbolIdAST : public AST 
@@ -393,6 +422,7 @@ class SymbolIdAST : public AST
       void print(int lvl) override;
       void semantic(void) override;
       void sym_tab(void) override;
+      void codogenerator(void) override;
 };
 
 class BreakAST : public AST 
@@ -403,6 +433,7 @@ class BreakAST : public AST
       void print(int lvl) override;
       void semantic(void) override;
       void sym_tab(void) override;
+      void codogenerator(void) override;
 };
 
 void printAST (AST *tree);

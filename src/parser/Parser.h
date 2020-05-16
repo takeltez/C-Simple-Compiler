@@ -9,6 +9,7 @@
 #include "AST.h"
 #include "SymTab.h"
 #include "Sema.h"
+#include "CodGen.h"
 
 using namespace std;
 
