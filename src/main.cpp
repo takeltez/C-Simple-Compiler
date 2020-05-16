@@ -4,9 +4,11 @@ int main(int argc, char const **argv)
 {
 	Lexer *lexer = new Lexer();
 	Parser *parser = new Parser();
+
 	AST *tree = new AST();
 	SymbolTable *symbol_table = new SymbolTable();
 	Sema *sema = new Sema();
+
 	CodGen *cod_gen = new CodGen();
 
 	Token token;
@@ -25,16 +27,6 @@ int main(int argc, char const **argv)
 
 	lexer->setStartFileString(file_path);
 
-	tree = parser->buildAST(lexer);
-
-	symbol_table->setSymTab(tree);
-		
-	sema->checkSemantic(tree);
-
-	cod_gen->startCodGen(tree, file_path);
-
-	lexer = new Lexer();
-
 	if (command == "--dump-tokens") {
 
 		while (1) {
@@ -50,13 +42,39 @@ int main(int argc, char const **argv)
 	}
 
 	else if (command == "--dump-ast") {
-		
+
+		tree = parser->buildAST(lexer);
 		printAST(tree);
+
+		symbol_table->setSymTab(tree);
 		symbol_table->printSymTab();
+
+		sema->checkSemantic(tree);
 	}
 
-	else if (command == "--dump-asm")
+	else if (command == "--dump-asm") {
+
+		tree = parser->buildAST(lexer);
+
+		symbol_table->setSymTab(tree);
+
+		sema->checkSemantic(tree);
+
+		cod_gen->startCodGen(tree, file_path);
 		cod_gen->printAsm();
+	}
+
+	else {
+
+		tree = parser->buildAST(lexer);
+
+		symbol_table->setSymTab(tree);
+
+		sema->checkSemantic(tree);
+
+		cod_gen->startCodGen(tree, file_path);
+		cod_gen->compileAsmFile();
+	}
 
 	free(lexer);
 	free(parser);

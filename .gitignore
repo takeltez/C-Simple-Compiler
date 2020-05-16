@@ -1,3 +1,4 @@
 bin/
 build/
+asm/
 gtest_install.txt

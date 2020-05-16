@@ -4,8 +4,11 @@ extern map <string, string> type_id;
 extern string data_type;
 
 string val;
-string f_name;
 string command;
+
+string src_file_name;
+string asm_file_name;
+string exc_file_name;
 
 int offset = 0;
 
@@ -200,16 +203,16 @@ void BreakAST::codogenerator() {}
 void CodGen::startCodGen(AST *tree, string file_path)
 {
 	setFileName(file_path);
+
+	system("mkdir asm");
 	
-	printProlog();
+	handleProlog();
 
 	RootAST *root = static_cast<RootAST*>(tree);
 	
 	root->codogenerator();
 
-	printEpilog();
-
-	compileAsmFile();
+	handleEpilog();
 }
 
 void CodGen::setFileName(string file_path)
@@ -217,15 +220,18 @@ void CodGen::setFileName(string file_path)
 	int start_pos = file_path.rfind("/");
 	int end_pos = file_path.rfind(".");	
 
-	f_name = file_path.substr(start_pos + 1, end_pos - start_pos - 1);
-	f_name += ".s";	
+	asm_file_name = file_path.substr(start_pos + 1, end_pos - start_pos - 1);
+	
+	src_file_name = asm_file_name + ".c";
+	exc_file_name = asm_file_name + ".out";
+	asm_file_name += ".s";	
 }
 
 void CodGen::handleAsmMov()
 {
 	++offset;
 
-	ofstream file ("asm/" + f_name, ios::app);
+	ofstream file ("asm/" + asm_file_name, ios::app);
 
 	if (command == "=") {
 
@@ -239,11 +245,29 @@ void CodGen::handleAsmMov()
 	file.close();
 }
 
+void CodGen::handleProlog()
+{
+	ofstream file ("asm/" + asm_file_name);
+
+	file << ".intel_syntax noprefix\n\n.global main\n\nmain:\n\t\tpush\trbp\n\t\tmov\t\trbp, rsp\n";
+
+	file.close();
+}
+
+void CodGen::handleEpilog()
+{
+	ofstream file ("asm/" + asm_file_name, ios::app);
+
+	file << "\t\tpop\t\trbp\n\t\tret\n";
+
+	file.close();
+}
+
 void CodGen::printAsm()
 {
 	string asm_info;
 
-	ifstream file ("asm/" + f_name);
+	ifstream file ("asm/" + asm_file_name);
 
 	getline (file, asm_info, '\0');
 
@@ -252,33 +276,10 @@ void CodGen::printAsm()
 	file.close();
 }
 
-void CodGen::printProlog()
-{
-	ofstream file ("asm/" + f_name);
-
-	file << ".intel_syntax noprefix\n\n.global main\n\nmain:\n\t\tpush\trbp\n\t\tmov\t\trbp, rsp\n";
-
-	file.close();
-}
-
-void CodGen::printEpilog()
-{
-	ofstream file ("asm/" + f_name, ios::app);
-
-	file << "\t\tpop\t\trbp\n\t\tret\n";
-
-	file.close();
-}
-
 void CodGen::compileAsmFile()
 {
-	string new_file_name = f_name;
+	string comp = "gcc asm/" + asm_file_name + " -no-pie -o asm/" + exc_file_name;
 
-	int pos = new_file_name.find(".");
-
-	new_file_name.replace(pos, new_file_name.length() - pos, ".out");
-
-	string comp = "gcc asm/" + f_name + " -no-pie -o asm/" + new_file_name;
-
-	system(comp.c_str());
+	if (!system(comp.c_str()))
+		cout <<"Done: "<<src_file_name<<" -> "<< asm_file_name<<" -> "<<exc_file_name<<endl;
 }
