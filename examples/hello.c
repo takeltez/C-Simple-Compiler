@@ -1,7 +1,9 @@
 int main()
 {   
     int a = 5;
-    int q = 2;
-    
+    char b = 'q';
+    int c = 2;
+    char d = 'a';
+
     return 0;
 }

@@ -1,10 +1,10 @@
 #include "Parser.h"
 
 extern map <string, string> type_id;
-extern string data_type;
 
-string val;
+string value;
 string command;
+string d_type;
 
 string src_file_name;
 string asm_file_name;
@@ -115,8 +115,8 @@ void AssignmentAST::codogenerator()
 
 	cod_gen->handleAsmMov();
 
-	data_type.clear();
-	val.clear();
+	d_type.clear();
+	value.clear();
 	command.clear();
 }
 
@@ -172,7 +172,7 @@ void ReturnAST::codogenerator()
 
 	cod_gen->handleAsmMov();
 
-	val.clear();
+	value.clear();
 	command.clear();
 }
 
@@ -182,23 +182,36 @@ void StringLexemeAST::codogenerator()
 
 void SymbolLexemeAST::codogenerator()
 {
+	value = definition;
 }
 
 void DigitIdAST::codogenerator()
 {
-	val = definition;
+	value = definition;
 }
 
 void SymbolIdAST::codogenerator()
 {
 	auto it = type_id.find(definition);
 
-	data_type = it->second; 
-	val =definition;
+	d_type = it->second; 
+	value =definition;
 }
 
 void BreakAST::codogenerator() {}
 
+
+void CodGen::setFileName(string file_path)
+{
+	int start_pos = file_path.rfind("/");
+	int end_pos = file_path.rfind(".");	
+
+	asm_file_name = file_path.substr(start_pos + 1, end_pos - start_pos - 1);
+	
+	src_file_name = asm_file_name + ".c";
+	exc_file_name = asm_file_name + ".out";
+	asm_file_name += ".s";	
+}
 
 void CodGen::startCodGen(AST *tree, string file_path)
 {
@@ -213,73 +226,4 @@ void CodGen::startCodGen(AST *tree, string file_path)
 	root->codogenerator();
 
 	handleEpilog();
-}
-
-void CodGen::setFileName(string file_path)
-{
-	int start_pos = file_path.rfind("/");
-	int end_pos = file_path.rfind(".");	
-
-	asm_file_name = file_path.substr(start_pos + 1, end_pos - start_pos - 1);
-	
-	src_file_name = asm_file_name + ".c";
-	exc_file_name = asm_file_name + ".out";
-	asm_file_name += ".s";	
-}
-
-void CodGen::handleAsmMov()
-{
-	++offset;
-
-	ofstream file ("asm/" + asm_file_name, ios::app);
-
-	if (command == "=") {
-
-		if (data_type == "int")
-			file << "\t\tmov\t\tDWORD PTR [rbp-" + to_string(offset * 4) + "], " + val<<endl;
-	}
-
-	else if (command == "return")
-		file << "\t\tmov\t\teax, " + val<<endl;
-
-	file.close();
-}
-
-void CodGen::handleProlog()
-{
-	ofstream file ("asm/" + asm_file_name);
-
-	file << ".intel_syntax noprefix\n\n.global main\n\nmain:\n\t\tpush\trbp\n\t\tmov\t\trbp, rsp\n";
-
-	file.close();
-}
-
-void CodGen::handleEpilog()
-{
-	ofstream file ("asm/" + asm_file_name, ios::app);
-
-	file << "\t\tpop\t\trbp\n\t\tret\n";
-
-	file.close();
-}
-
-void CodGen::printAsm()
-{
-	string asm_info;
-
-	ifstream file ("asm/" + asm_file_name);
-
-	getline (file, asm_info, '\0');
-
-	cout<<asm_info<<endl;
-
-	file.close();
-}
-
-void CodGen::compileAsmFile()
-{
-	string comp = "gcc asm/" + asm_file_name + " -no-pie -o asm/" + exc_file_name;
-
-	if (!system(comp.c_str()))
-		cout <<"Done: "<<src_file_name<<" -> "<< asm_file_name<<" -> "<<exc_file_name<<endl;
 }
