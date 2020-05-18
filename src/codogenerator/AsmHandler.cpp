@@ -68,10 +68,16 @@ void CodGen::handleAsmMov()
 		auto it2 = vars_mem_pos.find(operand2);
 
 		if (it1 != vars_mem_pos.end() && it2 != vars_mem_pos.end() && !value.empty())
-			file << "\t\tmov\t\t" + it1->second  + ", " + value<<endl;
+			file << "\t\tmov\t\t" + it1->second + ", " + value<<endl;
 	
-		else if (it1 != vars_mem_pos.end() && it2 != vars_mem_pos.end() && value.empty())
-			file << "\t\tmov\t\t" + it1->second + ", " + it2->second<<endl;
+		else if (it1 != vars_mem_pos.end() && it2 != vars_mem_pos.end() && value.empty()) {
+
+			if (d_type == "int")
+				file << "\t\tmov\t\teax, " + it2->second<<endl<<"\t\tmov\t\t" + it1->second + ", eax"<<endl;
+		
+			else if (d_type == "char")
+				file << "\t\tmov\t\tal, " + it2->second<<endl<<"\t\tmov\t\t" + it1->second + ", al"<<endl;
+		}
 	}
 
 	else if (command == "+" || command == "-" || command == "*" || command == "/") {
@@ -92,14 +98,16 @@ void CodGen::handleAsmMov()
 
 		else if (command == "/") {
 
-			if (!value.empty())
+			file << "\t\tcdq"<<endl;
+
+			/*if (!value.empty())
 				file << "\t\tmov\t\tbl, " + value<<endl;
 			
 			else {
 
 				auto it = vars_mem_pos.find(var);
 				file << "\t\tmov\t\tbl, " + it->second<<endl;
-			}
+			}*/
 			
 			use_reg_bl = false;
 		}
@@ -159,7 +167,9 @@ void CodGen::handleAsmDiv()
 {
 	ofstream file ("asm/" + asm_file_name, ios::app);
 
-	file << "\t\tidiv\tbl"<<endl;
+	auto it = vars_mem_pos.find(var);
+
+	file << "\t\tidiv\t" + it->second<<endl;
 	value = "eax";
 
 	file.close();

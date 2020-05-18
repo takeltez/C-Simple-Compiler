@@ -16,7 +16,7 @@ int main()
     d = 'w';
 
     int c = 5 * 3;
-    c = 5 / c;
+    c = 30 / q;
    
     return 0;
 }
