@@ -1,14 +1,22 @@
 #include "Parser.h"
 
 extern map <string, string> type_id;
+map <string, string> vars_mem_pos;
 
+string var;
 string value;
+string operand1;
+string operand2;
 string command;
 string d_type;
 
 string src_file_name;
 string asm_file_name;
 string exc_file_name;
+
+bool use_reg_eax = true;
+bool use_reg_edx = true;
+bool use_reg_bl = true;
 
 int offset = 0;
 
@@ -111,12 +119,18 @@ void AssignmentAST::codogenerator()
 	command = definition;
 
 	l_operand->codogenerator();
+	operand1 = var;
+
 	r_operand->codogenerator();
+	operand2 = var;
 
 	cod_gen->handleAsmMov();
 
 	d_type.clear();
 	value.clear();
+	var.clear();
+	operand1.clear();
+	operand2.clear();
 	command.clear();
 }
 
@@ -134,8 +148,34 @@ void TernarOperationAST::codogenerator()
 
 void BinOperationAST::codogenerator()
 {
+	string buff = command;
+	command = definition;
+
 	l_operand->codogenerator();
+
+	cod_gen->handleAsmMov();
+
 	r_operand->codogenerator();
+
+	cod_gen->handleAsmMov();
+
+	if (command == "+")
+		cod_gen->handleAsmAdd();
+
+	else if (command == "-")
+		cod_gen->handleAsmSub();
+
+	else if (command == "*")
+		cod_gen->handleAsmMul();
+
+	else if (command == "/")
+		cod_gen->handleAsmDiv();
+
+	command = buff;
+
+	use_reg_edx = true;
+	use_reg_eax = true;
+	use_reg_bl = true;
 }
 
 void UnaryOperationAST::codogenerator()
@@ -182,7 +222,10 @@ void StringLexemeAST::codogenerator()
 
 void SymbolLexemeAST::codogenerator()
 {
-	value = definition;
+	char symbol = definition.c_str()[1];
+	int askii_cod = (int)symbol;
+
+	value = to_string(askii_cod);
 }
 
 void DigitIdAST::codogenerator()
@@ -195,7 +238,25 @@ void SymbolIdAST::codogenerator()
 	auto it = type_id.find(definition);
 
 	d_type = it->second; 
-	value =definition;
+
+	if (vars_mem_pos.find(definition) == vars_mem_pos.end()) {
+
+		if (d_type == "int") {
+			
+			vars_mem_pos.emplace(definition, "DWORD PTR [rbp-" + to_string(offset + 4) + "]");
+			offset += 4;
+		}
+
+		else if (d_type == "char") {
+
+			vars_mem_pos.emplace(definition, "BYTE PTR [rbp-" + to_string(offset + 1) + "]");
+			offset += 1;
+		}
+	}
+
+	var = definition;
+
+	value.clear();
 }
 
 void BreakAST::codogenerator() {}

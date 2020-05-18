@@ -1,6 +1,11 @@
 #include "Parser.h"
 
+extern map <string, string> vars_mem_pos;
+
+extern string var;
 extern string value;
+extern string operand1;
+extern string operand2;
 extern string command;
 extern string d_type;
 
@@ -9,6 +14,10 @@ extern string asm_file_name;
 extern string exc_file_name;
 
 extern int offset;
+
+extern bool use_reg_eax;
+extern bool use_reg_edx;
+extern bool use_reg_bl;
 
 void CodGen::compileAsmFile()
 {
@@ -55,24 +64,103 @@ void CodGen::handleAsmMov()
 
 	if (command == "=") {
 
-		if (d_type == "int") {
+		auto it1 = vars_mem_pos.find(operand1);
+		auto it2 = vars_mem_pos.find(operand2);
+
+		if (it1 != vars_mem_pos.end() && it2 != vars_mem_pos.end() && !value.empty())
+			file << "\t\tmov\t\t" + it1->second  + ", " + value<<endl;
+	
+		else if (it1 != vars_mem_pos.end() && it2 != vars_mem_pos.end() && value.empty())
+			file << "\t\tmov\t\t" + it1->second + ", " + it2->second<<endl;
+	}
+
+	else if (command == "+" || command == "-" || command == "*" || command == "/") {
+
+		if (use_reg_eax) {
+
+			if (!value.empty())
+				file << "\t\tmov\t\teax, " + value<<endl;
 			
-			file << "\t\tmov\t\tDWORD PTR [rbp-" + to_string(offset + 4) + "], " + value<<endl;
-			offset += 4;
+			else {
+
+				auto it = vars_mem_pos.find(var);
+				file << "\t\tmov\t\teax, " + it->second<<endl;
+			}
+
+			use_reg_eax = false;
 		}
 
-		else if (d_type == "char") {
-			
-			char symbol = value.c_str()[1];
-			int askii_cod = (int)symbol;
+		else if (command == "/") {
 
-			file << "\t\tmov\t\tBYTE PTR [rbp-" + to_string(offset + 1) + "], " + to_string(askii_cod)<<endl;
-			offset += 1;
+			if (!value.empty())
+				file << "\t\tmov\t\tbl, " + value<<endl;
+			
+			else {
+
+				auto it = vars_mem_pos.find(var);
+				file << "\t\tmov\t\tbl, " + it->second<<endl;
+			}
+			
+			use_reg_bl = false;
+		}
+		
+		else if (use_reg_edx) {
+
+			if (!value.empty())
+				file << "\t\tmov\t\tedx, " + value<<endl;
+			
+			else {
+
+				auto it = vars_mem_pos.find(var);
+				file << "\t\tmov\t\tedx, " + it->second<<endl;
+			}
+
+			use_reg_edx = false;
 		}
 	}
 
 	else if (command == "return")
 		file << "\t\tmov\t\teax, " + value<<endl;
+
+	file.close();
+}
+
+void CodGen::handleAsmAdd()
+{
+	ofstream file ("asm/" + asm_file_name, ios::app);
+
+	file << "\t\tadd\t\teax, edx"<<endl;
+	value = "eax";
+
+	file.close();
+}
+
+void CodGen::handleAsmSub()
+{
+	ofstream file ("asm/" + asm_file_name, ios::app);
+
+	file << "\t\tsub\t\teax, edx"<<endl;
+	value = "eax";
+
+	file.close();
+}
+
+void CodGen::handleAsmMul()
+{
+	ofstream file ("asm/" + asm_file_name, ios::app);
+
+	file << "\t\timul\teax, edx"<<endl;
+	value = "eax";
+
+	file.close();
+}
+
+void CodGen::handleAsmDiv()
+{
+	ofstream file ("asm/" + asm_file_name, ios::app);
+
+	file << "\t\tidiv\tbl"<<endl;
+	value = "eax";
 
 	file.close();
 }
