@@ -2,12 +2,14 @@
 
 extern map <string, string> type_id;
 map <string, string> vars_mem_pos;
+vector <int> marks;
 
 string var;
 string value;
 string operand1;
 string operand2;
 string command;
+string comp_command;
 string d_type;
 
 string src_file_name;
@@ -18,7 +20,10 @@ bool use_reg_eax = true;
 bool use_reg_edx = true;
 bool use_reg_bl = true;
 
+bool is_if = false;
+
 int offset = 0;
+int mark_num = 1;
 
 CodGen *cod_gen = new CodGen();
 
@@ -80,8 +85,19 @@ void WhileConditionAST::codogenerator()
 
 void IfAST::codogenerator()
 {
+	is_if = true;
+
 	condition->codogenerator();
+	cod_gen->handleAsmPass();
+
 	body->codogenerator();
+
+	ofstream file ("asm/" + asm_file_name, ios::app);
+
+	/*for (int i = 0; i < marks.size(); ++i)
+		file << ".L" + to_string(marks[i]) + ":"<<endl;*/
+		
+	file.close();
 }
 
 void IfBodyAST::codogenerator()
@@ -104,8 +120,23 @@ void FunctionAST::codogenerator()
 
 void FunctionBodyAST::codogenerator()
 {
-	for (int i = 0; i < blocks.size(); ++i)
+	for (int i = 0; i < blocks.size(); ++i) 
+	{	
 		blocks[i]->codogenerator();
+
+		if (is_if) {
+
+			ofstream file ("asm/" + asm_file_name, ios::app);
+
+			for (int i = 0; i < marks.size(); ++i)
+				file << ".L" + to_string(marks[i]) + ":"<<endl;
+		
+			is_if = false;
+
+			marks.clear();
+			file.close();
+		}
+	}
 }
 
 void FunctionArgsAST::codogenerator()
@@ -151,25 +182,63 @@ void BinOperationAST::codogenerator()
 	string buff = command;
 	command = definition;
 
-	l_operand->codogenerator();
+	if (command == "+") {
 
-	cod_gen->handleAsmMov();
+		l_operand->codogenerator();
+		cod_gen->handleAsmMov();
 
-	r_operand->codogenerator();
+		r_operand->codogenerator();
+		cod_gen->handleAsmMov();
 
-	cod_gen->handleAsmMov();
-
-	if (command == "+")
 		cod_gen->handleAsmAdd();
+	}
 
-	else if (command == "-")
+	else if (command == "-") {
+
+		l_operand->codogenerator();
+		cod_gen->handleAsmMov();
+
+		r_operand->codogenerator();
+		cod_gen->handleAsmMov();
+
 		cod_gen->handleAsmSub();
+	}
 
-	else if (command == "*")
+	else if (command == "*") {
+
+		l_operand->codogenerator();
+		cod_gen->handleAsmMov();
+
+		r_operand->codogenerator();
+		cod_gen->handleAsmMov();
+
 		cod_gen->handleAsmMul();
+	}
 
-	else if (command == "/")
+	else if (command == "/") {
+
+		l_operand->codogenerator();
+		cod_gen->handleAsmMov();
+
+		r_operand->codogenerator();
+		cod_gen->handleAsmMov();
+
 		cod_gen->handleAsmDiv();
+	}
+
+	else if (command == "==" || command == "!=" || command == ">" || command == "<" 
+			|| command == ">=" || command == "<=") {
+
+		l_operand->codogenerator();
+		cod_gen->handleAsmMov();
+
+		r_operand->codogenerator();
+		cod_gen->handleAsmMov();
+
+		cod_gen->handleAsmCmp();
+
+		comp_command = command;
+	}
 
 	command = buff;
 
