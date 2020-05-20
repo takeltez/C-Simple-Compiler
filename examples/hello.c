@@ -28,7 +28,7 @@ int main()
 
     if (c >= b) {
         char q = 'c';
-        int s = 3 * b;
+        int s = 3 / b;
     }
 
     if (b <= 5) {

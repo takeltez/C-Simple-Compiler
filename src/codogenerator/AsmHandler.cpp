@@ -175,7 +175,6 @@ void CodGen::handleAsmCmp()
 	ofstream file ("asm/" + asm_file_name, ios::app);
 
 	file << "\t\tcmp\t\teax, edx"<<endl;
-	value = "eax";
 
 	file.close();
 }
