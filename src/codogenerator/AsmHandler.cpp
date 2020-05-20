@@ -21,6 +21,7 @@ extern int mark_num;
 extern bool use_reg_eax;
 extern bool use_reg_edx;
 extern bool use_reg_bl;
+extern bool is_if;
 
 void CodGen::compileAsmFile()
 {
@@ -84,7 +85,8 @@ void CodGen::handleAsmMov()
 	}
 
 	else if (command == "+" || command == "-" || command == "*" || command == "/" 
-			|| command == "==" || command == "!=") {
+			|| command == "==" || command == "!=" || command == "<=" || command == ">=" 
+				|| command == "<" || command == ">") {
 
 		if (use_reg_eax) {
 
@@ -179,7 +181,7 @@ void CodGen::handleAsmCmp()
 	file.close();
 }
 
-void CodGen::handleAsmPass()
+void CodGen::handleAsmCondPassIf()
 {
 	ofstream file ("asm/" + asm_file_name, ios::app);
 
@@ -236,6 +238,69 @@ void CodGen::handleAsmPass()
 		file << "\t\tjg\t\t.L" + to_string(mark_num)<<endl;
 		
 	}
+
+	file.close();
+}
+
+void CodGen::handleAsmCondPassLoop()
+{
+	ofstream file ("asm/" + asm_file_name, ios::app);
+
+	if (comp_command == "==") {
+
+		++mark_num;
+
+		file << "\t\tje\t\t.L" + to_string(mark_num)<<endl;
+	}
+
+	else if (comp_command == "!=") {
+
+		++mark_num;
+
+		file << "\t\tjne\t\t.L" + to_string(mark_num)<<endl;
+	}
+
+	else if (comp_command == ">") {
+
+		++mark_num;
+
+		file << "\t\tjg\t\t.L" + to_string(mark_num)<<endl;
+		
+	}
+
+	else if (comp_command == "<") {
+
+		++mark_num;
+
+		file << "\t\tjl\t\t.L" + to_string(mark_num)<<endl;
+
+	}
+
+	else if (comp_command == ">=") {
+
+		++mark_num;
+
+		file << "\t\tjge\t\t.L" + to_string(mark_num)<<endl;
+	}
+
+	else if (comp_command == "<=") {
+
+		++mark_num;
+
+		file << "\t\tjle\t\t.L" + to_string(mark_num)<<endl;
+	}
+
+	file.close();
+}
+
+void CodGen::handleAsmJmp()
+{
+	ofstream file ("asm/" + asm_file_name, ios::app);
+
+	++mark_num;
+
+	file << "\t\tjmp\t\t.L" + to_string(mark_num)<<endl;
+	file << ".L" + to_string(mark_num + 1) + ":"<<endl;
 
 	file.close();
 }

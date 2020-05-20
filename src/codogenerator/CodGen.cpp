@@ -19,7 +19,6 @@ string exc_file_name;
 bool use_reg_eax = true;
 bool use_reg_edx = true;
 bool use_reg_bl = true;
-
 bool is_if = false;
 
 int offset = 0;
@@ -66,9 +65,18 @@ void ForConditionAST::codogenerator()
 }
 
 void WhileAST::codogenerator()
-{   	
-	condition->codogenerator();
+{   
+	cod_gen->handleAsmJmp();
 	body->codogenerator();
+
+	ofstream file ("asm/" + asm_file_name, ios::app);
+	
+	file << ".L" + to_string(mark_num) + ":"<<endl;
+	
+	condition->codogenerator();
+	cod_gen->handleAsmCondPassLoop();
+
+	file.close();
 }
 
 void WhileBodyAST::codogenerator()
@@ -88,16 +96,9 @@ void IfAST::codogenerator()
 	is_if = true;
 
 	condition->codogenerator();
-	cod_gen->handleAsmPass();
+	cod_gen->handleAsmCondPassIf();
 
 	body->codogenerator();
-
-	ofstream file ("asm/" + asm_file_name, ios::app);
-
-	/*for (int i = 0; i < marks.size(); ++i)
-		file << ".L" + to_string(marks[i]) + ":"<<endl;*/
-		
-	file.close();
 }
 
 void IfBodyAST::codogenerator()

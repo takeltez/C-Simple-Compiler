@@ -1,39 +1,14 @@
 int main()
 {   
     int c = 5 * 3;
-    int b;
+    int b = 3;
+
+    while (c > b) {
+       c = c - 1;
+    }
 
     if (c == b) {
-        char q = '2';
-        if (b != 5) {
-            char q = 'c';
-            int s = b;
-        }
-    }
-
-    if (b != 5) {
-        char q = 'c';
-        int s = b;
-    }
-
-    if (c > b) {
-        char q = 'c';
-        int s = 3 * b;
-    }
-
-    if (b < 5) {
-        char q = 'c';
-        int s = b;
-    }
-
-    if (c >= b) {
-        char q = 'c';
-        int s = 3 / b;
-    }
-
-    if (b <= 5) {
-        char q = 'c';
-        int s = b;
+        char q = 'q';
     }
    
     return 0;
