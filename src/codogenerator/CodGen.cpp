@@ -23,6 +23,7 @@ bool is_if = false;
 
 int offset = 0;
 int mark_num = 1;
+int for_cond_elem;
 
 CodGen *cod_gen = new CodGen();
 
@@ -48,8 +49,27 @@ void ArrayNameAST::codogenerator()
 
 void ForAST::codogenerator()
 {
+	for_cond_elem = 0;
+
 	condition->codogenerator();
+	cod_gen->handleAsmJmp();
+	
 	body->codogenerator();
+
+	for_cond_elem = 2;
+
+	condition->codogenerator();
+
+	ofstream file ("asm/" + asm_file_name, ios::app);
+	
+	file << ".L" + to_string(mark_num) + ":"<<endl;
+	
+	for_cond_elem = 1;
+
+	condition->codogenerator();
+	cod_gen->handleAsmCondPassLoop();
+
+	file.close();
 }
 
 void ForBodyAST::codogenerator()
@@ -60,8 +80,7 @@ void ForBodyAST::codogenerator()
 
 void ForConditionAST::codogenerator()
 {	
-	for (int i = 0; i < blocks.size(); ++i)
-		blocks[i]->codogenerator();
+	blocks[for_cond_elem]->codogenerator();
 }
 
 void WhileAST::codogenerator()
@@ -251,6 +270,12 @@ void BinOperationAST::codogenerator()
 void UnaryOperationAST::codogenerator()
 {
 	operand->codogenerator();
+
+	if (definition == "++")
+		cod_gen->handleAsmInc();
+
+	else if (definition == "--")
+		cod_gen->handleAsmDec();
 }
 
 void PointerAST::codogenerator()

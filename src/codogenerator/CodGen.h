@@ -17,6 +17,8 @@ class CodGen
 		void handleAsmSub(void);
 		void handleAsmMul(void);
 		void handleAsmDiv(void);
+		void handleAsmInc(void);
+		void handleAsmDec(void);
 		void handleAsmCmp(void);
 		void handleAsmCondPassIf(void);
 		void handleAsmCondPassLoop(void);

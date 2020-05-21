@@ -1,15 +1,21 @@
 int main()
 {   
-    int c = 5 * 3;
+    int c = 15;
     int b = 3;
 
-    while (c > b) {
-       c = c - 1;
+    for (int i = 0; i > c; ++i)
+    {
+        b = i;
     }
 
-    if (c == b) {
-        char q = 'q';
+    while (c >= b) 
+    {
+        --c;
     }
-   
+
+    if (c < b) {
+        b = c;	
+    }
+
     return 0;
 }

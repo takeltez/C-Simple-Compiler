@@ -172,6 +172,28 @@ void CodGen::handleAsmDiv()
 	file.close();
 }
 
+void CodGen::handleAsmInc()
+{
+	ofstream file ("asm/" + asm_file_name, ios::app);
+
+	auto it = vars_mem_pos.find(var);
+
+	file << "\t\tinc\t\t" + it->second<<endl;
+
+	file.close();
+}
+
+void CodGen::handleAsmDec()
+{
+	ofstream file ("asm/" + asm_file_name, ios::app);
+
+	auto it = vars_mem_pos.find(var);
+
+	file << "\t\tdec\t\t" + it->second<<endl;
+
+	file.close();
+}
+
 void CodGen::handleAsmCmp()
 {
 	ofstream file ("asm/" + asm_file_name, ios::app);
