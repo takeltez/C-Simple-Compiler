@@ -1,6 +1,6 @@
 #include "Parser.h"
 
-extern map <string, string> vars_mem_pos;
+extern map <string, string> mem_pos;
 extern vector <int> marks;
 
 extern string var;
@@ -21,7 +21,8 @@ extern int mark_num;
 extern bool use_reg_eax;
 extern bool use_reg_edx;
 extern bool use_reg_bl;
-extern bool is_if;
+
+extern bool is_array_pos;
 
 void CodGen::compileAsmFile()
 {
@@ -66,21 +67,46 @@ void CodGen::handleAsmMov()
 {
 	ofstream file ("asm/" + asm_file_name, ios::app);
 
-	if (command == "=") {
+	if (command == "ArrayMember") {
 
-		auto it1 = vars_mem_pos.find(operand1);
-		auto it2 = vars_mem_pos.find(operand2);
+		auto it = mem_pos.find(var);
 
-		if (it1 != vars_mem_pos.end() && it2 != vars_mem_pos.end() && !value.empty())
-			file << "\t\tmov\t\t" + it1->second + ", " + value<<endl;
-	
-		else if (it1 != vars_mem_pos.end() && it2 != vars_mem_pos.end() && value.empty()) {
+		file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
+		file << "\t\tcdqe"<<endl;
+	}
 
-			if (d_type == "int")
-				file << "\t\tmov\t\teax, " + it2->second<<endl<<"\t\tmov\t\t" + it1->second + ", eax"<<endl;
+	else if (command == "=") {
+
+		auto it1 = mem_pos.find(operand1);
+		auto it2 = mem_pos.find(operand2);
+
+		if (it1 != mem_pos.end() && !value.empty()) {
+
+			if (is_array_pos)
+				file << "\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(d_type) / 8) + "], " + value<<endl;
+
+			else
+				file << "\t\tmov\t\t" + it1->second + "], " + value<<endl;
+		}
+
+		else if (it1 != mem_pos.end() && it2 != mem_pos.end() && value.empty()) {
+
+			if (d_type == "int") {
+
+				if (is_array_pos)
+					file << "\t\tmov\t\teax, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(int)) + "], eax"<<endl;
+
+				else
+					file << "\t\tmov\t\teax, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "], eax"<<endl;
+			}
 		
 			else if (d_type == "char")
-				file << "\t\tmov\t\tal, " + it2->second<<endl<<"\t\tmov\t\t" + it1->second + ", al"<<endl;
+
+				if (is_array_pos)
+					file << "\t\tmov\t\tal, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(char)) + "], al"<<endl;
+
+				else
+					file << "\t\tmov\t\tal, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "], al"<<endl;
 		}
 	}
 
@@ -95,8 +121,8 @@ void CodGen::handleAsmMov()
 			
 			else {
 
-				auto it = vars_mem_pos.find(var);
-				file << "\t\tmov\t\teax, " + it->second<<endl;
+				auto it = mem_pos.find(var);
+				file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
 			}
 
 			use_reg_eax = false;
@@ -116,8 +142,8 @@ void CodGen::handleAsmMov()
 			
 			else {
 
-				auto it = vars_mem_pos.find(var);
-				file << "\t\tmov\t\tedx, " + it->second<<endl;
+				auto it = mem_pos.find(var);
+				file << "\t\tmov\t\tedx, " + it->second + "]"<<endl;
 			}
 
 			use_reg_edx = false;
@@ -164,9 +190,9 @@ void CodGen::handleAsmDiv()
 {
 	ofstream file ("asm/" + asm_file_name, ios::app);
 
-	auto it = vars_mem_pos.find(var);
+	auto it = mem_pos.find(var);
 
-	file << "\t\tidiv\t" + it->second<<endl;
+	file << "\t\tidiv\t" + it->second + "]"<<endl;
 	value = "eax";
 
 	file.close();
@@ -176,9 +202,9 @@ void CodGen::handleAsmInc()
 {
 	ofstream file ("asm/" + asm_file_name, ios::app);
 
-	auto it = vars_mem_pos.find(var);
+	auto it = mem_pos.find(var);
 
-	file << "\t\tinc\t\t" + it->second<<endl;
+	file << "\t\tinc\t\t" + it->second + "]"<<endl;
 
 	file.close();
 }
@@ -187,9 +213,9 @@ void CodGen::handleAsmDec()
 {
 	ofstream file ("asm/" + asm_file_name, ios::app);
 
-	auto it = vars_mem_pos.find(var);
+	auto it = mem_pos.find(var);
 
-	file << "\t\tdec\t\t" + it->second<<endl;
+	file << "\t\tdec\t\t" + it->second + "]"<<endl;
 
 	file.close();
 }

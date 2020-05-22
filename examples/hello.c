@@ -1,7 +1,16 @@
 int main()
 {   
-    int c = 15;
+    char s = 's';
+    char q = 'q';
+    
+    s = q;
+
     int b = 3;
+    int arr[] = {1, 2, 3, 4, 5, 32, 65, 78, 5, 0};
+    
+    int c = arr[3];
+    
+    arr[8] = b;
 
     for (int i = 0; i > c; ++i)
     {
@@ -16,6 +25,8 @@ int main()
     if (c < b) {
         b = c;	
     }
+
+    arr[c] = 4;
 
     return 0;
 }

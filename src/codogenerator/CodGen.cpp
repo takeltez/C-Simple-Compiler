@@ -1,7 +1,7 @@
 #include "Parser.h"
 
 extern map <string, string> type_id;
-map <string, string> vars_mem_pos;
+map <string, string> mem_pos;
 vector <int> marks;
 
 string var;
@@ -16,10 +16,15 @@ string src_file_name;
 string asm_file_name;
 string exc_file_name;
 
+string array_name;
+string array_member;
+
 bool use_reg_eax = true;
 bool use_reg_edx = true;
 bool use_reg_bl = true;
+
 bool is_if = false;
+bool is_array_pos = false;
 
 int offset = 0;
 int mark_num = 1;
@@ -38,13 +43,71 @@ void RootAST::codogenerator()
 void ArrayDataAST::codogenerator()
 {
 	for (int i = 0; i < blocks.size(); ++i)
+	{
 		blocks[i]->codogenerator();
+
+		array_member = array_name + "[" + to_string(i) + "]";
+
+		if (mem_pos.find(array_member) == mem_pos.end()) {
+
+			if (d_type == "int") {
+				
+				mem_pos.emplace(array_member, "DWORD PTR [rbp-" + to_string(offset + 4));
+				offset += 4;
+			}
+
+			else if (d_type == "char") {
+
+				mem_pos.emplace(array_member, "BYTE PTR [rbp-" + to_string(offset + 1));
+				offset += 1;
+			}
+		}
+
+		operand1 = array_member;
+
+		cod_gen->handleAsmMov();
+	}
+
+	operand1.clear();
+	array_name.clear();
+	array_member.clear();
 }
 
 void ArrayNameAST::codogenerator()
 {	
-	if (identificator != NULL)
+	string buff = command;
+	command = "ArrayMember";
+
+	array_name = definition;
+
+	auto it = type_id.find(definition);
+
+	d_type = it->second; 
+
+	if (identificator != NULL) {
+
 		identificator->codogenerator();
+		
+		if (!value.empty()) {
+
+			array_member = array_name + "[" + value + "]";
+			var = array_member;
+		}
+
+		else {
+
+			is_array_pos = true;
+
+			cod_gen->handleAsmMov();
+			
+			array_member = array_name + "[0]";
+			var = array_member;
+		}
+	}
+
+	command = buff;
+
+	value.clear();
 }
 
 void ForAST::codogenerator()
@@ -177,12 +240,16 @@ void AssignmentAST::codogenerator()
 
 	cod_gen->handleAsmMov();
 
+	is_array_pos = false;
+
 	d_type.clear();
 	value.clear();
 	var.clear();
 	operand1.clear();
 	operand2.clear();
 	command.clear();
+	array_name.clear();
+	array_member.clear();
 }
 
 void LogicOperationAST::codogenerator()
@@ -334,17 +401,17 @@ void SymbolIdAST::codogenerator()
 
 	d_type = it->second; 
 
-	if (vars_mem_pos.find(definition) == vars_mem_pos.end()) {
+	if (mem_pos.find(definition) == mem_pos.end()) {
 
 		if (d_type == "int") {
 			
-			vars_mem_pos.emplace(definition, "DWORD PTR [rbp-" + to_string(offset + 4) + "]");
+			mem_pos.emplace(definition, "DWORD PTR [rbp-" + to_string(offset + 4));
 			offset += 4;
 		}
 
 		else if (d_type == "char") {
 
-			vars_mem_pos.emplace(definition, "BYTE PTR [rbp-" + to_string(offset + 1) + "]");
+			mem_pos.emplace(definition, "BYTE PTR [rbp-" + to_string(offset + 1));
 			offset += 1;
 		}
 	}
