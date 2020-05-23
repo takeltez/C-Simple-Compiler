@@ -7,9 +7,9 @@ int main()
 
     int b = 3;
     int arr[] = {1, 2, 3, 4, 5, 32, 65, 78, 5, 0};
-    
+
     int c = arr[3];
-    
+
     arr[8] = b;
 
     for (int i = 0; i > c; ++i)
@@ -27,7 +27,7 @@ int main()
     }
 
     if (arr[b] == arr[c]) {
-        q = s;
+        b = c;
     }
 
     int w = arr[c] * arr[b];

@@ -108,7 +108,7 @@ void CodGen::handleAsmMov()
 					file << "\t\tmov\t\t" + it1->second + "], " + value<<endl;
 			}
 
-			if (d_type == "char") {
+			else if (d_type == "char") {
 
 				if (is_array_pos)
 					file << "\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(char)) + "], " + value<<endl;
@@ -164,7 +164,7 @@ void CodGen::handleAsmMov()
 						file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
 				}
 
-				if (d_type == "char") {
+				else if (d_type == "char") {
 
 					if (is_array_pos) {
 
@@ -208,7 +208,7 @@ void CodGen::handleAsmMov()
 						file << "\t\tmov\t\tedx, " + it->second + "]"<<endl;
 				}
 
-				if (d_type == "char") {
+				else if (d_type == "char") {
 
 					if (is_array_pos) {
 
@@ -225,8 +225,40 @@ void CodGen::handleAsmMov()
 		}
 	}
 
-	else if (command == "return")
-		file << "\t\tmov\t\teax, " + value<<endl;
+	else if (command == "return") {
+		
+		if (!value.empty())
+			file << "\t\tmov\t\teax, " + value<<endl;
+
+		else {
+
+			auto it = mem_pos.find(var);
+
+			if (d_type == "int") {
+
+				if (is_array_pos) {
+
+					file << "\t\tmov\t\teax, " + it->second + "+rax*" + to_string(sizeof(int)) + "]"<<endl;
+					is_array_pos = false;
+				}
+
+				else 
+					file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
+			}
+
+			else if (d_type == "char") {
+
+				if (is_array_pos) {
+
+					file << "\t\tmov\t\teax, " + it->second + "+rax*" + to_string(sizeof(char)) + "]"<<endl;
+					is_array_pos = false;
+				}
+				
+				else 
+					file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
+			}
+		}
+	}
 
 	file.close();
 }
