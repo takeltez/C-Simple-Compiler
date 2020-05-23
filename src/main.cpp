@@ -47,7 +47,6 @@ int main(int argc, char const **argv)
 		printAST(tree);
 
 		symbol_table->setSymTab(tree);
-		symbol_table->printSymTab();
 
 		sema->checkSemantic(tree);
 	}
@@ -64,7 +63,7 @@ int main(int argc, char const **argv)
 		cod_gen->printAsm();
 	}
 
-	else {
+	else if (command.empty()) {
 
 		tree = parser->buildAST(lexer);
 
@@ -75,6 +74,9 @@ int main(int argc, char const **argv)
 		cod_gen->startCodGen(tree, file_path);
 		cod_gen->compileAsmFile();
 	}
+
+	else
+		cout<<"Error: Incorrect interrupt command"<<endl;
 
 	free(lexer);
 	free(parser);
