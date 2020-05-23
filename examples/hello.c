@@ -23,10 +23,14 @@ int main()
     }
 
     if (c < b) {
-        b = c;	
+        arr[b] = 2;	
     }
 
-    arr[c] = 4;
+    if (arr[b] == arr[c]) {
+        q = s;
+    }
+
+    int w = arr[c] * arr[b];
 
     return 0;
 }

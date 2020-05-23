@@ -71,7 +71,24 @@ void CodGen::handleAsmMov()
 
 		auto it = mem_pos.find(var);
 
-		file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
+		if (use_reg_eax) {
+
+			if (d_type == "int") 
+				file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
+			
+			else if (d_type == "char")
+				file << "\t\tmov\t\tal, " + it->second + "]"<<endl;
+		}
+
+		else if (use_reg_edx) {
+
+			if (d_type == "int") 
+				file << "\t\tmov\t\tedx, " + it->second + "]"<<endl;
+			
+			else if (d_type == "char")
+				file << "\t\tmov\t\tbl, " + it->second + "]"<<endl;
+		}
+
 		file << "\t\tcdqe"<<endl;
 	}
 
@@ -82,11 +99,23 @@ void CodGen::handleAsmMov()
 
 		if (it1 != mem_pos.end() && !value.empty()) {
 
-			if (is_array_pos)
-				file << "\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(d_type) / 8) + "], " + value<<endl;
+			if (d_type == "int") {
 
-			else
-				file << "\t\tmov\t\t" + it1->second + "], " + value<<endl;
+				if (is_array_pos)
+					file << "\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(int)) + "], " + value<<endl;
+
+				else
+					file << "\t\tmov\t\t" + it1->second + "], " + value<<endl;
+			}
+
+			if (d_type == "char") {
+
+				if (is_array_pos)
+					file << "\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(char)) + "], " + value<<endl;
+
+				else
+					file << "\t\tmov\t\t" + it1->second + "], " + value<<endl;
+			}
 		}
 
 		else if (it1 != mem_pos.end() && it2 != mem_pos.end() && value.empty()) {
@@ -94,7 +123,7 @@ void CodGen::handleAsmMov()
 			if (d_type == "int") {
 
 				if (is_array_pos)
-					file << "\t\tmov\t\teax, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(int)) + "], eax"<<endl;
+					file << "\t\tmov\t\tedx, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(int)) + "], edx"<<endl;
 
 				else
 					file << "\t\tmov\t\teax, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "], eax"<<endl;
@@ -103,7 +132,7 @@ void CodGen::handleAsmMov()
 			else if (d_type == "char")
 
 				if (is_array_pos)
-					file << "\t\tmov\t\tal, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(char)) + "], al"<<endl;
+					file << "\t\tmov\t\tbl, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(char)) + "], bl"<<endl;
 
 				else
 					file << "\t\tmov\t\tal, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "], al"<<endl;
@@ -122,7 +151,30 @@ void CodGen::handleAsmMov()
 			else {
 
 				auto it = mem_pos.find(var);
-				file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
+
+				if (d_type == "int") {
+
+					if (is_array_pos) {
+
+						file << "\t\tmov\t\teax, " + it->second + "+rax*" + to_string(sizeof(int)) + "]"<<endl;
+						is_array_pos = false;
+					}
+
+					else
+						file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
+				}
+
+				if (d_type == "char") {
+
+					if (is_array_pos) {
+
+						file << "\t\tmov\t\teax, " + it->second + "+rax*" + to_string(sizeof(char)) + "]"<<endl;
+						is_array_pos = false;
+					}
+
+					else
+						file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
+				}
 			}
 
 			use_reg_eax = false;
@@ -143,7 +195,30 @@ void CodGen::handleAsmMov()
 			else {
 
 				auto it = mem_pos.find(var);
-				file << "\t\tmov\t\tedx, " + it->second + "]"<<endl;
+
+				if (d_type == "int") {
+
+					if (is_array_pos) {
+
+						file << "\t\tmov\t\tedx, " + it->second + "+rdx*" + to_string(sizeof(int)) + "]"<<endl;
+						is_array_pos = false;
+					}
+
+					else
+						file << "\t\tmov\t\tedx, " + it->second + "]"<<endl;
+				}
+
+				if (d_type == "char") {
+
+					if (is_array_pos) {
+
+						file << "\t\tmov\t\tedx, " + it->second + "+rdx*" + to_string(sizeof(char)) + "]"<<endl;
+						is_array_pos = false;
+					}
+
+					else
+						file << "\t\tmov\t\tedx, " + it->second + "]"<<endl;
+				}
 			}
 
 			use_reg_edx = false;
@@ -192,7 +267,12 @@ void CodGen::handleAsmDiv()
 
 	auto it = mem_pos.find(var);
 
-	file << "\t\tidiv\t" + it->second + "]"<<endl;
+	if (is_array_pos)
+		file << "\t\tidiv\t" + it->second + "+rdx*" + to_string(sizeof(int)) + "]"<<endl;
+	
+	else 
+		file << "\t\tidiv\t" + it->second + "]"<<endl;
+
 	value = "eax";
 
 	file.close();

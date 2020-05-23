@@ -68,9 +68,7 @@ void ArrayDataAST::codogenerator()
 		cod_gen->handleAsmMov();
 	}
 
-	operand1.clear();
-	array_name.clear();
-	array_member.clear();
+	 operand1.clear();
 }
 
 void ArrayNameAST::codogenerator()
@@ -332,6 +330,8 @@ void BinOperationAST::codogenerator()
 	use_reg_edx = true;
 	use_reg_eax = true;
 	use_reg_bl = true;
+
+	is_array_pos = false;
 }
 
 void UnaryOperationAST::codogenerator()
