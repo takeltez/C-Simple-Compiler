@@ -73,9 +73,6 @@ void ArrayDataAST::codogenerator()
 
 void ArrayNameAST::codogenerator()
 {	
-	string buff = command;
-	command = "ArrayMember";
-
 	array_name = definition;
 
 	auto it = type_id.find(definition);
@@ -94,16 +91,19 @@ void ArrayNameAST::codogenerator()
 
 		else {
 
+			string buff = command;
+			command = "ArrayMember";
+
 			is_array_pos = true;
 
 			cod_gen->handleAsmMov();
 			
 			array_member = array_name + "[0]";
 			var = array_member;
+		
+			command = buff;
 		}
 	}
-
-	command = buff;
 
 	value.clear();
 }

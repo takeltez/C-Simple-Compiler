@@ -2,8 +2,6 @@ int main()
 {   
     char s = 's';
     char q = 'q';
-    
-    s = q;
 
     int b = 3;
     int arr[] = {1, 2, 3, 4, 5, 32, 65, 78, 5, 0};
@@ -11,6 +9,8 @@ int main()
     int c = arr[3];
 
     arr[8] = b;
+
+    q = s;
 
     for (int i = 0; i > c; ++i)
     {
@@ -22,15 +22,19 @@ int main()
         --c;
     }
 
-    if (c < b) {
-        arr[b] = 2;	
-    }
-
     if (arr[b] == arr[c]) {
         b = c;
     }
 
-    int w = arr[c] * arr[b];
+    if (c != b) {
+        b = c;
+    }
 
+    int w = arr[b] * arr[c];
+
+    arr[c] = arr[b];
+    arr[2] = 1;
+    arr[b] = c;
+      
     return 0;
 }

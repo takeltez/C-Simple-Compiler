@@ -24,6 +24,8 @@ extern bool use_reg_bl;
 
 extern bool is_array_pos;
 
+bool is_sec_op_array = true;
+
 void CodGen::compileAsmFile()
 {
 	string comp = "gcc asm/" + asm_file_name + " -no-pie -o asm/" + exc_file_name;
@@ -71,16 +73,28 @@ void CodGen::handleAsmMov()
 
 		auto it = mem_pos.find(var);
 
-		if (use_reg_eax) {
+		if (use_reg_edx) {
 
-			if (d_type == "int") 
-				file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
+			if (d_type == "int")  {
+
+				if (is_sec_op_array) {
+
+					file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
+					is_sec_op_array = false;
+				}
+				
+				else {
+
+					file << "\t\tmov\t\tedx, " + it->second + "]"<<endl;
+					is_sec_op_array = true;
+				}
+			}
 			
 			else if (d_type == "char")
 				file << "\t\tmov\t\tal, " + it->second + "]"<<endl;
 		}
 
-		else if (use_reg_edx) {
+		else if (use_reg_eax) {
 
 			if (d_type == "int") 
 				file << "\t\tmov\t\tedx, " + it->second + "]"<<endl;
@@ -122,8 +136,14 @@ void CodGen::handleAsmMov()
 
 			if (d_type == "int") {
 
-				if (is_array_pos)
-					file << "\t\tmov\t\tedx, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(int)) + "], edx"<<endl;
+				if (is_array_pos) {
+
+					if (operand2.find("[0]") != string::npos)
+						file << "\t\tmov\t\tedx, " + it2->second + "+rdx*" + to_string(sizeof(int)) + "]"<<endl<<"\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(int)) + "], edx"<<endl;
+
+					else
+						file << "\t\tmov\t\tedx, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(int)) + "], edx"<<endl;
+				}
 
 				else
 					file << "\t\tmov\t\teax, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "], eax"<<endl;
@@ -131,8 +151,14 @@ void CodGen::handleAsmMov()
 		
 			else if (d_type == "char")
 
-				if (is_array_pos)
-					file << "\t\tmov\t\tbl, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(char)) + "], bl"<<endl;
+				if (is_array_pos) {
+
+					if (operand2.find("[0]") != string::npos)
+						file << "\t\tmov\t\tbl, " + it2->second + "+rdx*" + to_string(sizeof(char)) + "]"<<endl<<"\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(int)) + "], edx"<<endl;
+					
+					else
+						file << "\t\tmov\t\tbl, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(char)) + "], bl"<<endl;
+				}
 
 				else
 					file << "\t\tmov\t\tal, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "], al"<<endl;
