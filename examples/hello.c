@@ -14,20 +14,21 @@ int main()
 
     for (int i = 0; i > c; ++i)
     {
-        b = i;
+        b = i + c;
     }
 
     while (c >= b) 
     {
         --c;
+        b = c - b;
     }
 
     if (arr[b] == arr[c]) {
-        b = c;
+        c = b * c;
     }
 
     if (c != b) {
-        b = c;
+        c = c / b;
     }
 
     int w = arr[b] * arr[c];
@@ -35,6 +36,7 @@ int main()
     arr[c] = arr[b];
     arr[2] = 1;
     arr[b] = c;
+    c = arr[b];
       
     return 0;
 }

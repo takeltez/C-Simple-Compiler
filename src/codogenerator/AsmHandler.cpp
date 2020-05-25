@@ -138,11 +138,14 @@ void CodGen::handleAsmMov()
 
 				if (is_array_pos) {
 
-					if (operand2.find("[0]") != string::npos)
+					if (operand1.find("[0]") != string::npos && operand2.find("[0]") != string::npos)
 						file << "\t\tmov\t\tedx, " + it2->second + "+rdx*" + to_string(sizeof(int)) + "]"<<endl<<"\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(int)) + "], edx"<<endl;
-
-					else
+					
+					else if (operand1.find("[0]") != string::npos)
 						file << "\t\tmov\t\tedx, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(int)) + "], edx"<<endl;
+					
+					else if (operand2.find("[0]") != string::npos)
+						file << "\t\tmov\t\tedx, " + it2->second + "+rdx*" + to_string(sizeof(int)) + "]"<<endl<<"\t\tmov\t\t" + it1->second + "], edx"<<endl;
 				}
 
 				else
@@ -150,14 +153,17 @@ void CodGen::handleAsmMov()
 			}
 		
 			else if (d_type == "char")
-
+				
 				if (is_array_pos) {
 
-					if (operand2.find("[0]") != string::npos)
-						file << "\t\tmov\t\tbl, " + it2->second + "+rdx*" + to_string(sizeof(char)) + "]"<<endl<<"\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(int)) + "], edx"<<endl;
+					if (operand1.find("[0]") != string::npos && operand2.find("[0]") != string::npos)
+						file << "\t\tmov\t\tbl, " + it2->second + "+rdx*" + to_string(sizeof(int)) + "]"<<endl<<"\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(int)) + "], bl"<<endl;
 					
-					else
-						file << "\t\tmov\t\tbl, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(char)) + "], bl"<<endl;
+					else if (operand1.find("[0]") != string::npos)
+						file << "\t\tmov\t\tbl, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(int)) + "], bl"<<endl;
+					
+					else if (operand2.find("[0]") != string::npos)
+						file << "\t\tmov\t\tbl, " + it2->second + "+rdx*" + to_string(sizeof(int)) + "]"<<endl<<"\t\tmov\t\t" + it1->second + "], bl"<<endl;
 				}
 
 				else
