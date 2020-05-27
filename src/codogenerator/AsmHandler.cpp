@@ -69,7 +69,7 @@ void CodGen::handleAsmMov()
 {
 	ofstream file ("asm/" + asm_file_name, ios::app);
 
-	if (command == "ArrayMember") {
+	if (command == "ArrayIndex") {
 
 		auto it = mem_pos.find(var);
 
@@ -90,8 +90,20 @@ void CodGen::handleAsmMov()
 				}
 			}
 			
-			else if (d_type == "char")
-				file << "\t\tmov\t\tal, " + it->second + "]"<<endl;
+			else if (d_type == "char") {
+
+				if (is_sec_op_array) {
+
+					file << "\t\tmov\t\tal, " + it->second + "]"<<endl;
+					is_sec_op_array = false;
+				}
+				
+				else {
+
+					file << "\t\tmov\t\tbl, " + it->second + "]"<<endl;
+					is_sec_op_array = true;
+				}
+			}
 		}
 
 		else if (use_reg_eax) {

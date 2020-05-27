@@ -35,7 +35,7 @@ int main()
 
     arr[c] = arr[b];
     arr[2] = 1;
-    arr[b] = c;
+    arr[c] = b;
     c = arr[b];
       
     return 0;

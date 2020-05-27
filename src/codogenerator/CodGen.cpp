@@ -92,7 +92,7 @@ void ArrayNameAST::codogenerator()
 		else {
 
 			string buff = command;
-			command = "ArrayMember";
+			command = "ArrayIndex";
 
 			is_array_pos = true;
 
