@@ -107,6 +107,12 @@ void IfConditionAST::semantic()
 		blocks[i]->semantic();
 }
 
+void ElseAST::semantic()
+{
+	for (int i = 0; i < blocks.size(); ++i)
+		blocks[i]->semantic();
+}
+
 void FunctionAST::semantic()
 {
 	args->semantic();
@@ -231,7 +237,7 @@ void StringLexemeAST::semantic()
 	if (sema->checkBinOperationSign(op))
 		cout<<"Cannot execute bin operation with 'string'"<<endl;
 
-	else if (data_type != "char" && !data_type.empty()) 
+	else if (data_type != "char" && !data_type.empty() && op != "printf") 
 		cout<<"Incorrect operators for operation '"<<op<<"': '"<<data_type<<"' and 'string'"<<endl;
 
 	else if (prev_node != "array_name" && prev_node != "printf")

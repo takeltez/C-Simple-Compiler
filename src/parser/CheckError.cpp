@@ -221,19 +221,25 @@ bool checkParseFuncBody(Token curr_tok, Token prev_tok)
 
 bool checkParseIf(Token tok)
 {
-	return (tok.getTokenClass() == "key_word_if" || tok.getTokenClass() == "key_word_else");
+	return (tok.getTokenClass() == "key_word_if");
 }
 
 
 bool checkParseIfCondition(Token curr_tok, Token prev_tok)
 {
-	return (curr_tok.getTokenClass() == "right_paren_(" && (prev_tok.getLexeme() == "if" || prev_tok.getLexeme() == "else"));
+	return (curr_tok.getTokenClass() == "right_paren_(" && prev_tok.getLexeme() == "if");
 }
 
 bool checkParseIfBody(Token curr_tok, Token prev_tok)
 {
-	return (curr_tok.getTokenClass() == "right_paren_{" && (prev_tok.getLexeme() == "if" || prev_tok.getLexeme() == "else"));
+	return (curr_tok.getTokenClass() == "right_paren_{" && prev_tok.getLexeme() == "if");
 }
+
+bool checkParseElse(Token tok)
+{
+	return (tok.getTokenClass() == "key_word_else");
+}
+
 
 bool checkParseFor(Token tok)
 {

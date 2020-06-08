@@ -182,6 +182,17 @@ void IfConditionAST::print(int lvl)
 		blocks[i]->print(lvl + 1);
 }
 
+void ElseAST::print(int lvl)
+{
+	level(lvl);
+	
+	cout<<definition<<endl;
+
+	for (int i = 0; i < blocks.size(); ++i)
+		blocks[i]->print(lvl + 1);
+}
+
+
 void FunctionAST::print(int lvl)
 {
 	level(lvl);

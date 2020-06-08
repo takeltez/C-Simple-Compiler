@@ -193,6 +193,12 @@ void IfConditionAST::codogenerator()
 		blocks[i]->codogenerator();
 }
 
+void ElseAST::codogenerator()
+{
+	for (int i = 0; i < blocks.size(); ++i)
+		blocks[i]->codogenerator();
+}
+
 void FunctionAST::codogenerator()
 {
 	args->codogenerator();

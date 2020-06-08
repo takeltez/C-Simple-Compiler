@@ -263,6 +263,20 @@ class IfConditionAST : public AST
     void codogenerator(void) override;
 };
 
+class ElseAST : public AST 
+{
+  public:
+      vector <AST*> blocks;
+
+  public:
+      string definition;
+      ElseAST(vector <AST*> blocks, Token token);
+      void print(int lvl) override;
+      void semantic(void) override;
+      void sym_tab(void) override;
+      void codogenerator(void) override;
+};
+
 
 class WhileAST : public AST 
 {

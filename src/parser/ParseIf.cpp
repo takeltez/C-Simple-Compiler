@@ -109,6 +109,8 @@ AST *Parser::parseIfBody(Lexer *lexer)
 			blocks.push_back(handler(tok, lexer));
 			Parser::prev_token = tok;
 		}
+
+		Parser::curr_token = tok;
 	}
 
 	for (int i = old_size; i < blocks.size(); ++i)
@@ -122,4 +124,42 @@ AST *Parser::parseIfBody(Lexer *lexer)
 	Parser::prev_token = buff;
 	
 	return if_body;
+}
+
+AST *Parser::parseElse(Token token, Lexer *lexer)
+{
+	Token tok, prev, buff;
+	ElseAST *key_word_else;
+	vector <AST*> else_blocks;
+	int old_size = blocks.size();
+
+	buff = Parser::prev_token;
+
+	Parser::curr_token.setLexeme("");
+	
+	while (tok.getLexeme() != "}" && Parser::curr_token.getLexeme() != "}") 
+	{	
+		prev = tok;
+		tok = getNextTok(lexer);
+
+		checkSemicolonAndCommaError(tok, prev);
+
+		if (checkBodyTok(tok)) {
+			blocks.push_back(handler(tok, lexer));
+			Parser::prev_token = tok;
+		}
+	}
+
+	for (int i = old_size; i < blocks.size(); ++i)
+		else_blocks.push_back(blocks[i]);
+
+	blocks.erase(blocks.begin() + old_size, blocks.begin() + blocks.size());
+	
+	if (!else_blocks.empty()) 
+		key_word_else = new ElseAST(else_blocks, token);
+
+	Parser::prev_token = buff;
+	Parser::curr_token.setLexeme("");
+	
+	return key_word_else;
 }

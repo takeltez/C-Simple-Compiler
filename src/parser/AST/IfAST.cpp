@@ -18,3 +18,9 @@ IfConditionAST::IfConditionAST(vector <AST*> blocks)
 	this->definition = "CONDITION";
 	this->blocks = blocks;
 }
+
+ElseAST::ElseAST(vector <AST*> blocks, Token token) 
+{
+	this->definition = token.getLexeme();
+	this->blocks = blocks;
+}

@@ -40,6 +40,7 @@ class Parser
 		AST *parseIf(Token token, Lexer *lexer);
 		AST *parseIfCondition(Lexer *lexer);
 		AST *parseIfBody(Lexer *lexer); 
+		AST *parseElse(Token token, Lexer *lexer);
 		AST *parseWhile(Token token, Lexer *lexer);
 		AST *parseWhileCondition(Lexer *lexer);
 		AST *parseWhileBody(Lexer *lexer);
@@ -84,6 +85,7 @@ bool checkParseFuncBody(Token curr_token, Token prev_token);
 bool checkParseIf(Token token);
 bool checkParseIfCondition(Token curr_token, Token prev_token);
 bool checkParseIfBody(Token curr_token, Token prev_token);
+bool checkParseElse(Token token);
 bool checkParseFor(Token token);
 bool checkParseForCond(Token curr_token, Token prev_token);
 bool checkParseForBody(Token curr_token, Token prev_token);

@@ -69,6 +69,9 @@ AST *Parser::handler(Token token, Lexer *lexer)
 	if (checkParseIf(token)) 
 		return parseIf(token, lexer);
 
+	if (checkParseElse(token)) 
+		return parseElse(token, lexer);
+
 	if (checkParseWhile(token)) 
 		return parseWhile(token, lexer);
 

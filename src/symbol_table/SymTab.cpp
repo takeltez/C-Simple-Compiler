@@ -167,6 +167,12 @@ void IfConditionAST::sym_tab()
 		blocks[i]->sym_tab();
 }
 
+void ElseAST::sym_tab()
+{
+	for (int i = 0; i < blocks.size(); ++i)
+		blocks[i]->sym_tab();
+}
+
 void FunctionAST::sym_tab()
 {
 	if (id_declr)

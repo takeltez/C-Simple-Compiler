@@ -7,8 +7,8 @@ TEST(parser_test, parseWhile)
 	Parser *parser = new Parser();
 	AST *result = new AST();
 
-	lexer->file_string = "while (int i = b + 1; i < 10; ++i){int a = 2;}";
-	lexer->new_file_string = "while (int i = b + 1; i < 10; ++i){int a = 2;}";
+	lexer->file_string = "while (a == 5){int a = 2;}";
+	lexer->new_file_string = "while (a == 5){int a = 2;}";
 
 	lexer->makeSpaces();
 

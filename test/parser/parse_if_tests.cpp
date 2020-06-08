@@ -56,3 +56,23 @@ TEST(parser_test, parseIfBody)
 
     EXPECT_EQ("BODY", if_body->definition);
 }
+
+TEST(parser_test, parseElse)
+{
+	Lexer *lexer = new Lexer();
+	Parser *parser = new Parser();
+	AST *result = new AST();
+
+	lexer->file_string = "else if (a == 5) {int a = 2;}";
+	lexer->new_file_string = "else if (a == 5) {int a = 2;}";
+
+	lexer->makeSpaces();
+
+	Token token = parser->getNextTok(lexer);
+
+	result = parser->parseElse(token, lexer);
+
+	ElseAST *key_word_else = static_cast<ElseAST*>(result); 
+
+    EXPECT_EQ("else", key_word_else->definition);
+}
