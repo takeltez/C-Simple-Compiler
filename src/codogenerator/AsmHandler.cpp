@@ -1,7 +1,8 @@
 #include "Parser.h"
 
 extern map <string, string> mem_pos;
-extern vector <int> marks;
+extern vector <string> LC_marks;
+extern vector <int> L_marks;
 
 extern string var;
 extern string value;
@@ -16,7 +17,8 @@ extern string asm_file_name;
 extern string exc_file_name;
 
 extern int offset;
-extern int mark_num;
+extern int L_mark_num;
+extern int LC_mark_num;
 
 extern bool use_reg_eax;
 extern bool use_reg_edx;
@@ -51,7 +53,7 @@ void CodGen::handleProlog()
 {
 	ofstream file ("asm/" + asm_file_name);
 
-	file << ".intel_syntax noprefix\n\n.global main\n\nmain:\n\t\tpush\trbp\n\t\tmov\t\trbp, rsp\n";
+	file << ".intel_syntax noprefix\n\n.global main\n\nmain:\n\t\tpush\trbp\n\t\tmov\t\trbp, rsp\n\t\tsub\t\trsp, 16"<<endl;
 
 	file.close();
 }
@@ -60,7 +62,17 @@ void CodGen::handleEpilog()
 {
 	ofstream file ("asm/" + asm_file_name, ios::app);
 
-	file << "\t\tpop\t\trbp\n\t\tret\n";
+	file << "\t\tleave\n\t\tret\n";
+
+	file.close();
+}
+
+void CodGen::handleLCMarks()
+{
+	ofstream file ("asm/" + asm_file_name, ios::app);
+
+	for (auto &it : LC_marks)
+		file<<it<<endl;
 
 	file.close();
 }
@@ -299,9 +311,57 @@ void CodGen::handleAsmMov()
 				}
 				
 				else 
-					file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
+					file << "\t\tmov\t\tal, " + it->second + "]"<<endl;
 			}
 		}
+	}
+
+	else if (command == "printf") {
+
+		auto it = mem_pos.find(var);
+
+		if (d_type == "int") {
+
+			if (is_array_pos) {
+
+				file << "\t\tmov\t\teax, " + it->second + "+rax*" + to_string(sizeof(int)) + "]"<<endl;
+				is_array_pos = false;
+			}
+
+			else 
+				file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
+
+			file << "\t\tmov\t\tesi, eax"<<endl;
+			file << "\t\tmov\t\tedi, OFFSET FLAT:.LC"+ to_string(LC_mark_num)<<endl;
+			file << "\t\tmov\t\teax, 0"<<endl;
+
+			++LC_mark_num;
+		}
+
+		else if (d_type == "char") {
+
+			if (is_array_pos) {
+
+				file << "\t\tmov\t\teax, " + it->second + "+rax*" + to_string(sizeof(char)) + "]"<<endl;
+				is_array_pos = false;
+			}
+			
+			else 
+				file << "\t\tmov\t\tal, " + it->second + "]"<<endl;
+
+			file << "\t\tmov\t\tesi, eax"<<endl;
+			file << "\t\tmov\t\tedi, OFFSET FLAT:.LC"+ to_string(LC_mark_num)<<endl;
+			file << "\t\tmov\t\teax, 0"<<endl;
+
+			++LC_mark_num;
+		}
+	}
+
+	else if (command == "puts") {
+
+			file << "\t\tmov\t\tedi, OFFSET FLAT:.LC"+ to_string(LC_mark_num)<<endl;
+
+			++LC_mark_num;
 	}
 
 	file.close();
@@ -391,55 +451,55 @@ void CodGen::handleAsmCondPassIf()
 
 	if (comp_command == "==") {
 
-		++mark_num;
-		marks.push_back(mark_num);
+		++L_mark_num;
+		L_marks.push_back(L_mark_num);
 
-		file << "\t\tjne\t\t.L" + to_string(mark_num)<<endl;
+		file << "\t\tjne\t\t.L" + to_string(L_mark_num)<<endl;
 		
 	}
 
 	else if (comp_command == "!=") {
 
-		++mark_num;
-		marks.push_back(mark_num);
+		++L_mark_num;
+		L_marks.push_back(L_mark_num);
 
-		file << "\t\tje\t\t.L" + to_string(mark_num)<<endl;
+		file << "\t\tje\t\t.L" + to_string(L_mark_num)<<endl;
 		
 	}
 
 	else if (comp_command == ">") {
 
-		++mark_num;
-		marks.push_back(mark_num);
+		++L_mark_num;
+		L_marks.push_back(L_mark_num);
 
-		file << "\t\tjle\t\t.L" + to_string(mark_num)<<endl;
+		file << "\t\tjle\t\t.L" + to_string(L_mark_num)<<endl;
 		
 	}
 
 	else if (comp_command == "<") {
 
-		++mark_num;
-		marks.push_back(mark_num);
+		++L_mark_num;
+		L_marks.push_back(L_mark_num);
 
-		file << "\t\tjge\t\t.L" + to_string(mark_num)<<endl;
+		file << "\t\tjge\t\t.L" + to_string(L_mark_num)<<endl;
 		
 	}
 
 	else if (comp_command == ">=") {
 
-		++mark_num;
-		marks.push_back(mark_num);
+		++L_mark_num;
+		L_marks.push_back(L_mark_num);
 
-		file << "\t\tjl\t\t.L" + to_string(mark_num)<<endl;
+		file << "\t\tjl\t\t.L" + to_string(L_mark_num)<<endl;
 		
 	}
 
 	else if (comp_command == "<=") {
 
-		++mark_num;
-		marks.push_back(mark_num);
+		++L_mark_num;
+		L_marks.push_back(L_mark_num);
 
-		file << "\t\tjg\t\t.L" + to_string(mark_num)<<endl;
+		file << "\t\tjg\t\t.L" + to_string(L_mark_num)<<endl;
 		
 	}
 
@@ -452,46 +512,46 @@ void CodGen::handleAsmCondPassLoop()
 
 	if (comp_command == "==") {
 
-		++mark_num;
+		++L_mark_num;
 
-		file << "\t\tje\t\t.L" + to_string(mark_num)<<endl;
+		file << "\t\tje\t\t.L" + to_string(L_mark_num)<<endl;
 	}
 
 	else if (comp_command == "!=") {
 
-		++mark_num;
+		++L_mark_num;
 
-		file << "\t\tjne\t\t.L" + to_string(mark_num)<<endl;
+		file << "\t\tjne\t\t.L" + to_string(L_mark_num)<<endl;
 	}
 
 	else if (comp_command == ">") {
 
-		++mark_num;
+		++L_mark_num;
 
-		file << "\t\tjg\t\t.L" + to_string(mark_num)<<endl;
+		file << "\t\tjg\t\t.L" + to_string(L_mark_num)<<endl;
 		
 	}
 
 	else if (comp_command == "<") {
 
-		++mark_num;
+		++L_mark_num;
 
-		file << "\t\tjl\t\t.L" + to_string(mark_num)<<endl;
+		file << "\t\tjl\t\t.L" + to_string(L_mark_num)<<endl;
 
 	}
 
 	else if (comp_command == ">=") {
 
-		++mark_num;
+		++L_mark_num;
 
-		file << "\t\tjge\t\t.L" + to_string(mark_num)<<endl;
+		file << "\t\tjge\t\t.L" + to_string(L_mark_num)<<endl;
 	}
 
 	else if (comp_command == "<=") {
 
-		++mark_num;
+		++L_mark_num;
 
-		file << "\t\tjle\t\t.L" + to_string(mark_num)<<endl;
+		file << "\t\tjle\t\t.L" + to_string(L_mark_num)<<endl;
 	}
 
 	file.close();
@@ -501,10 +561,19 @@ void CodGen::handleAsmJmp()
 {
 	ofstream file ("asm/" + asm_file_name, ios::app);
 
-	++mark_num;
+	++L_mark_num;
 
-	file << "\t\tjmp\t\t.L" + to_string(mark_num)<<endl;
-	file << ".L" + to_string(mark_num + 1) + ":"<<endl;
+	file << "\t\tjmp\t\t.L" + to_string(L_mark_num)<<endl;
+	file << ".L" + to_string(L_mark_num + 1) + ":"<<endl;
+
+	file.close();
+}
+
+void CodGen::handleAsmCall()
+{
+	ofstream file ("asm/" + asm_file_name, ios::app);
+
+	file << "\t\tcall\t" + command<<endl;
 
 	file.close();
 }

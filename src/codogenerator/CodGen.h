@@ -9,6 +9,7 @@ class CodGen
 		void printAsm(void);
 		void handleProlog(void);
 		void handleEpilog(void);
+		void handleLCMarks(void);
 		void compileAsmFile(void);
 		void setFileName(string file_path);
 		void startCodGen(AST *tree, string file_path);
@@ -23,4 +24,5 @@ class CodGen
 		void handleAsmCondPassIf(void);
 		void handleAsmCondPassLoop(void);
 		void handleAsmJmp(void);
+		void handleAsmCall(void);
 };

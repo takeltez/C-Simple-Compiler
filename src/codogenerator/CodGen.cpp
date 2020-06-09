@@ -2,7 +2,8 @@
 
 extern map <string, string> type_id;
 map <string, string> mem_pos;
-vector <int> marks;
+vector <string> LC_marks;
+vector <int> L_marks;
 
 string var;
 string value;
@@ -27,7 +28,8 @@ bool is_if = false;
 bool is_array_pos = false;
 
 int offset = 0;
-int mark_num = 1;
+int L_mark_num = 1;
+int LC_mark_num = 0;
 int for_cond_elem;
 
 CodGen *cod_gen = new CodGen();
@@ -123,7 +125,7 @@ void ForAST::codogenerator()
 
 	ofstream file ("asm/" + asm_file_name, ios::app);
 	
-	file << ".L" + to_string(mark_num) + ":"<<endl;
+	file << ".L" + to_string(L_mark_num) + ":"<<endl;
 	
 	for_cond_elem = 1;
 
@@ -151,7 +153,7 @@ void WhileAST::codogenerator()
 
 	ofstream file ("asm/" + asm_file_name, ios::app);
 	
-	file << ".L" + to_string(mark_num) + ":"<<endl;
+	file << ".L" + to_string(L_mark_num) + ":"<<endl;
 	
 	condition->codogenerator();
 	cod_gen->handleAsmCondPassLoop();
@@ -215,12 +217,12 @@ void FunctionBodyAST::codogenerator()
 
 			ofstream file ("asm/" + asm_file_name, ios::app);
 
-			for (int i = 0; i < marks.size(); ++i)
-				file << ".L" + to_string(marks[i]) + ":"<<endl;
+			for (int i = 0; i < L_marks.size(); ++i)
+				file << ".L" + to_string(L_marks[i]) + ":"<<endl;
 		
 			is_if = false;
 
-			marks.clear();
+			L_marks.clear();
 			file.close();
 		}
 	}
@@ -368,8 +370,18 @@ void ConstAST::codogenerator()
 
 void PrintfAST::codogenerator()
 {
+	command = definition;
+
 	for (int i = 0; i < params.size(); ++i)
 		params[i]->codogenerator();
+
+	if (params.size() == 1)
+		command = "puts";
+
+	cod_gen->handleAsmMov();
+	cod_gen->handleAsmCall();
+
+	command.clear();
 }
 
 void ReturnAST::codogenerator()
@@ -386,6 +398,8 @@ void ReturnAST::codogenerator()
 
 void StringLexemeAST::codogenerator()
 {
+	if (command == "printf") 
+		LC_marks.push_back(".LC" + to_string(LC_mark_num) + ":\n\t\t.string\t" + definition);
 }
 
 void SymbolLexemeAST::codogenerator()
@@ -455,4 +469,6 @@ void CodGen::startCodGen(AST *tree, string file_path)
 	root->codogenerator();
 
 	handleEpilog();
+
+	handleLCMarks();
 }

@@ -1,16 +1,14 @@
 int main()
 {   
-    int a;
-
-    if (a == 5) {
+    int a = 2;
+    char b = 'c';
+    
+    if (a == 2) {
         printf("a = %d\n", a);
+        printf("b = %c\n", b);
     }
-    else if (a != 5) {
-        printf("Not five\n");
-    }
-    else {
-        printf(":(\n");
-    }
+
+    printf(":)\n");
 
     return 0;
 }
