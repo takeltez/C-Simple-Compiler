@@ -573,7 +573,8 @@ void CodGen::handleAsmCall()
 {
 	ofstream file ("asm/" + asm_file_name, ios::app);
 
-	file << "\t\tcall\t" + command<<endl;
+	if (command == "printf" || command == "puts")
+		file << "\t\tcall\tprintf"<<endl;
 
 	file.close();
 }
