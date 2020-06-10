@@ -53,7 +53,7 @@ void CodGen::handleProlog()
 {
 	ofstream file ("asm/" + asm_file_name);
 
-	file << ".intel_syntax noprefix\n\n.global main\n\nmain:\n\t\tpush\trbp\n\t\tmov\t\trbp, rsp\n\t\tsub\t\trsp, 16"<<endl;
+	file << ".intel_syntax noprefix\n\n.global main\n\nmain:\n\t\tpush\trbp\n\t\tmov\t\trbp, rsp\n\t\tsub\t\trsp, 32"<<endl;
 
 	file.close();
 }
@@ -85,7 +85,7 @@ void CodGen::handleAsmMov()
 
 		auto it = mem_pos.find(var);
 
-		if (use_reg_edx) {
+		if (use_reg_eax) {
 
 			if (d_type == "int")  {
 
@@ -118,7 +118,7 @@ void CodGen::handleAsmMov()
 			}
 		}
 
-		else if (use_reg_eax) {
+		else if (use_reg_edx) {
 
 			if (d_type == "int") 
 				file << "\t\tmov\t\tedx, " + it->second + "]"<<endl;
