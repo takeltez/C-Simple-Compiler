@@ -199,6 +199,15 @@ void ElseAST::codogenerator()
 {
 	for (int i = 0; i < blocks.size(); ++i)
 		blocks[i]->codogenerator();
+
+	if (!is_if) {
+
+		ofstream file ("asm/" + asm_file_name, ios::app);
+
+		file << ".L" + to_string(L_mark_num + 1) + ":"<<endl;
+	
+		file.close();
+	}
 }
 
 void FunctionAST::codogenerator()
@@ -216,6 +225,21 @@ void FunctionBodyAST::codogenerator()
 		if (is_if) {
 
 			ofstream file ("asm/" + asm_file_name, ios::app);
+			
+			string node_type = typeid(*(blocks[i + 1])).name();
+
+			if (node_type.find("ElseAST") != string::npos) {
+
+				int jmp_num = 0;
+
+				for (int j = 2; node_type.find("ElseAST") != string::npos; ++j)
+				{
+					node_type = typeid(*(blocks[i + j])).name();
+					++jmp_num;
+				}
+
+				file << "\t\tjmp\t\t.L" + to_string(L_mark_num + jmp_num)<<endl;
+			}
 
 			for (int i = 0; i < L_marks.size(); ++i)
 				file << ".L" + to_string(L_marks[i]) + ":"<<endl;

@@ -1,11 +1,28 @@
 int main()
 {   
-    int arr[] = {1, 2, 3, 4, 5}; 
-    int a = arr[2];
-    int b = arr[a]; 
-
-    printf("%d\n", a);
-    printf("arr[a] = %d\n", arr[1]);
+    int a = 12, c = 6;
     
+    if (a == 2) {
+        a = 3;
+    }
+    else if (a == 5) {
+        a = 5;
+    }
+     else if (a == 4) {
+        printf("a = %d\n", a);
+        
+        a = 50;
+        
+        printf("a = %d\n", a);
+    }
+    else {
+        a = 18;
+        
+        printf("a = %d\n", a);
+    }
+
+    c = a / c;
+    printf("c = %d\n", c);
+
     return 0;
 }
