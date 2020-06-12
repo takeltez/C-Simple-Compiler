@@ -1,4 +1,4 @@
-int main(int argc, char const **argv)
+int main()
 {
     int N = 22, token_size = 4;
     char s_str[] = "AlexeyGenaEugeneAlexey";

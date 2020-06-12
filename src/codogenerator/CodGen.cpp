@@ -44,6 +44,20 @@ void RootAST::codogenerator()
 
 void ArrayDataAST::codogenerator()
 {
+	int arr_offset;
+
+	if (d_type == "int") {
+
+		arr_offset = offset + blocks.size() * sizeof(int);
+		offset = arr_offset;
+	}
+
+	else if (d_type == "char") {
+
+		arr_offset = offset + blocks.size() * sizeof(char);
+		offset = arr_offset;
+	}
+
 	for (int i = 0; i < blocks.size(); ++i)
 	{
 		blocks[i]->codogenerator();
@@ -54,14 +68,14 @@ void ArrayDataAST::codogenerator()
 
 			if (d_type == "int") {
 				
-				mem_pos.emplace(array_member, "DWORD PTR [rbp-" + to_string(offset + 4));
-				offset += 4;
+				mem_pos.emplace(array_member, "DWORD PTR [rbp-" + to_string(arr_offset));
+				arr_offset -= 4;
 			}
 
 			else if (d_type == "char") {
 
-				mem_pos.emplace(array_member, "BYTE PTR [rbp-" + to_string(offset + 1));
-				offset += 1;
+				mem_pos.emplace(array_member, "BYTE PTR [rbp-" + to_string(arr_offset));
+				arr_offset -= 1;
 			}
 		}
 

@@ -53,7 +53,7 @@ void CodGen::handleProlog()
 {
 	ofstream file ("asm/" + asm_file_name);
 
-	file << ".intel_syntax noprefix\n\n.global main\n\nmain:\n\t\tpush\trbp\n\t\tmov\t\trbp, rsp\n\t\tsub\t\trsp, 32"<<endl;
+	file << ".intel_syntax noprefix\n\n.global main\n\nmain:\n\t\tpush\trbp\n\t\tmov\t\trbp, rsp\n\t\tsub\t\trsp, 64"<<endl;
 
 	file.close();
 }
@@ -97,7 +97,7 @@ void CodGen::handleAsmMov()
 				
 				else {
 
-					file << "\t\tmov\t\tedx, " + it->second + "]"<<endl;
+					file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
 					is_sec_op_array = true;
 				}
 			}
@@ -169,7 +169,7 @@ void CodGen::handleAsmMov()
 						file << "\t\tmov\t\tedx, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(int)) + "], edx"<<endl;
 					
 					else if (operand2.find("[0]") != string::npos)
-						file << "\t\tmov\t\tedx, " + it2->second + "+rdx*" + to_string(sizeof(int)) + "]"<<endl<<"\t\tmov\t\t" + it1->second + "], edx"<<endl;
+						file << "\t\tmov\t\tedx, " + it2->second + "+rax*" + to_string(sizeof(int)) + "]"<<endl<<"\t\tmov\t\t" + it1->second + "], edx"<<endl;
 				}
 
 				else
@@ -181,13 +181,13 @@ void CodGen::handleAsmMov()
 				if (is_array_pos) {
 
 					if (operand1.find("[0]") != string::npos && operand2.find("[0]") != string::npos)
-						file << "\t\tmov\t\tbl, " + it2->second + "+rdx*" + to_string(sizeof(int)) + "]"<<endl<<"\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(int)) + "], bl"<<endl;
+						file << "\t\tmov\t\tbl, " + it2->second + "+rdx*" + to_string(sizeof(char)) + "]"<<endl<<"\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(char)) + "], bl"<<endl;
 					
 					else if (operand1.find("[0]") != string::npos)
-						file << "\t\tmov\t\tbl, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(int)) + "], bl"<<endl;
+						file << "\t\tmov\t\tbl, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(char)) + "], bl"<<endl;
 					
 					else if (operand2.find("[0]") != string::npos)
-						file << "\t\tmov\t\tbl, " + it2->second + "+rdx*" + to_string(sizeof(int)) + "]"<<endl<<"\t\tmov\t\t" + it1->second + "], bl"<<endl;
+						file << "\t\tmov\t\tbl, " + it2->second + "+rdx*" + to_string(sizeof(char)) + "]"<<endl<<"\t\tmov\t\t" + it1->second + "], bl"<<endl;
 				}
 
 				else
