@@ -204,7 +204,7 @@ void ElseAST::codogenerator()
 
 		ofstream file ("asm/" + asm_file_name, ios::app);
 
-		file << ".L" + to_string(L_mark_num + 1) + ":"<<endl;
+		file << ".L" + to_string(++L_mark_num) + ":"<<endl;
 	
 		file.close();
 	}

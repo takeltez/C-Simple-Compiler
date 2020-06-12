@@ -8,7 +8,7 @@ int main()
     else if (a == 5) {
         a = 5;
     }
-     else if (a == 4) {
+     else if (a >= 4) {
         printf("a = %d\n", a);
         
         a = 50;
@@ -19,6 +19,10 @@ int main()
         a = 18;
         
         printf("a = %d\n", a);
+    }
+
+    if (a < 200) {
+        a = 30;
     }
 
     c = a / c;
