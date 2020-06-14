@@ -25,4 +25,5 @@ class CodGen
 		void handleAsmCondPassLoop(void);
 		void handleAsmJmp(void);
 		void handleAsmCall(void);
+		void handleAsmCmovle(void);
 };

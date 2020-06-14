@@ -1,7 +1,7 @@
 int main()
 {
     int N = 10;
-    int arr[] = {1, 2, 3, 4, 5, 32, 65, 78, 5, 0};
+    int arr[] = {10, 2, 3, 4, 5, 32, 65, 78, 5, 0};
     int min = arr[0];
 
      for (int i = 1; i < N; ++i) {

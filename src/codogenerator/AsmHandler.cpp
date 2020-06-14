@@ -24,6 +24,7 @@ extern bool use_reg_eax;
 extern bool use_reg_edx;
 extern bool use_reg_bl;
 
+extern bool is_ternar;
 extern bool is_array_pos;
 
 bool is_sec_op_array = true;
@@ -135,7 +136,10 @@ void CodGen::handleAsmMov()
 		auto it1 = mem_pos.find(operand1);
 		auto it2 = mem_pos.find(operand2);
 
-		if (it1 != mem_pos.end() && !value.empty()) {
+		if (is_ternar)
+			file << "\t\tmov\t\t" + it1->second + "], eax"<<endl;
+
+		else if (it1 != mem_pos.end() && !value.empty()) {
 
 			if (d_type == "int") {
 
@@ -440,7 +444,10 @@ void CodGen::handleAsmCmp()
 {
 	ofstream file ("asm/" + asm_file_name, ios::app);
 
-	file << "\t\tcmp\t\teax, edx"<<endl;
+	if (is_ternar)
+		file << "\t\tcmp\t\tedx, eax"<<endl;
+	else
+		file << "\t\tcmp\t\teax, edx"<<endl;
 
 	file.close();
 }
@@ -574,6 +581,17 @@ void CodGen::handleAsmCall()
 
 	if (command == "printf" || command == "puts")
 		file << "\t\tcall\tprintf"<<endl;
+
+	file.close();
+}
+
+void CodGen::handleAsmCmovle()
+{
+	auto it = mem_pos.find(var);
+
+	ofstream file ("asm/" + asm_file_name, ios::app);
+
+	file << "\t\tcmovl\teax, " + it->second + "]"<<endl;
 
 	file.close();
 }

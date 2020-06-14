@@ -26,11 +26,14 @@ bool use_reg_bl = true;
 
 bool is_if = false;
 bool is_for = false;
+bool is_ternar = false;
+bool is_break = false;
 bool is_array_pos = false;
 
 int offset = 0;
 int L_mark_num = 1;
 int LC_mark_num = 0;
+int L_mark_storage;
 int for_cond_elem;
 
 CodGen *cod_gen = new CodGen();
@@ -128,7 +131,6 @@ void ArrayNameAST::codogenerator()
 void ForAST::codogenerator()
 {
 	is_for = true;
-	int L_mark_storage;
 	for_cond_elem = 0;
 
 	ofstream file ("asm/" + asm_file_name, ios::app);	
@@ -158,6 +160,10 @@ void ForAST::codogenerator()
 	condition->codogenerator();
 	cod_gen->handleAsmCondPassLoop();
 
+	if (is_break)
+		file << ".L" + to_string(L_mark_storage + 2) + ":"<<endl;
+
+	is_break = false;
 	is_for = false;
 
 	file.close();
@@ -320,6 +326,7 @@ void AssignmentAST::codogenerator()
 	cod_gen->handleAsmMov();
 
 	is_array_pos = false;
+	is_ternar = false;
 
 	d_type.clear();
 	value.clear();
@@ -339,7 +346,11 @@ void LogicOperationAST::codogenerator()
 
 void TernarOperationAST::codogenerator()
 {
+	is_ternar = true;
+
 	l_operand->codogenerator();
+	cod_gen->handleAsmCmovle();
+
 	r_operand->codogenerator();
 }
 
@@ -443,6 +454,7 @@ void ConstAST::codogenerator()
 
 void PrintfAST::codogenerator()
 {
+	string buff = command;
 	command = definition;
 
 	for (int i = 0; i < params.size(); ++i)
@@ -454,7 +466,7 @@ void PrintfAST::codogenerator()
 	cod_gen->handleAsmMov();
 	cod_gen->handleAsmCall();
 
-	command.clear();
+	command = buff;
 }
 
 void ReturnAST::codogenerator()
@@ -514,7 +526,16 @@ void SymbolIdAST::codogenerator()
 	value.clear();
 }
 
-void BreakAST::codogenerator() {}
+void BreakAST::codogenerator() 
+{
+	is_break = true;
+
+	ofstream file ("asm/" + asm_file_name, ios::app);
+	
+	file << "\t\tjmp\t\t.L" + to_string(L_mark_storage + 2)<<endl;
+
+	file.close();
+}
 
 
 void CodGen::setFileName(string file_path)
