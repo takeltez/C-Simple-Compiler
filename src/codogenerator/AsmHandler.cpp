@@ -564,7 +564,6 @@ void CodGen::handleAsmJmp()
 	++L_mark_num;
 
 	file << "\t\tjmp\t\t.L" + to_string(L_mark_num)<<endl;
-	file << ".L" + to_string(L_mark_num + 1) + ":"<<endl;
 
 	file.close();
 }

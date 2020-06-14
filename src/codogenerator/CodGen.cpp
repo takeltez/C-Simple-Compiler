@@ -25,6 +25,7 @@ bool use_reg_edx = true;
 bool use_reg_bl = true;
 
 bool is_if = false;
+bool is_for = false;
 bool is_array_pos = false;
 
 int offset = 0;
@@ -126,33 +127,57 @@ void ArrayNameAST::codogenerator()
 
 void ForAST::codogenerator()
 {
+	is_for = true;
+	int L_mark_storage;
 	for_cond_elem = 0;
+
+	ofstream file ("asm/" + asm_file_name, ios::app);	
 
 	condition->codogenerator();
 	cod_gen->handleAsmJmp();
+
+	L_mark_storage = L_mark_num;
 	
 	body->codogenerator();
+
+	if (is_if) {
+
+		file << ".L" + to_string(L_mark_num) + ":"<<endl;
+
+		is_if = false;
+	}
 
 	for_cond_elem = 2;
 
 	condition->codogenerator();
-
-	ofstream file ("asm/" + asm_file_name, ios::app);
 	
-	file << ".L" + to_string(L_mark_num) + ":"<<endl;
+	file << ".L" + to_string(L_mark_storage) + ":"<<endl;
 	
 	for_cond_elem = 1;
 
 	condition->codogenerator();
 	cod_gen->handleAsmCondPassLoop();
 
+	is_for = false;
+
 	file.close();
 }
 
 void ForBodyAST::codogenerator()
 {
+	string node_type = typeid(*(blocks[0])).name();
+	
+	if (node_type.find("IfAST") == string::npos) {
+	
+		ofstream file ("asm/" + asm_file_name, ios::app);
+		file << ".L" + to_string(L_mark_num + 1) + ":"<<endl;
+
+		file.close();
+	}
+
 	for (int i = 0; i < blocks.size(); ++i)
 		blocks[i]->codogenerator();
+
 }
 
 void ForConditionAST::codogenerator()
@@ -190,6 +215,16 @@ void WhileConditionAST::codogenerator()
 void IfAST::codogenerator()
 {
 	is_if = true;
+
+	if (is_for) {
+
+		ofstream file ("asm/" + asm_file_name, ios::app);
+
+		file << ".L" + to_string(L_mark_num + 2) + ":"<<endl;
+	
+		file.close();
+	}
+	
 
 	condition->codogenerator();
 	cod_gen->handleAsmCondPassIf();
