@@ -167,7 +167,8 @@ bool checkForConditionTok(Token tok)
 bool checkArrayDataTok(Token tok)
 {
 	return (tok.getTokenClass() == "digit_literal_dec" || tok.getTokenClass() == "digit_literal_bin"
-			|| tok.getTokenClass() == "digit_literal_hex" || tok.getTokenClass() == "digit_literal_oct");
+			|| tok.getTokenClass() == "digit_literal_hex" || tok.getTokenClass() == "digit_literal_oct" 
+				|| tok.getTokenClass() == "symbol_literal");
 }
 
 bool checkArrayNameTok(Token tok)
