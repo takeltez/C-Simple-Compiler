@@ -29,6 +29,7 @@ bool is_for = false;
 bool is_ternar = false;
 bool is_break = false;
 bool is_array_pos = false;
+bool is_div_op = false;
 
 int offset = 0;
 int L_mark_num = 1;
@@ -161,7 +162,7 @@ void ForAST::codogenerator()
 	cod_gen->handleAsmCondPassLoop();
 
 	if (is_break)
-		file << ".L" + to_string(L_mark_storage + 2) + ":"<<endl;
+		file << ".L" + to_string(L_mark_storage + 3) + ":"<<endl;
 
 	is_break = false;
 	is_for = false;
@@ -341,7 +342,13 @@ void AssignmentAST::codogenerator()
 void LogicOperationAST::codogenerator()
 {
 	l_operand->codogenerator();
+
+	ofstream file ("asm/" + asm_file_name, ios::app);
+	file << "\t\tjne\t\t.L" + to_string(L_mark_num + 1)<<endl;
+
 	r_operand->codogenerator();
+
+	file.close();
 }
 
 void TernarOperationAST::codogenerator()
@@ -392,7 +399,7 @@ void BinOperationAST::codogenerator()
 		cod_gen->handleAsmMul();
 	}
 
-	else if (command == "/") {
+	else if (command == "/" || command == "%") {
 
 		l_operand->codogenerator();
 		cod_gen->handleAsmMov();
@@ -401,6 +408,8 @@ void BinOperationAST::codogenerator()
 		cod_gen->handleAsmMov();
 
 		cod_gen->handleAsmDiv();
+
+		is_div_op = true;
 	}
 
 	else if (command == "==" || command == "!=" || command == ">" || command == "<" 
@@ -532,7 +541,7 @@ void BreakAST::codogenerator()
 
 	ofstream file ("asm/" + asm_file_name, ios::app);
 	
-	file << "\t\tjmp\t\t.L" + to_string(L_mark_storage + 2)<<endl;
+	file << "\t\tjmp\t\t.L" + to_string(L_mark_storage + 3)<<endl;
 
 	file.close();
 }

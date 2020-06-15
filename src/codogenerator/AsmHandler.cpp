@@ -26,6 +26,7 @@ extern bool use_reg_bl;
 
 extern bool is_ternar;
 extern bool is_array_pos;
+extern bool is_div_op;
 
 bool is_sec_op_array = true;
 
@@ -200,10 +201,17 @@ void CodGen::handleAsmMov()
 	}
 
 	else if (command == "+" || command == "-" || command == "*" || command == "/" 
-			|| command == "==" || command == "!=" || command == "<=" || command == ">=" 
+			|| command == "%" || command == "==" || command == "!=" || command == "<=" || command == ">=" 
 				|| command == "<" || command == ">") {
 
-		if (use_reg_eax) {
+		if (is_div_op) {
+			
+			file << "\t\tmov\t\teax, edx"<<endl;
+			is_div_op = false;
+			use_reg_eax = false;
+		}
+
+		else if (use_reg_eax) {
 
 			if (!value.empty())
 				file << "\t\tmov\t\teax, " + value<<endl;
@@ -240,7 +248,7 @@ void CodGen::handleAsmMov()
 			use_reg_eax = false;
 		}
 
-		else if (command == "/") {
+		else if (command == "/" || command == "%") {
 
 			file << "\t\tcdq"<<endl;
 			

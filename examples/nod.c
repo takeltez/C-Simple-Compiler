@@ -5,10 +5,10 @@ int main ()
     int nod = min;
 
     for (int i = min; i > 0; i--) { 
-        //if (a % i == 0 && b % i == 0) { 
+        if (a % i == 0 && b % i == 0) { 
             nod = i;
             break;  
-       // }
+       }
    }
 
     printf("nod: %d\n", nod); 
