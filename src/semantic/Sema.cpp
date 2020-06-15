@@ -256,8 +256,8 @@ void SymbolLexemeAST::semantic()
 	else if (data_type != "char" && !data_type.empty())
 		cout<<"Incorrect operators for operation '"<<op<<"': '"<<data_type<<"' and 'char'"<<endl;
 
-	else if (prev_node == "array_name")
-			cout<<"Cannot assign 'char' to array, right operand must be 'string'"<<endl;
+/*	else if (prev_node == "array_name")
+			cout<<"Cannot assign 'char' to array, right operand must be 'string'"<<endl;*/
 }
 
 void DigitIdAST::semantic()
