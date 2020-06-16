@@ -25,7 +25,6 @@ extern int LC_mark_num;
 
 extern bool use_reg_eax;
 extern bool use_reg_edx;
-extern bool use_reg_bl;
 
 extern bool is_ternar;
 extern bool is_array_pos;
@@ -211,13 +210,9 @@ void CodGen::handleAsmMov()
 			use_reg_eax = false;
 		}
 
-		else if (command == "/" || command == "%") {
-
+		else if (command == "/" || command == "%")
 			file << "\t\tcdq"<<endl;
-			
-			use_reg_bl = false;
-		}
-		
+
 		else if (use_reg_edx) {
 
 			if (!value.empty())

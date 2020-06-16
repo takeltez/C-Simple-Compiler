@@ -24,7 +24,6 @@ string def;
 
 bool use_reg_eax = true;
 bool use_reg_edx = true;
-bool use_reg_bl = true;
 
 bool is_if = false;
 bool is_for = false;
@@ -441,7 +440,6 @@ void BinOperationAST::codogenerator()
 
 	use_reg_edx = true;
 	use_reg_eax = true;
-	use_reg_bl = true;
 
 	is_array_pos = false;
 }
