@@ -11,7 +11,8 @@ string operand1;
 string operand2;
 string command;
 string comp_command;
-string d_type;
+string d_type_vars;
+string d_type_arrs;
 
 string src_file_name;
 string asm_file_name;
@@ -19,6 +20,7 @@ string exc_file_name;
 
 string array_name;
 string array_member;
+string def;
 
 bool use_reg_eax = true;
 bool use_reg_edx = true;
@@ -30,7 +32,8 @@ bool is_ternar = false;
 bool is_break = false;
 bool is_array_pos = false;
 bool is_div_op = false;
-
+ 	
+int if_counter = 0;
 int offset = 0;
 int L_mark_num = 1;
 int LC_mark_num = 0;
@@ -51,13 +54,13 @@ void ArrayDataAST::codogenerator()
 {
 	int arr_offset;
 
-	if (d_type == "int") {
+	if (d_type_arrs == "int") {
 
 		arr_offset = offset + blocks.size() * sizeof(int);
 		offset = arr_offset;
 	}
 
-	else if (d_type == "char") {
+	else if (d_type_arrs == "char") {
 
 		arr_offset = offset + blocks.size() * sizeof(char);
 		offset = arr_offset;
@@ -71,13 +74,13 @@ void ArrayDataAST::codogenerator()
 
 		if (mem_pos.find(array_member) == mem_pos.end()) {
 
-			if (d_type == "int") {
+			if (d_type_arrs == "int") {
 				
 				mem_pos.emplace(array_member, "DWORD PTR [rbp-" + to_string(arr_offset));
 				arr_offset -= 4;
 			}
 
-			else if (d_type == "char") {
+			else if (d_type_arrs == "char") {
 
 				mem_pos.emplace(array_member, "BYTE PTR [rbp-" + to_string(arr_offset));
 				arr_offset -= 1;
@@ -95,10 +98,11 @@ void ArrayDataAST::codogenerator()
 void ArrayNameAST::codogenerator()
 {	
 	array_name = definition;
+	def = definition;
 
 	auto it = type_id.find(definition);
 
-	d_type = it->second; 
+	d_type_arrs = it->second; 
 
 	if (identificator != NULL) {
 
@@ -162,7 +166,7 @@ void ForAST::codogenerator()
 	cod_gen->handleAsmCondPassLoop();
 
 	if (is_break)
-		file << ".L" + to_string(L_mark_storage + 3) + ":"<<endl;
+		file << ".L" + to_string(L_mark_storage + if_counter + 2) + ":"<<endl;
 
 	is_break = false;
 	is_for = false;
@@ -172,19 +176,24 @@ void ForAST::codogenerator()
 
 void ForBodyAST::codogenerator()
 {
-	string node_type = typeid(*(blocks[0])).name();
-	
-	if (node_type.find("IfAST") == string::npos) {
-	
-		ofstream file ("asm/" + asm_file_name, ios::app);
-		file << ".L" + to_string(L_mark_num + 1) + ":"<<endl;
+	string node_type;
 
-		file.close();
+	ofstream file ("asm/" + asm_file_name, ios::app);
+
+	for (int i = 0; i < blocks.size(); ++i)
+	{
+		node_type = typeid(*(blocks[i])).name();
+
+		if (node_type.find("IfAST") != string::npos)
+			++if_counter;
 	}
+
+	file << ".L" + to_string(L_mark_num + if_counter + 1) + ":"<<endl;
 
 	for (int i = 0; i < blocks.size(); ++i)
 		blocks[i]->codogenerator();
 
+	file.close();
 }
 
 void ForConditionAST::codogenerator()
@@ -221,17 +230,20 @@ void WhileConditionAST::codogenerator()
 
 void IfAST::codogenerator()
 {
+	static bool first_if = true;
 	is_if = true;
 
 	if (is_for) {
 
 		ofstream file ("asm/" + asm_file_name, ios::app);
 
-		file << ".L" + to_string(L_mark_num + 2) + ":"<<endl;
+		if (!first_if)
+			file << ".L" + to_string(L_mark_num) + ":"<<endl;
 	
+		first_if = false;
+
 		file.close();
 	}
-	
 
 	condition->codogenerator();
 	cod_gen->handleAsmCondPassIf();
@@ -329,7 +341,6 @@ void AssignmentAST::codogenerator()
 	is_array_pos = false;
 	is_ternar = false;
 
-	d_type.clear();
 	value.clear();
 	var.clear();
 	operand1.clear();
@@ -511,19 +522,21 @@ void DigitIdAST::codogenerator()
 
 void SymbolIdAST::codogenerator()
 {
+	def = definition;
+
 	auto it = type_id.find(definition);
 
-	d_type = it->second; 
+	d_type_vars = it->second; 
 
 	if (mem_pos.find(definition) == mem_pos.end()) {
 
-		if (d_type == "int") {
+		if (d_type_vars == "int") {
 			
 			mem_pos.emplace(definition, "DWORD PTR [rbp-" + to_string(offset + 4));
 			offset += 4;
 		}
 
-		else if (d_type == "char") {
+		else if (d_type_vars == "char") {
 
 			mem_pos.emplace(definition, "BYTE PTR [rbp-" + to_string(offset + 1));
 			offset += 1;
@@ -541,7 +554,7 @@ void BreakAST::codogenerator()
 
 	ofstream file ("asm/" + asm_file_name, ios::app);
 	
-	file << "\t\tjmp\t\t.L" + to_string(L_mark_storage + 3)<<endl;
+	file << "\t\tjmp\t\t.L" + to_string(L_mark_storage + if_counter + 2)<<endl;
 
 	file.close();
 }

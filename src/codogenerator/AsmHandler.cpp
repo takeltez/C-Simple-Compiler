@@ -1,5 +1,6 @@
 #include "Parser.h"
 
+extern map <string, string> type_id;
 extern map <string, string> mem_pos;
 extern vector <string> LC_marks;
 extern vector <int> L_marks;
@@ -10,11 +11,13 @@ extern string operand1;
 extern string operand2;
 extern string command;
 extern string comp_command;
-extern string d_type;
+extern string d_type_arrs;
 
 extern string src_file_name;
 extern string asm_file_name;
 extern string exc_file_name;
+
+extern string def;
 
 extern int offset;
 extern int L_mark_num;
@@ -27,8 +30,6 @@ extern bool use_reg_bl;
 extern bool is_ternar;
 extern bool is_array_pos;
 extern bool is_div_op;
-
-bool is_sec_op_array = true;
 
 void CodGen::compileAsmFile()
 {
@@ -87,47 +88,11 @@ void CodGen::handleAsmMov()
 
 		auto it = mem_pos.find(var);
 
-		if (use_reg_eax) {
+		if (use_reg_eax)
+			file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
 
-			if (d_type == "int")  {
-
-				if (is_sec_op_array) {
-
-					file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
-					is_sec_op_array = false;
-				}
-				
-				else {
-
-					file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
-					is_sec_op_array = true;
-				}
-			}
-			
-			else if (d_type == "char") {
-
-				if (is_sec_op_array) {
-
-					file << "\t\tmov\t\tal, " + it->second + "]"<<endl;
-					is_sec_op_array = false;
-				}
-				
-				else {
-
-					file << "\t\tmov\t\tbl, " + it->second + "]"<<endl;
-					is_sec_op_array = true;
-				}
-			}
-		}
-
-		else if (use_reg_edx) {
-
-			if (d_type == "int") 
-				file << "\t\tmov\t\tedx, " + it->second + "]"<<endl;
-			
-			else if (d_type == "char")
-				file << "\t\tmov\t\tbl, " + it->second + "]"<<endl;
-		}
+		else if (use_reg_edx) 	
+			file << "\t\tmov\t\tedx, " + it->second + "]"<<endl;
 
 		file << "\t\tcdqe"<<endl;
 	}
@@ -142,30 +107,27 @@ void CodGen::handleAsmMov()
 
 		else if (it1 != mem_pos.end() && !value.empty()) {
 
-			if (d_type == "int") {
+			if (is_array_pos) {
 
-				if (is_array_pos)
+				if (d_type_arrs == "int")
 					file << "\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(int)) + "], " + value<<endl;
-
-				else
-					file << "\t\tmov\t\t" + it1->second + "], " + value<<endl;
+			
+				else if (d_type_arrs == "char")
+					file << "\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(char)) + "], " + value<<endl;
 			}
 
-			else if (d_type == "char") {
+			else {
 
-				if (is_array_pos)
-					file << "\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(char)) + "], " + value<<endl;
-
-				else
+				if (type_id.find(def)->second == "int" || type_id.find(def)->second == "char")
 					file << "\t\tmov\t\t" + it1->second + "], " + value<<endl;
 			}
 		}
 
 		else if (it1 != mem_pos.end() && it2 != mem_pos.end() && value.empty()) {
 
-			if (d_type == "int") {
+			if (is_array_pos) {
 
-				if (is_array_pos) {
+				if (d_type_arrs == "int") {
 
 					if (operand1.find("[0]") != string::npos && operand2.find("[0]") != string::npos)
 						file << "\t\tmov\t\tedx, " + it2->second + "+rdx*" + to_string(sizeof(int)) + "]"<<endl<<"\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(int)) + "], edx"<<endl;
@@ -177,13 +139,7 @@ void CodGen::handleAsmMov()
 						file << "\t\tmov\t\tedx, " + it2->second + "+rax*" + to_string(sizeof(int)) + "]"<<endl<<"\t\tmov\t\t" + it1->second + "], edx"<<endl;
 				}
 
-				else
-					file << "\t\tmov\t\teax, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "], eax"<<endl;
-			}
-		
-			else if (d_type == "char")
-				
-				if (is_array_pos) {
+				else if (d_type_arrs == "char") {
 
 					if (operand1.find("[0]") != string::npos && operand2.find("[0]") != string::npos)
 						file << "\t\tmov\t\tbl, " + it2->second + "+rdx*" + to_string(sizeof(char)) + "]"<<endl<<"\t\tmov\t\t" + it1->second + "+rax*" + to_string(sizeof(char)) + "], bl"<<endl;
@@ -194,9 +150,16 @@ void CodGen::handleAsmMov()
 					else if (operand2.find("[0]") != string::npos)
 						file << "\t\tmov\t\tbl, " + it2->second + "+rdx*" + to_string(sizeof(char)) + "]"<<endl<<"\t\tmov\t\t" + it1->second + "], bl"<<endl;
 				}
+			}
 
-				else
+			else {
+
+				if (type_id.find(def)->second == "int")
+					file << "\t\tmov\t\teax, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "], eax"<<endl;
+			
+				else if (type_id.find(def)->second == "char")
 					file << "\t\tmov\t\tal, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "], al"<<endl;
+			}
 		}
 	}
 
@@ -220,28 +183,28 @@ void CodGen::handleAsmMov()
 
 				auto it = mem_pos.find(var);
 
-				if (d_type == "int") {
+				if (is_array_pos) {
 
-					if (is_array_pos) {
+					if (d_type_arrs == "int") {
 
 						file << "\t\tmov\t\teax, " + it->second + "+rax*" + to_string(sizeof(int)) + "]"<<endl;
 						is_array_pos = false;
 					}
 
-					else
-						file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
-				}
-
-				else if (d_type == "char") {
-
-					if (is_array_pos) {
-
-						file << "\t\tmov\t\teax, " + it->second + "+rax*" + to_string(sizeof(char)) + "]"<<endl;
+					else if (d_type_arrs == "char") {
+						
+						file << "\t\tmov\t\tal, " + it->second + "+rax*" + to_string(sizeof(char)) + "]"<<endl;
 						is_array_pos = false;
 					}
+				}
 
-					else
+				else {
+
+					if (type_id.find(def)->second == "int")
 						file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
+				
+					else if (type_id.find(def)->second == "char")
+						file << "\t\tmov\t\tal, " + it->second + "]"<<endl;
 				}
 			}
 
@@ -264,28 +227,28 @@ void CodGen::handleAsmMov()
 
 				auto it = mem_pos.find(var);
 
-				if (d_type == "int") {
+				if (is_array_pos) {
 
-					if (is_array_pos) {
+					if (d_type_arrs == "int") {
 
 						file << "\t\tmov\t\tedx, " + it->second + "+rdx*" + to_string(sizeof(int)) + "]"<<endl;
 						is_array_pos = false;
 					}
 
-					else
-						file << "\t\tmov\t\tedx, " + it->second + "]"<<endl;
-				}
-
-				else if (d_type == "char") {
-
-					if (is_array_pos) {
-
-						file << "\t\tmov\t\tedx, " + it->second + "+rdx*" + to_string(sizeof(char)) + "]"<<endl;
+					else if (d_type_arrs == "char") {
+						
+						file << "\t\tmov\t\tdl, " + it->second + "+rdx*" + to_string(sizeof(char)) + "]"<<endl;
 						is_array_pos = false;
 					}
+				}
 
-					else
+				else {
+
+					if (type_id.find(def)->second == "int")
 						file << "\t\tmov\t\tedx, " + it->second + "]"<<endl;
+				
+					else if (type_id.find(def)->second == "char")
+						file << "\t\tmov\t\tdl, " + it->second + "]"<<endl;
 				}
 			}
 
@@ -302,27 +265,27 @@ void CodGen::handleAsmMov()
 
 			auto it = mem_pos.find(var);
 
-			if (d_type == "int") {
+			if (is_array_pos) {
 
-				if (is_array_pos) {
+				if (d_type_arrs == "int") {
 
 					file << "\t\tmov\t\teax, " + it->second + "+rax*" + to_string(sizeof(int)) + "]"<<endl;
 					is_array_pos = false;
 				}
 
-				else 
-					file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
-			}
+				else if (d_type_arrs == "char") {
 
-			else if (d_type == "char") {
-
-				if (is_array_pos) {
-
-					file << "\t\tmov\t\teax, " + it->second + "+rax*" + to_string(sizeof(char)) + "]"<<endl;
+					file << "\t\tmov\t\tal, " + it->second + "+rax*" + to_string(sizeof(char)) + "]"<<endl;
 					is_array_pos = false;
 				}
-				
-				else 
+			}
+
+			else {
+
+				if (type_id.find(def)->second == "int")
+					file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
+
+				else if (type_id.find(def)->second == "char")
 					file << "\t\tmov\t\tal, " + it->second + "]"<<endl;
 			}
 		}
@@ -332,41 +295,35 @@ void CodGen::handleAsmMov()
 
 		auto it = mem_pos.find(var);
 
-		if (d_type == "int") {
+		if (is_array_pos) {
 
-			if (is_array_pos) {
+			if (d_type_arrs == "int") {
 
 				file << "\t\tmov\t\teax, " + it->second + "+rax*" + to_string(sizeof(int)) + "]"<<endl;
 				is_array_pos = false;
 			}
 
-			else 
-				file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
+			else if (d_type_arrs == "char") {
 
-			file << "\t\tmov\t\tesi, eax"<<endl;
-			file << "\t\tmov\t\tedi, OFFSET FLAT:.LC"+ to_string(LC_mark_num)<<endl;
-			file << "\t\tmov\t\teax, 0"<<endl;
-
-			++LC_mark_num;
-		}
-
-		else if (d_type == "char") {
-
-			if (is_array_pos) {
-
-				file << "\t\tmov\t\teax, " + it->second + "+rax*" + to_string(sizeof(char)) + "]"<<endl;
+				file << "\t\tmov\t\tal, " + it->second + "+rax*" + to_string(sizeof(char)) + "]"<<endl;
 				is_array_pos = false;
 			}
-			
-			else 
-				file << "\t\tmov\t\tal, " + it->second + "]"<<endl;
-
-			file << "\t\tmov\t\tesi, eax"<<endl;
-			file << "\t\tmov\t\tedi, OFFSET FLAT:.LC"+ to_string(LC_mark_num)<<endl;
-			file << "\t\tmov\t\teax, 0"<<endl;
-
-			++LC_mark_num;
 		}
+
+		else {
+
+			if (type_id.find(def)->second == "int")
+				file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
+
+			else if (type_id.find(def)->second == "char")
+				file << "\t\tmov\t\tal, " + it->second + "]"<<endl;
+		}
+
+		file << "\t\tmov\t\tesi, eax"<<endl;
+		file << "\t\tmov\t\tedi, OFFSET FLAT:.LC"+ to_string(LC_mark_num)<<endl;
+		file << "\t\tmov\t\teax, 0"<<endl;
+
+		++LC_mark_num;
 	}
 
 	else if (command == "puts") {

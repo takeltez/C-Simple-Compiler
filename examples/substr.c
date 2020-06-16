@@ -5,15 +5,15 @@ int main()
     char token[] = {'G', 'e', 'n', 'a'};
     int j = 0, pos;
 
-    // for (int i = 0; i < N; ++i) {
-    //     if (s_str[i] == token[j]) {
-    //         j++;
-    //     }
-    //     if (j == token_size) {
-    //         pos = i - token_size + 1;
-    //         break;
-    //      }
-    // }
+    for (int i = 0; i < N; ++i) {
+         if (s_str[i] == token[j]) {
+            j++;
+         }
+         if (j == token_size) {
+            pos = i - token_size + 1;
+            break;
+        }
+    }
 
      printf("substr start pos: %d\n", pos);
 
