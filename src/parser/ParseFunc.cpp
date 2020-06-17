@@ -7,45 +7,24 @@ AST *Parser::parseFunction(Token token, Lexer *lexer)
 	FunctionAST *func; 
 	AST *func_Body, *func_args;
 	Token tok;
-	bool error;
 
 	Parser::prev_token = token;
 
 	while (tok.getLexeme() != "(") 
 	{
 		tok = getNextTok(lexer);
-		error = CheckRightParenError(tok, token);
-
-		if (error)
-			break;
+		CheckRightParenError(tok, token);
 	}
 
-	if (!error)
-		func_args = handler(tok, lexer);
+	func_args = handler(tok, lexer);
 
-	else {
-		while (tok.getLexeme() != ")")
-			tok = getNextTok(lexer);
-	}
-	
-	error = false;
-
-	while (tok.getLexeme() != "{") {
-
+	while (tok.getLexeme() != "{") 
+	{
 		tok = getNextTok(lexer);
-		error = checkRightBraceError(tok);
-	
-		if (error)
-			break;
+		checkRightBraceError(tok);
 	}
 
-	if (!error)  
-		func_Body = handler(tok, lexer);
-
-	else {
-		while (tok.getLexeme() != "}")
-			tok = getNextTok(lexer);
-	}
+	func_Body = handler(tok, lexer);
 
 	if (func_Body && func_args)
 		func = new FunctionAST(func_args, func_Body, token);
@@ -61,7 +40,6 @@ AST *Parser::parseFunctionArgs(Lexer *lexer)
 	FunctionArgsAST *func_args;
 	vector <AST*> func_blocks;
 	int old_size = blocks.size();
-	bool error;
 
 	while (tok.getLexeme() != ")") 
 	{
@@ -69,11 +47,7 @@ AST *Parser::parseFunctionArgs(Lexer *lexer)
 		tok = getNextTok(lexer);
 
 		checkSemicolonAndCommaError(tok, prev);
-
-		error = CheckLeftParenError(tok);
-
-		if(error)
-			break;
+		CheckLeftParenError(tok);
 
 		if (checkFuncArgsTok(tok)) 
 			blocks.push_back(handler(tok, lexer));

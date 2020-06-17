@@ -85,15 +85,6 @@ string Lexer::findStringLexeme(int newLineCount, string *lexeme, int *lexeme_pos
 			return "unknown";
 		}
 
-		else if ((end_pos - start_pos) < 2) { //Если нет символов в строковой лексеме
-			*lexeme = new_file_string.substr(start_pos, (end_pos - start_pos) + 1);
-			*lexeme_pos = file_string.find(*lexeme) + 1;
-
-			file_string.replace(file_string.find(*lexeme), (*lexeme).length(), (*lexeme).length(), ' ');
-			new_file_string.replace(new_file_string.find(*lexeme), (*lexeme).length(), (*lexeme).length(), ' ');
-			return "not_string_length";
-		}
-
 		else { //Если нашли корректнкю строковую лексему
 			*lexeme = new_file_string.substr(start_pos, (end_pos - start_pos + 1));
 			*lexeme_pos = file_string.find(*lexeme) + 1;

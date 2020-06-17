@@ -15,10 +15,13 @@ vector <string> SymbolTable::checkMultiDeclaration(vector <string> identificator
 		for (auto j = 0; j < identificators.size(); ++j)
 		{
 			if (i != j && !identificators[i].empty()) {
+
 				if (identificators[i] == identificators[j]) {
+
 					cout<<endl<<"identificator '"<<identificators[i]<<"' was already declarated in this scope"<<endl;
 					identificators[j].clear();
 					flag = true;
+					exit(1);
 				}
 			}		
 		}

@@ -20,7 +20,7 @@ vector <string> Sema::checkOperatorsDataType(vector <string> operands, map <stri
 				if (data_types[i] != "char")  {
 
 					cout<<"Incorrect operators for operation '"<<op<<"': 'char' and '"<<data_types[i]<<"'"<<endl;
-					break;
+					exit(1);
 				}	
 			}
 

@@ -31,8 +31,11 @@ void ArrayNameAST::semantic()
 	if ((type_id.find(definition)) == type_id.end() && !data_type.empty())
 		type_id.emplace(definition, data_type);
 
-	else if ((type_id.find(definition)) == type_id.end() && data_type.empty()) 
+	else if ((type_id.find(definition)) == type_id.end() && data_type.empty()) {
+
 		cout<<"Identificator '"<<definition<<"' was not declarated in this scope"<<endl;
+		exit(1);
+	}
 	
 	prev_node = "array_name";
 
@@ -234,14 +237,23 @@ void StringLexemeAST::semantic()
 
 	data_type = it->second;
 
-	if (sema->checkBinOperationSign(op))
+	if (sema->checkBinOperationSign(op)) {
+
 		cout<<"Cannot execute bin operation with 'string'"<<endl;
+		exit(1);
+	}
 
-	else if (data_type != "char" && !data_type.empty() && op != "printf") 
+	else if (data_type != "char" && !data_type.empty() && op != "printf") {
+
 		cout<<"Incorrect operators for operation '"<<op<<"': '"<<data_type<<"' and 'string'"<<endl;
+		exit(1);
+	}
 
-	else if (prev_node != "array_name" && prev_node != "printf")
-			cout<<"Cannot assign 'string', variable must be array"<<endl;
+	else if (prev_node != "array_name" && prev_node != "printf") {
+
+		cout<<"Cannot assign 'string', variable must be array"<<endl;
+		exit(1);
+	}
 }
 
 void SymbolLexemeAST::semantic()
@@ -250,22 +262,33 @@ void SymbolLexemeAST::semantic()
 
 	data_type = it->second;
 
-	if (sema->checkBinOperationSign(op))
-		cout<<"Cannot execute bin operation with 'char'"<<endl;
+	if (sema->checkBinOperationSign(op)) {
 
-	else if (data_type != "char" && !data_type.empty())
+		cout<<"Cannot execute bin operation with 'char'"<<endl;
+		exit(1);
+	}
+
+	else if (data_type != "char" && !data_type.empty()) {
+		
 		cout<<"Incorrect operators for operation '"<<op<<"': '"<<data_type<<"' and 'char'"<<endl;
+		exit(1);
+	}
 }
 
 void DigitIdAST::semantic()
 {
 	if ((cond == "if condition" || cond == "while condition")  
-		&& (op != ">" && op != "<" && op != ">=" && op != "<=" && op != "==" && op != "!="))
+		&& (op != ">" && op != "<" && op != ">=" && op != "<=" && op != "==" && op != "!=")) {
 			
 			cout<<"Cannot execute arithmetic operation in '"<<cond<<"'"<<endl;
+			exit(1);
+	}
 
-	else if (data_type != "int" && data_type != "double" && data_type != "float" && !data_type.empty() && prev_node != "array_name")
+	else if (data_type != "int" && data_type != "double" && data_type != "float" && !data_type.empty() && prev_node != "array_name") {
+		
 		cout<<"Incorrect operators for operation '"<<op<<"': '"<<data_type<<"' and 'int'"<<endl;
+		exit(1);
+	}
 }
 
 void SymbolIdAST::semantic()
@@ -278,8 +301,7 @@ void SymbolIdAST::semantic()
 				&& (op != ">" && op != "<" && op != ">=" && op != "<=" && op != "==" && op != "%" && op != "!=")) {
 		
 			cout<<"Cannot execute arithmetic operation in '"<<cond<<"'"<<endl;
-
-			return;
+			exit(1);
 		}
 
 		if (!num) {
@@ -298,8 +320,7 @@ void SymbolIdAST::semantic()
 				error = true;
 
 				cout<<"Identificator '"<<definition<<"' was not declarated in this scope"<<endl;
-
-				return;
+				exit(1);
 			}
 
 			if (!error)
@@ -313,6 +334,7 @@ void SymbolIdAST::semantic()
 				error = true;
 
 				cout<<"Identificator '"<<definition<<"' was not declarated in this scope"<<endl;
+				exit(1);
 			}
 		}
 

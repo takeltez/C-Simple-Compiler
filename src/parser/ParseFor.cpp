@@ -7,47 +7,24 @@ AST *Parser::parseFor(Token token, Lexer *lexer)
 	ForAST *key_word_for; 
 	AST *for_body, *for_cond;
 	Token tok;
-	bool error;
 
 	Parser::prev_token = token;
 
 	while (tok.getLexeme() != "(") 
 	{
 		tok = getNextTok(lexer);
-		error = CheckRightParenError(tok, token);
-
-		if (error)
-			break;
+		CheckRightParenError(tok, token);
 	}
 
-	if (!error)
-		for_cond = handler(tok, lexer);
-
-	else {
-		while (tok.getLexeme() != ")")
-			tok = getNextTok(lexer);
+	for_cond = handler(tok, lexer);
+	
+	while (tok.getLexeme() != "{") 
+	{
+		tok = getNextTok(lexer);
+		checkRightBraceError(tok);
 	}
 	
-	error = false;
-
-	if (Parser::curr_token.getLexeme() != "{") {
-		while (tok.getLexeme() != "{") 
-		{
-			tok = getNextTok(lexer);
-			error = checkRightBraceError(tok);
-		
-			if (error)
-				break;
-		}
-	}
-
-	if (!error)
-		for_body = handler(tok, lexer);
-
-	else {
-		while (tok.getLexeme() != "}")
-			tok = getNextTok(lexer);
-	}
+	for_body = handler(tok, lexer);
 
 	if (for_body && for_cond)
 		key_word_for = new ForAST(for_cond, for_body, token);
@@ -63,7 +40,6 @@ AST *Parser::parseForCondition(Lexer *lexer)
 	ForConditionAST *for_cond;
 	vector <AST*> for_blocks;
 	int old_size = blocks.size();
-	bool error;
 	
 	buff = Parser::prev_token;
 
@@ -73,11 +49,7 @@ AST *Parser::parseForCondition(Lexer *lexer)
 		tok = getNextTok(lexer);
 
 		checkSemicolonAndCommaError(tok, prev);
-
-		error = CheckLeftParenError(tok);
-
-		if(error)
-			break;
+		CheckLeftParenError(tok);
 
 		if (checkForConditionTok(tok)) {
 			blocks.push_back(handler(tok, lexer));

@@ -367,47 +367,41 @@ bool checkParseTernarOperation(Token tok)
 //errors
 
 
-bool CheckRightParenError(Token next_tok, Token curr_tok)
+void CheckRightParenError(Token next_tok, Token curr_tok)
 {
 	if (next_tok.getLexeme() != "(" && next_tok.getLexeme() != "") {
 
 		cout<<"Loc=<"<<next_tok.getLine()<<":"<<next_tok.getPos()<<"> ";
 		cout<<"Expected '(' after '"<<curr_tok.getLexeme()<<"'"<<endl;
 		
-		return true; 
+		exit(1);
 	}
-
-	return false;
 }
 
-bool CheckLeftParenError(Token tok)
+void CheckLeftParenError(Token tok)
 {
 	if (tok.getLexeme() == "{") {
 
 		cout<<"Loc=<"<<tok.getLine()<<":"<<tok.getPos()<<"> ";
 		cout<<"Expected ')' becouse '(' previously used"<<endl;
 		
-		return true; 
+		exit(1);
 	}
-
-	return false;
 }
 
 
-bool checkRightBraceError(Token tok)
+void checkRightBraceError(Token tok)
 {
 	if (tok.getLexeme() != "{" && tok.getLexeme() != "") {
 
 		cout<<"Loc=<"<<tok.getLine()<<":"<<tok.getPos()<<"> ";
 		cout<<"Expected '{' after  ')'"<<endl;
 		
-		return true; 
+		exit(1); 
 	}
-
-	return false;
 }
 
-bool checkDataTypeNextTokError(Token next_tok, Token curr_tok)
+void checkDataTypeNextTokError(Token next_tok, Token curr_tok)
 {
 	if (next_tok.getTokenClass() != "function_name" &&  next_tok.getTokenClass() != "variable" 
 			&&  next_tok.getTokenClass() != "arithmetic_operator_*" &&  next_tok.getTokenClass() != "key_word_const"
@@ -416,13 +410,11 @@ bool checkDataTypeNextTokError(Token next_tok, Token curr_tok)
 		cout<<"Loc=<"<<next_tok.getLine()<<":"<<next_tok.getPos()<<"> ";
 		cout<<"Expected identificator after '"<<curr_tok.getLexeme()<<"'"<<endl;
 		
-		return true; 
+		exit(1);
 	}
-
-	return false;
 }
 
-bool checkConstNextTokError(Token next_tok, Token curr_tok)
+void checkConstNextTokError(Token next_tok, Token curr_tok)
 {
 	if (next_tok.getTokenClass() != "data_type_int" && next_tok.getTokenClass() != "data_type_char" 
 			&& next_tok.getTokenClass() != "data_type_float" && next_tok.getTokenClass() != "data_type_double" 
@@ -432,13 +424,11 @@ bool checkConstNextTokError(Token next_tok, Token curr_tok)
 		cout<<"Loc=<"<<next_tok.getLine()<<":"<<next_tok.getPos()<<"> ";
 		cout<<"Expected identificator after '"<<curr_tok.getLexeme()<<"'"<<endl;
 		
-		return true; 
+		exit(1);
 	}
-
-	return false;
 }
 
-bool checkReturnNextTokError(Token next_tok, Token curr_tok)
+void checkReturnNextTokError(Token next_tok, Token curr_tok)
 {
 	if (next_tok.getTokenClass() != "variable" && next_tok.getTokenClass() != "digit_literal_dec" 
 			&& next_tok.getTokenClass() != "digit_literal_bin" && next_tok.getTokenClass() != "digit_literal_hex" 
@@ -448,13 +438,11 @@ bool checkReturnNextTokError(Token next_tok, Token curr_tok)
 		cout<<"Loc=<"<<next_tok.getLine()<<":"<<next_tok.getPos()<<"> ";
 		cout<<"Expected identificator after '"<<curr_tok.getLexeme()<<"'"<<endl;
 		
-		return true; 
+		exit(1); 
 	}
-
-	return false;
 }
 
-bool checkSemicolonAndCommaError(Token curr_tok, Token prev_tok)
+void checkSemicolonAndCommaError(Token curr_tok, Token prev_tok)
 {
 	if (prev_tok.getTokenClass() != "variable" && prev_tok.getTokenClass() != "digit_literal_oct"
 		&& prev_tok.getTokenClass() != "digit_literal_hex" && prev_tok.getTokenClass() != "digit_literal_bin"
@@ -463,7 +451,7 @@ bool checkSemicolonAndCommaError(Token curr_tok, Token prev_tok)
 					&& prev_tok.getTokenClass() != "data_type_double" && prev_tok.getTokenClass() != "key_word_return"
 						&& prev_tok.getTokenClass() != "arithmetic_operator_++" && prev_tok.getTokenClass() != "arithmetic_operator_+")
 
-		return false;
+		return;
 
 	if (curr_tok.getLexeme() != "," && curr_tok.getLexeme() != ";" && curr_tok.getLexeme() != "(" 
 		&& curr_tok.getLexeme() != ")" && curr_tok.getLexeme() != "=" && curr_tok.getLexeme() != "=="
@@ -475,21 +463,18 @@ bool checkSemicolonAndCommaError(Token curr_tok, Token prev_tok)
 		cout<<"Loc=<"<<prev_tok.getLine()<<":"<<prev_tok.getPos()<<"> ";
 		cout<<"expected ',' or ';' after identidicator"<<endl;
 		
-		return true; 
+		exit(1);
 	}
 
-	return false;
 }
 
-bool checkEndOfOperatorError(Token curr_tok, Token next_tok)
+void checkEndOfOperatorError(Token curr_tok, Token next_tok)
 {
 	if (next_tok.getLexeme() != ";")
 	{
 		cout<<"Loc=<"<<curr_tok.getLine()<<":"<<curr_tok.getPos()<<"> ";
 		cout<<"expected ';' after '"<<curr_tok.getLexeme()<<"'"<<endl;
 		
-		return true; 
+		exit(1);
 	}
-
-	return false;
 }

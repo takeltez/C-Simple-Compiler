@@ -7,45 +7,24 @@ AST *Parser::parseWhile(Token token, Lexer *lexer)
 	WhileAST *key_word_while; 
 	AST *while_body, *while_cond;
 	Token tok;
-	bool error;
 	
 	Parser::prev_token = token;
 
 	while (tok.getLexeme() != "(") 
 	{
 		tok = getNextTok(lexer);
-		error = CheckRightParenError(tok, token);
-
-		if (error)
-			break;
+		CheckRightParenError(tok, token);
 	}
 
-	if (!error)
-		while_cond = handler(tok, lexer);
-
-	else {
-		while (tok.getLexeme() != ")")
-			tok = getNextTok(lexer);
-	}
-
-	error = false;
+	while_cond = handler(tok, lexer);
 
 	while (tok.getLexeme() != "{") {
 
 		tok = getNextTok(lexer);
-		error = checkRightBraceError(tok);
-	
-		if (error)
-			break;
+		checkRightBraceError(tok);
 	}
 
-	if (!error)
-		while_body = handler(tok, lexer);
-
-	else {
-		while (tok.getLexeme() != "}")
-			tok = getNextTok(lexer);
-	}
+	while_body = handler(tok, lexer);
 	
 	if (while_body && while_cond)
 		key_word_while = new WhileAST(while_cond, while_body, token);
@@ -61,16 +40,12 @@ AST *Parser::parseWhileCondition(Lexer *lexer)
 	WhileConditionAST *while_cond;
 	vector <AST*> while_blocks;
 	int old_size = blocks.size();
-	bool error;
 
 	while (tok.getLexeme() != ")" && Parser::curr_token.getLexeme() != ")") 
 	{
 		tok = getNextTok(lexer);
 
-		error = CheckLeftParenError(tok);
-
-		if(error)
-			break;
+		CheckLeftParenError(tok);
 
 		if (checkWhileConditionTok(tok))
 			blocks.push_back(handler(tok, lexer));

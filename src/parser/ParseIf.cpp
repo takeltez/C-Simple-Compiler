@@ -7,45 +7,24 @@ AST *Parser::parseIf(Token token, Lexer *lexer)
 	IfAST *key_word_if; 
 	AST *if_body, *if_cond;
 	Token tok;
-	bool error;
 	
 	Parser::prev_token = token;
 
 	while (tok.getLexeme() != "(") 
 	{
 		tok = getNextTok(lexer);
-		error = CheckRightParenError(tok, token);
-
-		if (error)
-			break;
+		CheckRightParenError(tok, token);
 	}
 
-	if (!error)
-		if_cond = handler(tok, lexer);
+	if_cond = handler(tok, lexer);
 
-	else {
-		while (tok.getLexeme() != ")")
-			tok = getNextTok(lexer);
-	}
-
-	error = false;
-
-	while (tok.getLexeme() != "{") {
-
+	while (tok.getLexeme() != "{") 
+	{
 		tok = getNextTok(lexer);
-		error = checkRightBraceError(tok);
-	
-		if (error)
-			break;
+		checkRightBraceError(tok);
 	}
 
-	if (!error)
-		if_body = handler(tok, lexer);
-
-	else {
-		while (tok.getLexeme() != "}")
-			tok = getNextTok(lexer);
-	}
+	if_body = handler(tok, lexer);
 
 	if (if_body && if_cond)
 		key_word_if = new IfAST(if_cond, if_body, token);
@@ -61,16 +40,12 @@ AST *Parser::parseIfCondition(Lexer *lexer)
 	IfConditionAST *if_cond;
 	vector <AST*> if_blocks;
 	int old_size = blocks.size();
-	bool error;
 
 	while (tok.getLexeme() != ")" && Parser::curr_token.getLexeme() != ")") 
 	{
 		tok = getNextTok(lexer);
 
-		error = CheckLeftParenError(tok);
-
-		if(error)
-			break;
+		CheckLeftParenError(tok);
 
 		if (checkIfConditionTok(tok)) 
 			blocks.push_back(handler(tok, lexer));

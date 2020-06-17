@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <cstdlib>
 #include <fstream>
 #include <vector>
 #include <string>
@@ -107,12 +108,12 @@ bool checkParseUnaryOperation(Token token);
 bool checkParseLogicOperation(Token token);
 bool checkParseTernarOperation(Token token);
 
-bool CheckRightParenError(Token next_token, Token curr_token);
-bool CheckLeftParenError(Token token);
-bool checkRightBraceError(Token token);
-bool checkLeftBraceError(Token token);
-bool checkConstNextTokError(Token next_token, Token curr_token);
-bool checkDataTypeNextTokError(Token next_token, Token curr_token);
-bool checkReturnNextTokError(Token next_token, Token curr_token);
-bool checkSemicolonAndCommaError(Token curr_token, Token prev_token);
-bool checkEndOfOperatorError(Token curr_token, Token next_token);
+void CheckRightParenError(Token next_token, Token curr_token);
+void CheckLeftParenError(Token token);
+void checkRightBraceError(Token token);
+void checkLeftBraceError(Token token);
+void checkConstNextTokError(Token next_token, Token curr_token);
+void checkDataTypeNextTokError(Token next_token, Token curr_token);
+void checkReturnNextTokError(Token next_token, Token curr_token);
+void checkSemicolonAndCommaError(Token curr_token, Token prev_token);
+void checkEndOfOperatorError(Token curr_token, Token next_token);

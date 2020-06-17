@@ -7,7 +7,6 @@ AST *Parser::parseDataType(Token token, Lexer *lexer)
 	DataTypeAST *data_type; 
 	AST *identificator;
 	Token tok, buff;
-	bool error;
 
 	buff = Parser::prev_token;
 
@@ -16,16 +15,12 @@ AST *Parser::parseDataType(Token token, Lexer *lexer)
 	while (!checkDataTypeTok(tok)) 
 	{
 		tok = getNextTok(lexer);
-		error = checkDataTypeNextTokError(tok, token);
-
-		if (error)
-			break;
+		checkDataTypeNextTokError(tok, token);
 	}
 
-	if (checkDataTypeTok(tok) && !error)
-		identificator = handler(tok, lexer);
+	identificator = handler(tok, lexer);
 
-	if (identificator && !error)
+	if (identificator)
 		data_type = new DataTypeAST(identificator, token);
 
 	Parser::prev_token = buff;
@@ -38,7 +33,6 @@ AST *Parser::parseConst(Token token, Lexer *lexer)
 	ConstAST *key_word_const; 
 	AST *data_type;
 	Token tok, buff;
-	bool error;
 
 	buff = Parser::prev_token;
 
@@ -47,16 +41,12 @@ AST *Parser::parseConst(Token token, Lexer *lexer)
 	while (!checkConstTok(tok)) 
 	{
 		tok = getNextTok(lexer);
-		error = checkConstNextTokError(tok, token);
-
-		if (error)
-			break;
+		checkConstNextTokError(tok, token);
 	}
 
-	if (checkConstTok(tok) && !error) 
-		data_type = handler(tok, lexer);
+	data_type = handler(tok, lexer);
 
-	if (data_type  && !error)
+	if (data_type)
 		key_word_const = new ConstAST(data_type, token);
 
 	Parser::prev_token = buff;
@@ -102,21 +92,16 @@ AST *Parser::parseReturn(Token token, Lexer *lexer)
 	Token tok;
 	ReturnAST *key_word_return;
 	AST *identificator;
-	bool error;
 
 	while (!checkReturnTok(tok)) 
 	{
 		tok = getNextTok(lexer);
-		error = checkReturnNextTokError(tok, token);
-
-		if (error)
-			break;
+		checkReturnNextTokError(tok, token);
 	}
+ 
+	identificator = handler(tok, lexer);
 
-	if (checkReturnTok(tok) && !error) 
-		identificator = handler(tok, lexer);
-
-	if (identificator && !error)
+	if (identificator)
 		key_word_return = new ReturnAST(identificator, token);
 
 	return key_word_return;

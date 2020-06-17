@@ -1,6 +1,46 @@
 #include <gtest/gtest.h>
 #include "Parser.h"
 
+TEST(parser_test, parsePointer)
+{
+	Lexer *lexer = new Lexer();
+	Parser *parser = new Parser();
+	AST *result = new AST();
+
+	lexer->file_string = "*argv[]";
+	lexer->new_file_string = "*argv[]";
+
+	lexer->makeSpaces();
+
+	Token token = parser->getNextTok(lexer);
+
+	result = parser->parsePointer(token, lexer);
+
+	PointerAST *ptr = static_cast<PointerAST*>(result); 
+
+    EXPECT_EQ("*", ptr->definition);
+}
+
+TEST(parser_test, parseUnaryOperation)
+{
+	Lexer *lexer = new Lexer();
+	Parser *parser = new Parser();
+	AST *result = new AST();
+
+	lexer->file_string = "++i";
+	lexer->new_file_string = "++i";
+
+	lexer->makeSpaces();
+
+	Token token = parser->getNextTok(lexer);
+
+	result = parser->parseUnaryOperation(token, lexer);
+
+	UnaryOperationAST *uanry_op = static_cast<UnaryOperationAST*>(result); 
+
+    EXPECT_EQ("++", uanry_op->definition);
+}
+
 TEST(parser_test, parseLogicOperation)
 {
 	Lexer *lexer = new Lexer();
@@ -59,46 +99,6 @@ TEST(parser_test, parseBinOperation)
 	BinOperationAST *bin_op = static_cast<BinOperationAST*>(result); 
 
     EXPECT_EQ("/", bin_op->definition);
-}
-
-TEST(parser_test, parseUnaryOperation)
-{
-	Lexer *lexer = new Lexer();
-	Parser *parser = new Parser();
-	AST *result = new AST();
-
-	lexer->file_string = "++i";
-	lexer->new_file_string = "++i";
-
-	lexer->makeSpaces();
-
-	Token token = parser->getNextTok(lexer);
-
-	result = parser->parseUnaryOperation(token, lexer);
-
-	UnaryOperationAST *uanry_op = static_cast<UnaryOperationAST*>(result); 
-
-    EXPECT_EQ("++", uanry_op->definition);
-}
-
-TEST(parser_test, parsePointer)
-{
-	Lexer *lexer = new Lexer();
-	Parser *parser = new Parser();
-	AST *result = new AST();
-
-	lexer->file_string = "*argv[]";
-	lexer->new_file_string = "*argv[]";
-
-	lexer->makeSpaces();
-
-	Token token = parser->getNextTok(lexer);
-
-	result = parser->parsePointer(token, lexer);
-
-	PointerAST *ptr = static_cast<PointerAST*>(result); 
-
-    EXPECT_EQ("*", ptr->definition);
 }
 
 TEST(parser_test, parseAssignment)

@@ -9,7 +9,6 @@ AST *Parser::parseAssignment(Token token, Lexer *lexer)
 	AST *r_operand, *l_operand;
 
 	buff = Parser::prev_token;
-
 	Parser::prev_token = token;
 
 	l_operand = blocks[blocks.size() - 1];

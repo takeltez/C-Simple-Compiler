@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "Parser.h"
 
-TEST(parser_test, parseMainFunction)
+TEST(parser_test, parseFunction)
 {
 	Lexer *lexer = new Lexer();
 	Parser *parser = new Parser();
@@ -21,7 +21,7 @@ TEST(parser_test, parseMainFunction)
     EXPECT_EQ("main", func->definition);
 }
 
-TEST(parser_test, parseMainFunctionArgs)
+TEST(parser_test, parseFunctionArgs)
 {
 	Lexer *lexer = new Lexer();
 	Parser *parser = new Parser();
@@ -39,7 +39,7 @@ TEST(parser_test, parseMainFunctionArgs)
     EXPECT_EQ("ARGUMENTS", func_args->definition);
 }
 
-TEST(parser_test, parseMainFunctionBody)
+TEST(parser_test, parseFunctionBody)
 {
 	Lexer *lexer = new Lexer();
 	Parser *parser = new Parser();
