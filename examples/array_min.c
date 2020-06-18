@@ -4,7 +4,7 @@ int main()
     int arr[] = {10, 2, 3, 4, 5, 32, 65, 78, 5, 0};
     int min = arr[0];
 
-     for (int i = 1; i < N; ++i) {
+    for (int i = 1; i < N; ++i) {
          if (arr[i] < min) {
             min = arr[i];
          }

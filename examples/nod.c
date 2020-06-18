@@ -1,6 +1,7 @@
 int main ()
 {
-    int a = 24, b = 12  ;
+    int a = 24; 
+    int b = 12;
     int min = (a < b) ? a : b;
     int nod = min;
 

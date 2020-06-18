@@ -74,8 +74,6 @@ AST *Parser::parseFunctionBody(Lexer *lexer)
 	{	
 		prev = tok;
 		tok = getNextTok(lexer);
-	
-		checkSemicolonAndCommaError(tok, prev);
 
 		if (checkBodyTok(tok))
 			blocks.push_back(handler(tok, lexer));

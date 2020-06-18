@@ -1,9 +1,11 @@
 int main()
 {
-    int N = 22, token_size = 4;
+    int N = 22;
+    int token_size = 4;
     char s_str[] = {'A', 'l', 'e', 'x', 'e', 'y', 'G', 'e', 'n', 'a', 'E', 'u', 'g', 'e', 'n', 'e', 'A', 'l', 'e', 'x', 'e', 'y'};
     char token[] = {'G', 'e', 'n', 'a'};
-    int j = 0, pos = 0;
+    int j = 0;
+    int pos = 0;
 
     for (int i = 0; i < N; ++i) {
          if (s_str[i] == token[j]) {

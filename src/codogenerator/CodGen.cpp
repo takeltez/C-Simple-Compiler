@@ -11,7 +11,6 @@ string operand1;
 string operand2;
 string command;
 string comp_command;
-string d_type_vars;
 string d_type_arrs;
 
 string src_file_name;
@@ -97,7 +96,6 @@ void ArrayDataAST::codogenerator()
 void ArrayNameAST::codogenerator()
 {	
 	array_name = definition;
-	def = definition;
 
 	auto it = type_id.find(definition);
 
@@ -520,6 +518,7 @@ void DigitIdAST::codogenerator()
 
 void SymbolIdAST::codogenerator()
 {
+	string d_type_vars;
 	def = definition;
 
 	auto it = type_id.find(definition);

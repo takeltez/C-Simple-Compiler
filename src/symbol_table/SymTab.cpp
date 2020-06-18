@@ -5,7 +5,8 @@ string prev_declr_level;
 
 bool id_declr = false;
 
-string alphabet[] = {"", "a", "b", "c", "d"};
+string alphabet[] = {"", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", 
+														"q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
 int ind = 0;
 
 vector <string> identificators;

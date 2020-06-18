@@ -12,7 +12,7 @@ string unaccept_symbols = "@$^\\№АаБбВвГгДдЕеЁёЖжЗзИиЙй�
 string path;
 
 Lexer::Lexer() 
-{ //Считывание стандартных лексем с файлов
+{ 
 	string str;
 
 	for(int i = 0; i < CountOfFiles; ++i){
@@ -28,7 +28,7 @@ Lexer::Lexer()
 }
 
 void Lexer::makeSpaces() 
-{ //Разделяем пробелами с обеих сторон токены, указанные в DICT_SPACE
+{ 
     bool is_str = false;
     new_file_string = ' ' + new_file_string;
 
@@ -57,26 +57,26 @@ void Lexer::makeSpaces()
 }
 
 string Lexer::shrinkLexemeFromString (int *start_pos) 
-{ //вырезаем лексему из строки
-	int end_pos = new_file_string.find(" ", *start_pos + 1); //ищем по пробелу конец лексемы
+{ 
+	int end_pos = new_file_string.find(" ", *start_pos + 1); 
 
-	string lexeme = new_file_string.substr(*start_pos + 1, (end_pos - *start_pos - 1)); //лексема
+	string lexeme = new_file_string.substr(*start_pos + 1, (end_pos - *start_pos - 1)); 
 
-	*start_pos = new_file_string.find(" ", end_pos); //ищем по пробелу начало лексемы	
+	*start_pos = new_file_string.find(" ", end_pos); 	
 
 	return lexeme;
 }
 
 string Lexer::findStringLexeme(int newLineCount, string *lexeme, int *lexeme_pos) 
-{ //Поиск строковых лексем
+{ 
 	int start_pos = new_file_string.find('"');
 	int end_pos; 
 
-	if (start_pos != string::npos) { //Если есть кавычка
+	if (start_pos != string::npos) { 
 
 		end_pos = new_file_string.find('"', start_pos + 1);
 
-		if (end_pos == string::npos) {	//Если кавычка не закрыта
+		if (end_pos == string::npos) {	
 			*lexeme = new_file_string.substr(start_pos);
 			*lexeme_pos = file_string.find(*lexeme) + 1;
 
@@ -85,7 +85,7 @@ string Lexer::findStringLexeme(int newLineCount, string *lexeme, int *lexeme_pos
 			return "unknown";
 		}
 
-		else { //Если нашли корректнкю строковую лексему
+		else { 
 			*lexeme = new_file_string.substr(start_pos, (end_pos - start_pos + 1));
 			*lexeme_pos = file_string.find(*lexeme) + 1;
 
@@ -99,15 +99,15 @@ string Lexer::findStringLexeme(int newLineCount, string *lexeme, int *lexeme_pos
 }
 
 string Lexer::findSymbolLexeme(int newLineCount, string *lexeme, int *lexeme_pos) 
-{ //Поиск символьных лексем
+{ 
 	int start_pos = new_file_string.find('\''); 
 	int end_pos;
 
-	if (start_pos != string::npos) { //Если есть кавычка
+	if (start_pos != string::npos) { 
 
 		end_pos = new_file_string.find('\'', start_pos + 1);
 
-		if (end_pos == string::npos) { //Если кавычка не закрыта
+		if (end_pos == string::npos) { 
 			*lexeme = new_file_string.substr(start_pos);
 			*lexeme_pos = file_string.find(*lexeme) + 1;
 
@@ -116,7 +116,7 @@ string Lexer::findSymbolLexeme(int newLineCount, string *lexeme, int *lexeme_pos
 			return "unknown";
 		}
 
-		else if ((end_pos - start_pos) != 2) { //Если нет символов в символьной лексеме или больше 1-го
+		else if ((end_pos - start_pos) != 2) { 
 
 			*lexeme = new_file_string.substr(start_pos, (end_pos - start_pos) + 1);
 
@@ -125,7 +125,7 @@ string Lexer::findSymbolLexeme(int newLineCount, string *lexeme, int *lexeme_pos
 			return "not_symbol_length";
 		}
 
-		else { //Если нашли корректнкю символьную лексему
+		else { 
 
 			file_string.replace(file_string.find(*lexeme), (*lexeme).length(), (*lexeme).length(), ' ');
 			new_file_string.replace(new_file_string.find(*lexeme), (*lexeme).length(), (*lexeme).length(), ' ');
@@ -137,11 +137,11 @@ string Lexer::findSymbolLexeme(int newLineCount, string *lexeme, int *lexeme_pos
 }
 
 void Lexer::delSimpleComment() 
-{ //Удаление однострочных комментариев
+{ 
 	string lexeme;
 	int start_pos = new_file_string.find("//"); 
 
-	if (start_pos != string::npos) { //Если есть символ //
+	if (start_pos != string::npos) { 
 
 		lexeme = new_file_string.substr(start_pos);
 
@@ -151,14 +151,14 @@ void Lexer::delSimpleComment()
 }
 
 string Lexer::findStandartLexeme(int newLineCount, string lexeme, int *lexeme_pos) 
-{ //Поиск стандартных лексем, хранящихся в векторах
-	for (int i = 0; i < CountOfFiles; ++i) { //Меняем вектор с типом лексем
+{ 
+	for (int i = 0; i < CountOfFiles; ++i) { 
 
-		for (auto it = stdLexemesVec[i].begin(); it != stdLexemesVec[i].end(); ++it) { //Перебераем все значения каждого вектора
+		for (auto it = stdLexemesVec[i].begin(); it != stdLexemesVec[i].end(); ++it) { 
 
 			int pos = lexeme.find(*it);
 
-			if (pos != string::npos) { //Если есть лексема	
+			if (pos != string::npos) { 
 
 				*lexeme_pos = file_string.find(*it) + 1;	
 				string tokenClass = checkStdLexemes(lexeme);
@@ -173,12 +173,12 @@ string Lexer::findStandartLexeme(int newLineCount, string lexeme, int *lexeme_po
 }
 
 string Lexer::findDigitLexeme(int newLineCount, string lexeme, int *lexeme_pos) 
-{ //Поиск целочисленных лексем
+{ 
 	int start_pos = lexeme.find_first_of(symbols); 
 
-	if (start_pos != string::npos) { //Если есть допустимые символы
+	if (start_pos != string::npos) { 
 
-		if (regex_search(lexeme.begin(), lexeme.end(), DICT_NUM_HEX)) { //Проверка на 16-ричное число	
+		if (regex_search(lexeme.begin(), lexeme.end(), DICT_NUM_HEX)) { 	
 			*lexeme_pos = file_string.find(lexeme) + 1;				
 			
 			file_string.replace(file_string.find(lexeme), lexeme.length(), lexeme.length(), ' ');
@@ -186,7 +186,7 @@ string Lexer::findDigitLexeme(int newLineCount, string lexeme, int *lexeme_pos)
 			return "digit_literal_hex";
 		}
 
-		else if (regex_search(lexeme.begin(), lexeme.end(), DICT_NUM_BIN)) { //Проверка на 2-ричное число
+		else if (regex_search(lexeme.begin(), lexeme.end(), DICT_NUM_BIN)) { 
 			*lexeme_pos = file_string.find(lexeme) + 1;				
 		
 			file_string.replace(file_string.find(lexeme), lexeme.length(), lexeme.length(), ' ');
@@ -195,7 +195,7 @@ string Lexer::findDigitLexeme(int newLineCount, string lexeme, int *lexeme_pos)
 		}
 
 			
-		else if (regex_search(lexeme.begin(), lexeme.end(), DICT_NUM_OCT)) { //Проверка на 8-ричное число
+		else if (regex_search(lexeme.begin(), lexeme.end(), DICT_NUM_OCT)) { 
 			*lexeme_pos = file_string.find(lexeme) + 1;
 
 			file_string.replace(file_string.find(lexeme), lexeme.length(), lexeme.length(), ' ');
@@ -203,7 +203,7 @@ string Lexer::findDigitLexeme(int newLineCount, string lexeme, int *lexeme_pos)
 			return "digit_literal_oct";
 		}
 
-		else if (regex_search(lexeme.begin(), lexeme.end(), DICT_NUM_DEC) || lexeme == "0") { //Проверка на 10-ричное число
+		else if (regex_search(lexeme.begin(), lexeme.end(), DICT_NUM_DEC) || lexeme == "0") { 
 			*lexeme_pos = file_string.find(lexeme) + 1;
 
 			file_string.replace(file_string.find(lexeme), lexeme.length(), lexeme.length(), ' ');
@@ -216,16 +216,16 @@ string Lexer::findDigitLexeme(int newLineCount, string lexeme, int *lexeme_pos)
 }
 
 string Lexer::findVariables(int newLineCount, string lexeme, int *lexeme_pos, int start_pos_next_lexeme) 
-{ //Поиск переменных
+{ 
 	string next_lexeme;
 	int start_pos = lexeme.find_first_of(symbols); 
 
-	if (start_pos != string::npos) { //Если есть допустимые символы
+	if (start_pos != string::npos) { 
 
 		while(next_lexeme == "") 
 			 next_lexeme = shrinkLexemeFromString(&start_pos_next_lexeme);
 
-		if (isdigit(lexeme[0])) { //Если первый символ - цифра, лексема не может быть переменной
+		if (isdigit(lexeme[0])) { 
 			*lexeme_pos = file_string.find(lexeme) + 1;
 
 			file_string.replace(file_string.find(lexeme), lexeme.length(), lexeme.length(), ' ');
@@ -262,10 +262,10 @@ string Lexer::findVariables(int newLineCount, string lexeme, int *lexeme_pos, in
 }
 
 string Lexer::findUnacceptSymbols(int newLineCount, string lexeme, int *lexeme_pos) 
-{ //Поиск недопустимых символов
+{ 
 	int start_pos = lexeme.find_first_of(unaccept_symbols); 
 
-	if (start_pos != string::npos) { //Если есть допустимые символы
+	if (start_pos != string::npos) {
 		*lexeme_pos = file_string.find(lexeme) + 1;
 
 		file_string.replace(file_string.find(lexeme), lexeme.length(), lexeme.length(), ' ');
@@ -277,13 +277,13 @@ string Lexer::findUnacceptSymbols(int newLineCount, string lexeme, int *lexeme_p
 }
 
 Token Lexer::getNextToken() 
-{ //Поиск токенов
+{ 
 	int lexeme_pos = 0;
 	string lexeme;
 	string tokenClass;
 	Token token;
 
-	if (new_file_string.find_first_not_of(" 	") == string::npos) { //Если в строке не осталось лексем, читаем следующую строку из файла
+	if (new_file_string.find_first_not_of(" 	") == string::npos) { 
 
 		ifstream file (path);
 		file_pos += file_string.length() + 1;
@@ -293,7 +293,7 @@ Token Lexer::getNextToken()
 
 		new_file_string = file_string;
 		
-		makeSpaces(); //разделяем строку по пробелам
+		makeSpaces(); 
 		start_pos = 0;
 
 		if (file.eof() && new_file_string.find_first_not_of(" ") == string::npos) 
@@ -303,30 +303,30 @@ Token Lexer::getNextToken()
 		file.close();
 	}
 
-	lexeme = shrinkLexemeFromString(&start_pos); //вырезаем токен, окруженный пробелами слева и справа
+	lexeme = shrinkLexemeFromString(&start_pos); 
 
-	if (lexeme[0] == '/' && lexeme[1] == '/') { //если лексема - комментарий
+	if (lexeme[0] == '/' && lexeme[1] == '/') { 
 		delSimpleComment();
 		return token;
 	}
 
-	if (lexeme[0] == '\"') { //если лексема - строковая константа
+	if (lexeme[0] == '\"') { 
 
 		tokenClass = findStringLexeme(newLineCount, &lexeme, &lexeme_pos);
 
-		if (tokenClass != NOLEXEME) { //Возвращаем найденную лексему, если не нашли, продолжаем поиск
+		if (tokenClass != NOLEXEME) { 
 			Token token(tokenClass, lexeme, newLineCount, lexeme_pos);
 			return token;
 		}
 	}
 
-	if (lexeme[0] == '\'') { //если лексема - символьна константа
+	if (lexeme[0] == '\'') { 
 
 		tokenClass = findSymbolLexeme(newLineCount, &lexeme, &lexeme_pos);
 
 		if (tokenClass != NOLEXEME) {
 			Token token(tokenClass, lexeme, newLineCount, lexeme_pos);
-			return token; //Возвращаем найденную лексему, если не нашли, продолжаем поиск
+			return token; 
 		}
 	}
 
@@ -358,7 +358,7 @@ Token Lexer::getNextToken()
 		return token;
 	}
 
-	if (e_o_f) {  //Если достигнут конец файла
+	if (e_o_f) { 
 		token.setLexeme(" ");
 		return token;
 	}

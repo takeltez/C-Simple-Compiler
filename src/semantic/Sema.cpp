@@ -175,8 +175,7 @@ void BinOperationAST::semantic()
 
 	op = buff;
 	
-	//if (op == "?")
-		num = 0;
+	num = 0;
 }
 
 void UnaryOperationAST::semantic()
