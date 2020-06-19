@@ -1,7 +1,4 @@
 comp := bin/compiler/my-compiler
-examp_array_min := bin/examples/array_min
-examp_substr := bin/examples/substr
-examp_nod := bin/examples/nod
 lexer_test := bin/test/lexer_tests
 parser_test := bin/test/parser_tests
 SymTab_test := bin/test/SymTab_tests
@@ -10,7 +7,7 @@ G++ := g++
 
 .PHONY: all clean dir
 
-all: $(comp) $(examp_array_min) $(examp_substr) $(examp_nod) $(lexer_test) $(parser_test) $(SymTab_test) $(semantic_test)
+all: $(comp) $(lexer_test) $(parser_test) $(SymTab_test) $(semantic_test)
 
 #compiler
 
@@ -95,22 +92,6 @@ build/compiler/CodGen.o: src/codogenerator/CodGen.cpp
 	$(G++) $(CFLAGS) -c src/codogenerator/CodGen.cpp -o build/compiler/CodGen.o -Isrc/lexer -Isrc/parser/AST -Isrc/symbol_table -Isrc/semantic -Isrc/parser -Isrc/codogenerator
 build/compiler/AsmHandler.o: src/codogenerator/AsmHandler.cpp
 	$(G++) $(CFLAGS) -c src/codogenerator/AsmHandler.cpp -o build/compiler/AsmHandler.o -Isrc/lexer -Isrc/parser/AST -Isrc/symbol_table -Isrc/semantic -Isrc/parser -Isrc/codogenerator
-#examples
-
-$(examp_array_min): build/examples/array_min.o
-	$(G++) $(CFLAGS) build/examples/array_min.o -o $(examp_array_min)
-build/examples/array_min.o: examples/array_min.c 
-	$(G++) $(CFLAGS) -c examples/array_min.c -o build/examples/array_min.o
-
-$(examp_substr): build/examples/substr.o
-	$(G++) $(CFLAGS) build/examples/substr.o -o $(examp_substr)
-build/examples/substr.o: examples/substr.c 
-	$(G++) $(CFLAGS) -c examples/substr.c -o build/examples/substr.o
-
-$(examp_nod): build/examples/nod.o
-	$(G++) $(CFLAGS) build/examples/nod.o -o $(examp_nod)
-build/examples/nod.o: examples/nod.c 
-	$(G++) $(CFLAGS) -c examples/nod.c -o build/examples/nod.o
 
 
 
@@ -186,15 +167,6 @@ build/test/semantic_tests.o: test/semantic/Semantic_tests.cpp
 compiler: bin/compiler/my-compiler
 	bin/compiler/my-compiler
 
-array_min: bin/examples/array_min
-	bin/examples/array_min
-
-substr: bin/examples/substr
-	bin/examples/substr
-
-nod: bin/examples/nod
-	bin/examples/nod
-
 lexer_test: bin/test/lexer_tests
 	bin/test/lexer_tests
 
@@ -209,18 +181,14 @@ semantic_test: bin/test/semantic_tests
 
 clean:
 	@rm -rf build/test/*.o
-	@rm -rf build/examples/*.o
 	@rm -rf build/compiler/*.o
 	@rm -rf bin/test/*
-	@rm -rf bin/examples/*
 	@rm -rf bin/compiler/*
 
 dir:
 	@mkdir build
 	@mkdir build/test
-	@mkdir build/examples
 	@mkdir build/compiler
 	@mkdir bin
 	@mkdir bin/test
-	@mkdir bin/examples
 	@mkdir bin/compiler

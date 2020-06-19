@@ -161,7 +161,9 @@ bool checkForConditionTok(Token tok)
 									|| tok.getTokenClass() == "data_type_float" || tok.getTokenClass() == "data_type_double" 
 										|| tok.getTokenClass() =="arithmetic_operator_=" || tok.getTokenClass() == "compare_operator_=="
 											|| tok.getTokenClass() == "logic_operator_&&"|| tok.getTokenClass() == "logic_operator_||"
-												|| tok.getTokenClass() == "arithmetic_operator_%" || tok.getTokenClass() == "array_name");
+												|| tok.getTokenClass() == "arithmetic_operator_%" || tok.getTokenClass() == "array_name"
+													|| tok.getTokenClass() == "arithmetic_operator_+" || tok.getTokenClass() == "arithmetic_operator_-"
+														|| tok.getTokenClass() == "arithmetic_operator_*" || tok.getTokenClass() == "arithmetic_operator_/");
 }
 
 bool checkArrayDataTok(Token tok)

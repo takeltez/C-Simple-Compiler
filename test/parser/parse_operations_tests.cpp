@@ -41,7 +41,7 @@ TEST(parser_test, parseUnaryOperation)
     EXPECT_EQ("++", uanry_op->definition);
 }
 
-TEST(parser_test, parseLogicOperation)
+/*TEST(parser_test, parseLogicOperation)
 {
 	Lexer *lexer = new Lexer();
 	Parser *parser = new Parser();
@@ -119,4 +119,4 @@ TEST(parser_test, parseAssignment)
 	AssignmentAST *assignment = static_cast<AssignmentAST*>(result); 
 
     EXPECT_EQ("=", assignment->definition);
-}
+}*/

@@ -59,7 +59,17 @@ void ForBodyAST::semantic()
 void ForConditionAST::semantic()
 {
 	for (int i = 0; i < blocks.size(); ++i)
-		blocks[i]->semantic();
+	{
+		if (i == 1) {
+
+			cond = "for condition";
+			blocks[i]->semantic();
+			cond.clear();
+		}
+
+		else
+			blocks[i]->semantic();
+	}
 }
 
 void WhileAST::semantic()
@@ -244,7 +254,7 @@ void StringLexemeAST::semantic()
 
 	else if (data_type != "char" && !data_type.empty() && op != "printf") {
 
-		cout<<"Incorrect operators for operation '"<<op<<"': '"<<data_type<<"' and 'string'"<<endl;
+		cout<<"Incorrect operators for operation1 '"<<op<<"': '"<<data_type<<"' and 'string'"<<endl;
 		exit(1);
 	}
 
@@ -276,7 +286,7 @@ void SymbolLexemeAST::semantic()
 
 void DigitIdAST::semantic()
 {
-	if ((cond == "if condition" || cond == "while condition")  
+	if ((cond == "if condition" || cond == "while condition" || cond == "for condition")  
 		&& (op != ">" && op != "<" && op != ">=" && op != "<=" && op != "==" && op != "!=")) {
 			
 			cout<<"Cannot execute arithmetic operation in '"<<cond<<"'"<<endl;
@@ -296,7 +306,7 @@ void SymbolIdAST::semantic()
 
 	if (op == "=" || op == "unary_op" || op == "return" || op == "printf" || sema->checkBinOperationSign(op)) {
 
-		if ((cond == "if condition" || cond == "while condition") 
+		if ((cond == "if condition" || cond == "while condition" || cond == "for condition") 
 				&& (op != ">" && op != "<" && op != ">=" && op != "<=" && op != "==" && op != "%" && op != "!=")) {
 		
 			cout<<"Cannot execute arithmetic operation in '"<<cond<<"'"<<endl;

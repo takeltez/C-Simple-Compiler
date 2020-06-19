@@ -1,6 +1,6 @@
 #include "Lexer.h"
 
-string root_path_to_file = "/home/alexey/3 курс/ТЯП/compiler/resources/";
+string root_path_to_file = "resources/";
 
 string file_name[] = {"keyWords.txt", "stdHeaders.txt", "stdFuncs.txt", "parens.txt", "specSymbols.txt", 
 						"dataTypes.txt","compOps.txt", "logicOps.txt", "arithOps.txt"};
@@ -40,16 +40,16 @@ void Lexer::makeSpaces()
         if ((new_file_string[i] == '/') && (new_file_string[i + 1] == '/')) 
 	        break;
         
-        for (int j  = 0; j < DICT_SPACE.size(); j++) {
+        for (int j  = 0; j < shrinked_lexemes.size(); j++) {
            
-            if ((new_file_string.substr(i, DICT_SPACE[j].length()) == DICT_SPACE[j]) && !is_str && new_file_string[i - 1] != ' ') {
-                new_file_string.replace(i, DICT_SPACE[j].length(), ' ' + DICT_SPACE[j] + ' ');
-                i += DICT_SPACE[j].length();
+            if ((new_file_string.substr(i, shrinked_lexemes[j].length()) == shrinked_lexemes[j]) && !is_str && new_file_string[i - 1] != ' ') {
+                new_file_string.replace(i, shrinked_lexemes[j].length(), ' ' + shrinked_lexemes[j] + ' ');
+                i += shrinked_lexemes[j].length();
                 break;
             }
-            if ((new_file_string.substr(i, DICT_SPACE[j].length()) == DICT_SPACE[j]) && !is_str && new_file_string[i - 1] == ' ') {
-                new_file_string.replace(i, DICT_SPACE[j].length(), DICT_SPACE[j] + ' ');
-                i += DICT_SPACE[j].length();
+            if ((new_file_string.substr(i, shrinked_lexemes[j].length()) == shrinked_lexemes[j]) && !is_str && new_file_string[i - 1] == ' ') {
+                new_file_string.replace(i, shrinked_lexemes[j].length(), shrinked_lexemes[j] + ' ');
+                i += shrinked_lexemes[j].length();
                 break;
             }
         }
@@ -178,7 +178,7 @@ string Lexer::findDigitLexeme(int newLineCount, string lexeme, int *lexeme_pos)
 
 	if (start_pos != string::npos) { 
 
-		if (regex_search(lexeme.begin(), lexeme.end(), DICT_NUM_HEX)) { 	
+		if (regex_search(lexeme.begin(), lexeme.end(), REGULAR_HEX)) { 	
 			*lexeme_pos = file_string.find(lexeme) + 1;				
 			
 			file_string.replace(file_string.find(lexeme), lexeme.length(), lexeme.length(), ' ');
@@ -186,7 +186,7 @@ string Lexer::findDigitLexeme(int newLineCount, string lexeme, int *lexeme_pos)
 			return "digit_literal_hex";
 		}
 
-		else if (regex_search(lexeme.begin(), lexeme.end(), DICT_NUM_BIN)) { 
+		else if (regex_search(lexeme.begin(), lexeme.end(), REGULAR_BIN)) { 
 			*lexeme_pos = file_string.find(lexeme) + 1;				
 		
 			file_string.replace(file_string.find(lexeme), lexeme.length(), lexeme.length(), ' ');
@@ -195,7 +195,7 @@ string Lexer::findDigitLexeme(int newLineCount, string lexeme, int *lexeme_pos)
 		}
 
 			
-		else if (regex_search(lexeme.begin(), lexeme.end(), DICT_NUM_OCT)) { 
+		else if (regex_search(lexeme.begin(), lexeme.end(), REGULAR_OCT)) { 
 			*lexeme_pos = file_string.find(lexeme) + 1;
 
 			file_string.replace(file_string.find(lexeme), lexeme.length(), lexeme.length(), ' ');
@@ -203,7 +203,7 @@ string Lexer::findDigitLexeme(int newLineCount, string lexeme, int *lexeme_pos)
 			return "digit_literal_oct";
 		}
 
-		else if (regex_search(lexeme.begin(), lexeme.end(), DICT_NUM_DEC) || lexeme == "0") { 
+		else if (regex_search(lexeme.begin(), lexeme.end(), REGULAR_DEC) || lexeme == "0") { 
 			*lexeme_pos = file_string.find(lexeme) + 1;
 
 			file_string.replace(file_string.find(lexeme), lexeme.length(), lexeme.length(), ' ');
@@ -249,7 +249,7 @@ string Lexer::findVariables(int newLineCount, string lexeme, int *lexeme_pos, in
 			return "function_name";
 		}
 
-		else if (regex_search(lexeme.begin(), lexeme.end(), DICT_ID)) {
+		else if (regex_search(lexeme.begin(), lexeme.end(), REGULAR_VARS)) {
 			*lexeme_pos = file_string.find(lexeme) + 1;
 
 			file_string.replace(file_string.find(lexeme), lexeme.length(), lexeme.length(), ' ');

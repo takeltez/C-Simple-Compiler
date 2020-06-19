@@ -11,7 +11,7 @@ int main ()
             break;  
        }
    }
-
+                   
     printf("nod: %d\n", nod); 
 
     return 0;

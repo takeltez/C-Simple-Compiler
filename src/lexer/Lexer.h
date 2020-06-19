@@ -11,11 +11,11 @@ using namespace std;
 #define CountOfFiles 9
 #define NOLEXEME "Error"
 
-const regex DICT_ID = regex("^[A-Za-z_][A-Za-z0-9_]*$");
-const regex DICT_NUM_DEC = regex("^[1-9][0-9]*$");
-const regex DICT_NUM_HEX = regex("^0[xX][A-Fa-f0-9]+$");
-const regex DICT_NUM_BIN = regex("^0[bB][01]+$");
-const regex DICT_NUM_OCT = regex("^0[0-7]+$");
+const regex REGULAR_VARS = regex("^[A-Za-z_][A-Za-z0-9_]*$");
+const regex REGULAR_DEC = regex("^[1-9][0-9]*$");
+const regex REGULAR_HEX = regex("^0[xX][A-Fa-f0-9]+$");
+const regex REGULAR_BIN = regex("^0[bB][01]+$");
+const regex REGULAR_OCT = regex("^0[0-7]+$");
 
 class Lexer
 {
@@ -25,7 +25,7 @@ class Lexer
 		bool e_o_f = false;
 		int start_pos = 0;
 
-		vector <string> DICT_SPACE =  {".", ", ", ";", "(", ")", "{", "}", "[", "]","+=", "-=", "*=", "/=", 
+		vector <string> shrinked_lexemes =  {".", ", ", ";", "(", ")", "{", "}", "[", "]","+=", "-=", "*=", "/=", 
 												"%=", "!=", "++", "+", "--", "-", "*", "/", "%", "==", ">=", "<=", ">", "<", "=", "#", "&&", "&", "||" "!"};
 		vector <string> stdFuncs;
 		vector <string> parens;
