@@ -1,7 +1,8 @@
 # C-Simple-Compiler
 
 ## Compilation:
-    make/make all - build whole project with tests
+    make dir - create directories
+    make - build whole project with tests
     make lexer_test - build lexer tests
     make parser_test - build parser tests
     make SymTab_test - build symbol table tests
