@@ -2,6 +2,7 @@
 
 ## Compilation:
     make dir - create directories
+    make gtest - install gtest
     make - build whole project with tests
     make lexer_test - build lexer tests
     make parser_test - build parser tests
