@@ -192,3 +192,11 @@ dir:
 	@mkdir bin
 	@mkdir bin/test
 	@mkdir bin/compiler
+	
+gtest:
+	@sudo apt-get install libgtest-dev
+	@sudo apt-get install cmake
+	@cd /usr/src/gtest/
+	@sudo cmake -DBUILD_SHARED_LIBS=ON
+	@sudo make
+	@sudo cp *.so /usr/lib
