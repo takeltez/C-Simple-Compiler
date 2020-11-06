@@ -47,9 +47,10 @@ int main(int argc, char const **argv)
 		printAST(tree);
 
 		symbol_table->setSymTab(tree);
-		//symbol_table->printSymTab();
+		symbol_table->printSymTab();
 
 		sema->checkSemantic(tree);
+		sema->printIdTable();
 	}
 
 	else if (command == "--dump-asm") {

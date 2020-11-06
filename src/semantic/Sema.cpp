@@ -9,7 +9,7 @@ string left_operand;
 string prev_node;
 string cond;
 
-map <string, string> type_id;
+map <string, string> id_table;
 vector <string> operands;
 
 Sema *sema = new Sema();
@@ -28,10 +28,10 @@ void ArrayDataAST::semantic()
 
 void ArrayNameAST::semantic()
 {		
-	if ((type_id.find(definition)) == type_id.end() && !data_type.empty())
-		type_id.emplace(definition, data_type);
+	if ((id_table.find(definition)) == id_table.end() && !data_type.empty())
+		id_table.emplace(definition, data_type);
 
-	else if ((type_id.find(definition)) == type_id.end() && data_type.empty()) {
+	else if ((id_table.find(definition)) == id_table.end() && data_type.empty()) {
 
 		cout<<"Identificator '"<<definition<<"' was not declarated in this scope"<<endl;
 		exit(1);
@@ -152,7 +152,7 @@ void AssignmentAST::semantic()
 	l_operand->semantic();
 	r_operand->semantic();
 
-	operands = sema->checkOperatorsDataType(operands, type_id, op);
+	operands = sema->checkOperatorsDataType(operands, id_table, op);
 
 	op = buff;
 
@@ -242,7 +242,7 @@ void ReturnAST::semantic()
 
 void StringLexemeAST::semantic()
 {
-	auto it = type_id.find(left_operand);
+	auto it = id_table.find(left_operand);
 
 	data_type = it->second;
 
@@ -254,7 +254,7 @@ void StringLexemeAST::semantic()
 
 	else if (data_type != "char" && !data_type.empty() && op != "printf") {
 
-		cout<<"Incorrect operators for operation1 '"<<op<<"': '"<<data_type<<"' and 'string'"<<endl;
+		cout<<"Incorrect operators for operation '"<<op<<"': '"<<data_type<<"' and 'string'"<<endl;
 		exit(1);
 	}
 
@@ -267,7 +267,7 @@ void StringLexemeAST::semantic()
 
 void SymbolLexemeAST::semantic()
 {
-	auto it = type_id.find(left_operand);
+	auto it = id_table.find(left_operand);
 
 	data_type = it->second;
 
@@ -315,16 +315,16 @@ void SymbolIdAST::semantic()
 
 		if (!num) {
 
-			if ((type_id.find(definition)) == type_id.end() && !data_type.empty()) {
+			if ((id_table.find(definition)) == id_table.end() && !data_type.empty()) {
 
-					type_id.emplace(definition, data_type);
+					id_table.emplace(definition, data_type);
 
 					declr = true;
 
 					left_operand = definition;	
 			}
 
-			else if ((type_id.find(definition)) == type_id.end() && data_type.empty()) {
+			else if ((id_table.find(definition)) == id_table.end() && data_type.empty()) {
 
 				error = true;
 
@@ -338,7 +338,7 @@ void SymbolIdAST::semantic()
 
 		else  {
 
-			if ((type_id.find(definition)) == type_id.end() || ((definition == left_operand) && declr)) {
+			if ((id_table.find(definition)) == id_table.end() || ((definition == left_operand) && declr)) {
 				
 				error = true;
 
@@ -360,14 +360,27 @@ void SymbolIdAST::semantic()
 
 	else if (!data_type.empty()) {
 
-		if ((type_id.find(definition)) == type_id.end()) 
-			type_id.emplace(definition, data_type);
+		if ((id_table.find(definition)) == id_table.end()) 
+			id_table.emplace(definition, data_type);
 	}
 
 }
 
 void BreakAST::semantic()
 {
+}
+
+void Sema::printIdTable(void)
+{
+	cout << endl << endl <<"Identificator type | "<< "Identificator name" <<endl;
+	cout<<"--------------------------------------"<<endl;
+
+	for (auto it = id_table.begin(); it != id_table.end(); ++it) 
+	{
+		cout << it->second << endl;
+		cout << "\t\t\t" << it->first << endl;
+		cout << "--------------------------------------" << endl;
+	}
 }
 
 Sema::Sema() {}

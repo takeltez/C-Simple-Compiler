@@ -1,6 +1,6 @@
 #include "Parser.h"
 
-extern map <string, string> type_id;
+extern map <string, string> id_table;
 extern map <string, string> mem_pos;
 extern vector <string> LC_marks;
 extern vector <int> L_marks;
@@ -117,7 +117,7 @@ void CodGen::handleAsmMov()
 
 			else {
 
-				if (type_id.find(def)->second == "int" || type_id.find(def)->second == "char")
+				if (id_table.find(def)->second == "int" || id_table.find(def)->second == "char")
 					file << "\t\tmov\t\t" + it1->second + "], " + value<<endl;
 			}
 		}
@@ -153,10 +153,10 @@ void CodGen::handleAsmMov()
 
 			else {
 
-				if (type_id.find(def)->second == "int")
+				if (id_table.find(def)->second == "int")
 					file << "\t\tmov\t\teax, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "], eax"<<endl;
 			
-				else if (type_id.find(def)->second == "char")
+				else if (id_table.find(def)->second == "char")
 					file << "\t\tmov\t\tal, " + it2->second + "]"<<endl<<"\t\tmov\t\t" + it1->second + "], al"<<endl;
 			}
 		}
@@ -199,10 +199,10 @@ void CodGen::handleAsmMov()
 
 				else {
 
-					if (type_id.find(def)->second == "int")
+					if (id_table.find(def)->second == "int")
 						file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
 				
-					else if (type_id.find(def)->second == "char")
+					else if (id_table.find(def)->second == "char")
 						file << "\t\tmov\t\tal, " + it->second + "]"<<endl;
 				}
 			}
@@ -239,10 +239,10 @@ void CodGen::handleAsmMov()
 
 				else {
 
-					if (type_id.find(def)->second == "int")
+					if (id_table.find(def)->second == "int")
 						file << "\t\tmov\t\tedx, " + it->second + "]"<<endl;
 				
-					else if (type_id.find(def)->second == "char")
+					else if (id_table.find(def)->second == "char")
 						file << "\t\tmov\t\tdl, " + it->second + "]"<<endl;
 				}
 			}
@@ -277,10 +277,10 @@ void CodGen::handleAsmMov()
 
 			else {
 
-				if (type_id.find(def)->second == "int")
+				if (id_table.find(def)->second == "int")
 					file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
 
-				else if (type_id.find(def)->second == "char")
+				else if (id_table.find(def)->second == "char")
 					file << "\t\tmov\t\tal, " + it->second + "]"<<endl;
 			}
 		}
@@ -307,10 +307,10 @@ void CodGen::handleAsmMov()
 
 		else {
 
-			if (type_id.find(def)->second == "int")
+			if (id_table.find(def)->second == "int")
 				file << "\t\tmov\t\teax, " + it->second + "]"<<endl;
 
-			else if (type_id.find(def)->second == "char")
+			else if (id_table.find(def)->second == "char")
 				file << "\t\tmov\t\tal, " + it->second + "]"<<endl;
 		}
 

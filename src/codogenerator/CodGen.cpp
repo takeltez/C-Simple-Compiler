@@ -1,6 +1,6 @@
 #include "Parser.h"
 
-extern map <string, string> type_id;
+extern map <string, string> id_table;
 map <string, string> mem_pos;
 vector <string> LC_marks;
 vector <int> L_marks;
@@ -97,7 +97,7 @@ void ArrayNameAST::codogenerator()
 {	
 	array_name = definition;
 
-	auto it = type_id.find(definition);
+	auto it = id_table.find(definition);
 
 	d_type_arrs = it->second; 
 
@@ -521,7 +521,7 @@ void SymbolIdAST::codogenerator()
 	string d_type_vars;
 	def = definition;
 
-	auto it = type_id.find(definition);
+	auto it = id_table.find(definition);
 
 	d_type_vars = it->second; 
 
